@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Code Viewer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <h1>Claude Code Viewer</h1>
+      <div class="status-badge">
+        <div class="status-dot"></div>
+        <span>实时监控中</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="stat-badge">
+        总请求数: <strong id="total-count">0</strong>
+      </div>
+      <button id="mode-toggle-btn" onclick="toggleViewMode()">打开对话模式</button>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <div class="left-panel" id="left-panel">
+      <div class="panel-header">请求列表</div>
+      <div class="request-list" id="request-list">
+        <div class="empty-state">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+          </svg>
+          <p>等待请求...</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="resizer" id="resizer"></div>
+
+    <div class="right-panel" id="right-panel">
+      <div class="empty-detail">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path>
+        </svg>
+        <p>选择一个请求查看详情</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="chat-container" class="chat-container" style="display: none;"></div>
+
+  <script src="/node_modules/marked/lib/marked.umd.js"></script>
+  <script src="/node_modules/@alenaksu/json-viewer/dist/json-viewer.bundle.js"></script>
+  <script src="/app.js" defer></script>
+</body>
+</html>

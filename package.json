@@ -1,0 +1,46 @@
+{
+  "name": "cc-viewer",
+  "version": "0.0.1",
+  "description": "Claude Code Logger visualization management tool",
+  "license": "MIT",
+  "main": "lib/server.js",
+  "type": "module",
+  "author": "chenpx976",
+  "bin": {
+    "ccviewer": "lib/cli.js"
+  },
+  "scripts": {
+    "build": "node build.js",
+    "start": "node lib/server.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "claude code"
+  ],
+  "contributors": [
+    {
+      "name": "weiesky",
+      "email": "sbxdwz@qq.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/weiesky/cc-viewer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/weiesky/cc-viewer/issues"
+  },
+  "homepage": "https://github.com/weiesky/cc-viewer#readme",
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "lib/",
+    "cli.js",
+    "interceptor.js"
+  ],
+  "devDependencies": {
+    "@alenaksu/json-viewer": "^2.0.1",
+    "marked": "^17.0.2"
+  }
+}
