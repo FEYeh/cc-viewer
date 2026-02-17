@@ -1,13 +1,13 @@
 {
   "name": "cc-viewer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Claude Code Logger visualization management tool",
   "license": "MIT",
   "main": "lib/server.js",
   "type": "module",
-  "author": "chenpx976",
+  "author": "weiesky",
   "bin": {
-    "ccviewer": "lib/cli.js"
+    "ccviewer": "cli.js"
   },
   "scripts": {
     "build": "node build.js",
