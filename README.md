@@ -11,7 +11,7 @@ npm install -g cc-viewer
 安装完成后运行：
 
 ```bash
-ccviewer
+ccv
 ```
 
 该命令会自动将监控脚本注入到本地安装的 Claude Code 中。之后正常使用 Claude Code，打开浏览器访问 `http://localhost:7008` 即可查看监控界面。
