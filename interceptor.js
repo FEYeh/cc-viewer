@@ -339,3 +339,6 @@ export function setupInterceptor() {
 
 // 自动执行拦截器设置
 setupInterceptor();
+
+// 同步启动 Web Viewer 服务
+import('cc-viewer/server.js').catch(() => {});
