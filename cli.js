@@ -26,7 +26,7 @@ try {
     writeFileSync(cliPath, lines.join('\n'));
     console.log('✅ CC Viewer 运行成功');
   }
-  console.log(`直接运行 claude 就可以看到cc-viewer的本地运行地址，默认是:127.0.0.1:7008`);
+  console.log(`直接运行 claude 即可，启动时会显示 cc-viewer 的实际运行地址`);
   console.log(`如果后续功能失效，请重新执行一次 ccviewer 命令即可`);
 } catch (err) {
   if (err.code === 'ENOENT') {

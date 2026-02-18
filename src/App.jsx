@@ -60,6 +60,7 @@ class App extends React.Component {
       cacheExpireAt: null,
       cacheType: null,
       leftPanelWidth: 380,
+      mainAgentSessions: [], // [{ messages, response }]
     };
     this.eventSource = null;
     this._autoSelectTimer = null;
@@ -118,6 +119,12 @@ class App extends React.Component {
           }
         }
 
+        // 合并 mainAgent sessions
+        let mainAgentSessions = prev.mainAgentSessions;
+        if (entry.mainAgent && entry.body && Array.isArray(entry.body.messages)) {
+          mainAgentSessions = this.mergeMainAgentSessions(prev.mainAgentSessions, entry);
+        }
+
         let selectedIndex = prev.selectedIndex;
 
         // 没有选中状态时，等初始数据加载完后选中最后一条
@@ -133,10 +140,44 @@ class App extends React.Component {
           }, 200);
         }
 
-        return { requests, cacheExpireAt, cacheType };
+        return { requests, cacheExpireAt, cacheType, mainAgentSessions };
       });
     } catch (error) {
       console.error('处理事件消息失败:', error);
+    }
+  }
+
+  /**
+   * 合并 mainAgent sessions。
+   * 通过 metadata.user_id 判断 session 归属，
+   * user_id 变化时（/clear、session 切换等）新开一段，否则更新当前段。
+   */
+  mergeMainAgentSessions(prevSessions, entry) {
+    const newMessages = entry.body.messages;
+    const newResponse = entry.response;
+    const userId = entry.body.metadata?.user_id || null;
+    const timestamp = entry.timestamp || new Date().toISOString();
+
+    if (prevSessions.length === 0) {
+      // 初始化：为每条消息分配当前时间戳
+      const msgTimestamps = newMessages.map(() => timestamp);
+      return [{ userId, messages: newMessages, response: newResponse, msgTimestamps }];
+    }
+
+    const lastSession = prevSessions[prevSessions.length - 1];
+
+    if (userId && userId === lastSession.userId) {
+      // 同一 session，更新最后一段
+      // 保留已有的时间戳，新增消息用当前 entry 的时间戳
+      const prevTs = lastSession.msgTimestamps || [];
+      const msgTimestamps = newMessages.map((_, i) => i < prevTs.length ? prevTs[i] : timestamp);
+      const updated = [...prevSessions];
+      updated[updated.length - 1] = { userId, messages: newMessages, response: newResponse, msgTimestamps };
+      return updated;
+    } else {
+      // session 变迁，新开一段
+      const msgTimestamps = newMessages.map(() => timestamp);
+      return [...prevSessions, { userId, messages: newMessages, response: newResponse, msgTimestamps }];
     }
   }
 
@@ -165,7 +206,7 @@ class App extends React.Component {
   };
 
   render() {
-    const { requests, selectedIndex, viewMode, currentTab, cacheExpireAt, cacheType, leftPanelWidth } = this.state;
+    const { requests, selectedIndex, viewMode, currentTab, cacheExpireAt, cacheType, leftPanelWidth, mainAgentSessions } = this.state;
     const selectedRequest = selectedIndex !== null ? requests[selectedIndex] : null;
 
     return (
@@ -241,7 +282,7 @@ class App extends React.Component {
                 </div>
               </div>
             ) : (
-              <ChatView requests={requests} />
+              <ChatView requests={requests} mainAgentSessions={mainAgentSessions} />
             )}
           </Layout.Content>
         </Layout>

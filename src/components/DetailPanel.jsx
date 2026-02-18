@@ -13,6 +13,15 @@ class DetailPanel extends React.Component {
     };
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return (
+      nextProps.request !== this.props.request ||
+      nextProps.currentTab !== this.props.currentTab ||
+      nextProps.onTabChange !== this.props.onTabChange ||
+      nextState.bodyViewMode !== this.state.bodyViewMode
+    );
+  }
+
   toggleBodyViewMode(type) {
     this.setState(prev => ({
       bodyViewMode: {

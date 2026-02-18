@@ -72,10 +72,10 @@ function assembleStreamMessage(events) {
           if (event.delta.type === 'text_delta' && event.delta.text) {
             contentBlocks[event.index].text += event.delta.text;
           } else if (event.delta.type === 'input_json_delta' && event.delta.partial_json) {
-            if (!contentBlocks[event.index].input) {
-              contentBlocks[event.index].input = '';
+            if (typeof contentBlocks[event.index]._inputJson !== 'string') {
+              contentBlocks[event.index]._inputJson = '';
             }
-            contentBlocks[event.index].input += event.delta.partial_json;
+            contentBlocks[event.index]._inputJson += event.delta.partial_json;
           } else if (event.delta.type === 'thinking_delta' && event.delta.thinking) {
             contentBlocks[event.index].thinking += event.delta.thinking;
           } else if (event.delta.type === 'signature_delta' && event.delta.signature) {
@@ -88,12 +88,13 @@ function assembleStreamMessage(events) {
         // 内容块结束
         if (event.index >= 0 && contentBlocks[event.index]) {
           // 如果是 tool_use 且有累积的 input JSON，尝试解析
-          if (contentBlocks[event.index].type === 'tool_use' && contentBlocks[event.index].input) {
+          if (contentBlocks[event.index].type === 'tool_use' && typeof contentBlocks[event.index]._inputJson === 'string') {
             try {
-              contentBlocks[event.index].input = JSON.parse(contentBlocks[event.index].input);
+              contentBlocks[event.index].input = JSON.parse(contentBlocks[event.index]._inputJson);
             } catch {
-              // 保持字符串形式
+              contentBlocks[event.index].input = contentBlocks[event.index]._inputJson;
             }
+            delete contentBlocks[event.index]._inputJson;
           }
         }
         break;

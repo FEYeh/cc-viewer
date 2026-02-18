@@ -1,5 +1,5 @@
-import { createServer } from 'node:http';
-import { readFileSync, existsSync, watchFile, unwatchFile, statSync, writeFileSync } from 'node:fs';
+import { createServer, request as httpRequest } from 'node:http';
+import { readFileSync, existsSync, watchFile, unwatchFile, statSync, writeFileSync, unlinkSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, extname } from 'node:path';
 import { LOG_FILE } from 'cc-viewer/interceptor.js';
@@ -10,6 +10,18 @@ const START_PORT = 7008;
 const MAX_PORT = 7099;
 const HOST = '127.0.0.1';
 const PORT_FILE = '/tmp/cc-viewer-port';
+
+function checkPortAlive(port) {
+  return new Promise((resolve) => {
+    const req = httpRequest({ host: HOST, port, path: '/api/requests', method: 'GET', timeout: 1000 }, (res) => {
+      res.resume();
+      resolve(true);
+    });
+    req.on('error', () => resolve(false));
+    req.on('timeout', () => { req.destroy(); resolve(false); });
+    req.end();
+  });
+}
 
 let clients = [];
 let server;
@@ -164,7 +176,26 @@ function handleRequest(req, res) {
   res.end('Not Found');
 }
 
-export function startViewer() {
+export async function startViewer() {
+  // 检查是否已有 cc-viewer 实例在运行
+  if (existsSync(PORT_FILE)) {
+    try {
+      const existingPort = parseInt(readFileSync(PORT_FILE, 'utf-8').trim(), 10);
+      if (existingPort >= START_PORT && existingPort <= MAX_PORT) {
+        const alive = await checkPortAlive(existingPort);
+        if (alive) {
+          actualPort = existingPort;
+          console.log(`\n🔍 CC Viewer 已在运行: http://${HOST}:${existingPort}\n`);
+          return null;
+        }
+      }
+    } catch {
+      // PORT_FILE 读取失败，继续正常启动
+    }
+    // 旧实例已不存在，清理 PORT_FILE
+    try { unlinkSync(PORT_FILE); } catch {}
+  }
+
   return new Promise((resolve, reject) => {
     function tryListen(port) {
       if (port > MAX_PORT) {
@@ -186,7 +217,6 @@ export function startViewer() {
 
       currentServer.on('error', (err) => {
         if (err.code === 'EADDRINUSE') {
-          console.log(`⚠️  端口 ${port} 已被占用，尝试 ${port + 1}...`);
           tryListen(port + 1);
         } else {
           reject(err);
