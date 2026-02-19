@@ -136,7 +136,7 @@ class RequestList extends React.Component {
                     }}>
                       <div>token: output:{formatTokens(outputTokens) || 0}, input: {formatTokens(inputTokens) || 0}</div>
                       {(cacheRead > 0 || cacheCreate > 0) && (
-                        <div>cache: {cacheRead > 0 ? `read:${formatTokens(cacheRead)}` : ''}{cacheRead > 0 && cacheCreate > 0 ? ', ' : ''}{cacheCreate > 0 ? `write:${formatTokens(cacheCreate)}` : ''}</div>
+                        <div>cache: {cacheRead > 0 ? `read:${formatTokens(cacheRead)}` : ''}{cacheRead > 0 && cacheCreate > 0 ? ', ' : ''}{cacheCreate > 0 ? `create:${formatTokens(cacheCreate)}` : ''}</div>
                       )}
                     </div>
                   )}

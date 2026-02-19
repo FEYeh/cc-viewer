@@ -1,5 +1,6 @@
 import React from 'react';
-import { ConfigProvider, Layout, theme } from 'antd';
+import { ConfigProvider, Layout, theme, Modal, Collapse, List, Tag, Spin } from 'antd';
+import { FolderOutlined, FileTextOutlined } from '@ant-design/icons';
 import AppHeader from './components/AppHeader';
 import RequestList from './components/RequestList';
 import DetailPanel from './components/DetailPanel';
@@ -61,6 +62,10 @@ class App extends React.Component {
       cacheType: null,
       leftPanelWidth: 380,
       mainAgentSessions: [], // [{ messages, response }]
+      importModalVisible: false,
+      localLogs: {},       // { projectName: [{file, timestamp, size}] }
+      localLogsLoading: false,
+      showAll: false,      // 是否显示心跳请求
     };
     this.eventSource = null;
     this._autoSelectTimer = null;
@@ -68,7 +73,20 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.initSSE();
+    // 查询是否显示全部请求
+    fetch('/api/show-all')
+      .then(res => res.json())
+      .then(data => this.setState({ showAll: !!data.showAll }))
+      .catch(() => {});
+
+    // 检查是否是通过 ?logfile= 打开的历史日志
+    const params = new URLSearchParams(window.location.search);
+    const logfile = params.get('logfile');
+    if (logfile) {
+      this.loadLocalLogFile(logfile);
+    } else {
+      this.initSSE();
+    }
   }
 
   componentWillUnmount() {
@@ -84,6 +102,34 @@ class App extends React.Component {
     } catch (error) {
       console.error('EventSource初始化失败:', error);
     }
+  }
+
+  loadLocalLogFile(file) {
+    // 加载本地历史日志文件（非实时模式）
+    this._isLocalLog = true;
+    this._localLogFile = file;
+    fetch(`/api/local-log?file=${encodeURIComponent(file)}`)
+      .then(res => res.json())
+      .then(entries => {
+        if (Array.isArray(entries)) {
+          // 合并 mainAgent sessions
+          let mainAgentSessions = [];
+          for (const entry of entries) {
+            if (entry.mainAgent && entry.body && Array.isArray(entry.body.messages)) {
+              mainAgentSessions = this.mergeMainAgentSessions(mainAgentSessions, entry);
+            }
+          }
+          const filtered = entries.filter(r =>
+            !r.isHeartbeat && !/\/api\/eval\/sdk-/.test(r.url || '') && !/\/messages\/count_tokens/.test(r.url || '')
+          );
+          this.setState({
+            requests: entries,
+            selectedIndex: filtered.length > 0 ? filtered.length - 1 : null,
+            mainAgentSessions,
+          });
+        }
+      })
+      .catch(err => console.error('加载日志文件失败:', err));
   }
 
   handleEventMessage(event) {
@@ -133,7 +179,10 @@ class App extends React.Component {
           this._autoSelectTimer = setTimeout(() => {
             this.setState(s => {
               if (s.selectedIndex === null && s.requests.length > 0) {
-                return { selectedIndex: s.requests.length - 1 };
+                const filtered = s.showAll ? s.requests : s.requests.filter(r =>
+                  !r.isHeartbeat && !/\/api\/eval\/sdk-/.test(r.url || '') && !/\/messages\/count_tokens/.test(r.url || '')
+                );
+                return filtered.length > 0 ? { selectedIndex: filtered.length - 1 } : null;
               }
               return null;
             });
@@ -166,11 +215,26 @@ class App extends React.Component {
 
     const lastSession = prevSessions[prevSessions.length - 1];
 
-    if (userId && userId === lastSession.userId) {
+    // 消息数量大幅缩减（不到之前的一半且减少超过 4 条）视为新对话（/clear 等）
+    const prevMsgCount = lastSession.messages ? lastSession.messages.length : 0;
+    const isNewConversation = prevMsgCount > 0 && newMessages.length < prevMsgCount * 0.5 && (prevMsgCount - newMessages.length) > 4;
+
+    if (userId && userId === lastSession.userId && !isNewConversation) {
       // 同一 session，更新最后一段
-      // 保留已有的时间戳，新增消息用当前 entry 的时间戳
+      // 保留已有的时间戳，新增消息或内容变化的消息用当前 entry 的时间戳
       const prevTs = lastSession.msgTimestamps || [];
-      const msgTimestamps = newMessages.map((_, i) => i < prevTs.length ? prevTs[i] : timestamp);
+      const prevMsgs = lastSession.messages || [];
+      const msgTimestamps = newMessages.map((msg, i) => {
+        if (i >= prevTs.length) return timestamp;
+        // 如果消息内容发生了变化，更新时间戳
+        const prevMsg = prevMsgs[i];
+        if (prevMsg && msg.role === 'user' && prevMsg.role === 'user') {
+          const prevContent = JSON.stringify(prevMsg.content);
+          const newContent = JSON.stringify(msg.content);
+          if (prevContent !== newContent) return timestamp;
+        }
+        return prevTs[i];
+      });
       const updated = [...prevSessions];
       updated[updated.length - 1] = { userId, messages: newMessages, response: newResponse, msgTimestamps };
       return updated;
@@ -205,9 +269,50 @@ class App extends React.Component {
     }
   };
 
+  handleImportLocalLogs = () => {
+    this.setState({ importModalVisible: true, localLogsLoading: true });
+    fetch('/api/local-logs')
+      .then(res => res.json())
+      .then(data => {
+        this.setState({ localLogs: data, localLogsLoading: false });
+      })
+      .catch(() => {
+        this.setState({ localLogs: {}, localLogsLoading: false });
+      });
+  };
+
+  handleCloseImportModal = () => {
+    this.setState({ importModalVisible: false });
+  };
+
+  handleOpenLogFile = (file) => {
+    // 在新窗口打开日志文件，避免覆盖当前监控窗口
+    const port = window.location.port || window.location.host.split(':')[1] || '7008';
+    window.open(`${window.location.protocol}//${window.location.hostname}:${port}?logfile=${encodeURIComponent(file)}`, '_blank');
+    this.setState({ importModalVisible: false });
+  };
+
+  formatTimestamp(ts) {
+    // 20260217_224218 -> 2026-02-17 22:42:18
+    if (!ts || ts.length < 15) return ts;
+    return `${ts.slice(0,4)}-${ts.slice(4,6)}-${ts.slice(6,8)} ${ts.slice(9,11)}:${ts.slice(11,13)}:${ts.slice(13,15)}`;
+  }
+
+  formatSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
   render() {
-    const { requests, selectedIndex, viewMode, currentTab, cacheExpireAt, cacheType, leftPanelWidth, mainAgentSessions } = this.state;
-    const selectedRequest = selectedIndex !== null ? requests[selectedIndex] : null;
+    const { requests, selectedIndex, viewMode, currentTab, cacheExpireAt, cacheType, leftPanelWidth, mainAgentSessions, showAll } = this.state;
+
+    // 过滤心跳请求（eval/sdk-* 和 count_tokens），除非 showAll
+    const filteredRequests = showAll ? requests : requests.filter(r =>
+      !r.isHeartbeat && !/\/api\/eval\/sdk-/.test(r.url || '') && !/\/messages\/count_tokens/.test(r.url || '')
+    );
+
+    const selectedRequest = selectedIndex !== null ? filteredRequests[selectedIndex] : null;
 
     return (
       <ConfigProvider
@@ -231,11 +336,15 @@ class App extends React.Component {
             lineHeight: '60px',
           }}>
             <AppHeader
-              requestCount={requests.length}
+              requestCount={filteredRequests.length}
+              requests={filteredRequests}
               viewMode={viewMode}
               cacheExpireAt={cacheExpireAt}
               cacheType={cacheType}
               onToggleViewMode={this.handleToggleViewMode}
+              onImportLocalLogs={this.handleImportLocalLogs}
+              isLocalLog={!!this._isLocalLog}
+              localLogFile={this._localLogFile}
             />
           </Layout.Header>
 
@@ -264,11 +373,11 @@ class App extends React.Component {
                     alignItems: 'center',
                   }}>
                     <span>请求列表</span>
-                    <span style={{ fontSize: 12, color: '#555', fontWeight: 400 }}>总请求数: {requests.length}</span>
+                    <span style={{ fontSize: 12, color: '#555', fontWeight: 400 }}>总请求数: {filteredRequests.length}</span>
                   </div>
                   <div style={{ flex: 1, overflow: 'hidden' }}>
                     <RequestList
-                      requests={requests}
+                      requests={filteredRequests}
                       selectedIndex={selectedIndex}
                       onSelect={this.handleSelectRequest}
                     />
@@ -286,10 +395,61 @@ class App extends React.Component {
                 </div>
               </div>
             ) : (
-              <ChatView requests={requests} mainAgentSessions={mainAgentSessions} />
+              <ChatView requests={filteredRequests} mainAgentSessions={mainAgentSessions} />
             )}
           </Layout.Content>
         </Layout>
+
+        <Modal
+          title="导入本地日志"
+          open={this.state.importModalVisible}
+          onCancel={this.handleCloseImportModal}
+          footer={null}
+          width={600}
+          styles={{ body: { maxHeight: '60vh', overflow: 'auto' } }}
+        >
+          {this.state.localLogsLoading ? (
+            <div style={{ textAlign: 'center', padding: 40 }}><Spin /></div>
+          ) : Object.keys(this.state.localLogs).length === 0 ? (
+            <div style={{ textAlign: 'center', color: '#999', padding: 40 }}>
+              暂无日志文件
+            </div>
+          ) : (
+            <Collapse
+              defaultActiveKey={Object.keys(this.state.localLogs)}
+              items={Object.entries(this.state.localLogs).map(([project, logs]) => ({
+                key: project,
+                label: (
+                  <span>
+                    <FolderOutlined style={{ marginRight: 8 }} />
+                    {project}
+                    <Tag style={{ marginLeft: 8 }}>{logs.length} 个日志</Tag>
+                  </span>
+                ),
+                children: (
+                  <List
+                    size="small"
+                    dataSource={logs}
+                    renderItem={(log) => (
+                      <List.Item
+                        style={{ cursor: 'pointer', padding: '8px 12px' }}
+                        onClick={() => this.handleOpenLogFile(log.file)}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'space-between' }}>
+                          <span>
+                            <FileTextOutlined style={{ marginRight: 8, color: '#3b82f6' }} />
+                            {this.formatTimestamp(log.timestamp)}
+                          </span>
+                          <Tag color="blue">{this.formatSize(log.size)}</Tag>
+                        </div>
+                      </List.Item>
+                    )}
+                  />
+                ),
+              }))}
+            />
+          )}
+        </Modal>
       </ConfigProvider>
     );
   }

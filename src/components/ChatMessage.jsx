@@ -43,7 +43,7 @@ class ChatMessage extends React.Component {
     return (
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
         <Text type="secondary" style={{ fontSize: 11 }}>{name}{extra || ''}</Text>
-        {timeStr && <Text style={{ fontSize: 10, color: '#484f58', flexShrink: 0, marginLeft: 8 }}>{timeStr}</Text>}
+        {timeStr && <Text style={{ fontSize: 10, color: '#6b7280', flexShrink: 0, marginLeft: 8 }}>{timeStr}</Text>}
       </div>
     );
   }
@@ -244,8 +244,25 @@ class ChatMessage extends React.Component {
     );
   }
 
+  renderToolResult(tr) {
+    if (!tr) return null;
+    return (
+      <div style={{
+        background: '#111827',
+        border: '1px solid #1e293b',
+        borderRadius: 6,
+        padding: '6px 10px',
+        margin: '2px 0 6px',
+        fontSize: 11,
+      }}>
+        <Text type="secondary" style={{ fontSize: 11 }}>{tr.label}</Text>
+        <ToolResultView toolName={tr.toolName} toolInput={tr.toolInput} resultText={tr.resultText} />
+      </div>
+    );
+  }
+
   renderAssistantMessage() {
-    const { content } = this.props;
+    const { content, toolResultMap = {} } = this.props;
     // content is an array of blocks: thinking, text, tool_use
     const thinkingBlocks = content.filter(b => b.type === 'thinking');
     const textBlocks = content.filter(b => b.type === 'text');
@@ -286,6 +303,13 @@ class ChatMessage extends React.Component {
 
     toolUseBlocks.forEach(tu => {
       innerContent.push(this.renderToolCall(tu));
+      // 紧跟工具返回结果
+      const tr = toolResultMap[tu.id];
+      if (tr) {
+        innerContent.push(
+          <React.Fragment key={`tr-${tu.id}`}>{this.renderToolResult(tr)}</React.Fragment>
+        );
+      }
     });
 
     if (innerContent.length === 0) return null;
@@ -322,9 +346,50 @@ class ChatMessage extends React.Component {
     );
   }
 
+  renderUserSelectionMessage() {
+    const { questions, answers } = this.props;
+    return (
+      <div style={{ display: 'flex', gap: 10, padding: '8px 0', justifyContent: 'flex-end' }}>
+        <div style={{ minWidth: 0, maxWidth: '85%' }}>
+          {this.renderLabel('User', ' — 选择')}
+          <div style={{ ...bubbleBase, background: '#1a3a1a', color: '#e5e7eb' }}>
+            {questions && questions.map((q, qi) => {
+              const answer = answers?.[q.question] || '未选择';
+              return (
+                <div key={qi} style={{ marginBottom: qi < questions.length - 1 ? 10 : 0 }}>
+                  <div style={{ fontSize: 13, color: '#ccc', marginBottom: 4 }}>{q.question}</div>
+                  <div style={{ paddingLeft: 8 }}>
+                    {q.options && q.options.map((opt, oi) => {
+                      const isSelected = answer === opt.label;
+                      return (
+                        <div key={oi} style={{
+                          fontSize: 12,
+                          padding: '1px 0',
+                          color: isSelected ? '#e5e5e5' : '#666',
+                          fontWeight: isSelected ? 600 : 'normal',
+                        }}>
+                          {isSelected ? '● ' : '○ '}{opt.label}
+                          {opt.description && <span style={{ color: '#555', marginLeft: 6, fontWeight: 'normal' }}>— {opt.description}</span>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div style={{ ...avatarBase, background: '#2ea043' }}
+          dangerouslySetInnerHTML={{ __html: getSvgAvatar('user') }}
+        />
+      </div>
+    );
+  }
+
   render() {
     const { role } = this.props;
     if (role === 'user') return this.renderUserMessage();
+    if (role === 'user-selection') return this.renderUserSelectionMessage();
     if (role === 'assistant') return this.renderAssistantMessage();
     if (role === 'sub-agent') return this.renderSubAgentMessage();
     return null;

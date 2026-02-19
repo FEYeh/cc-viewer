@@ -1,6 +1,7 @@
 // LLM Request Interceptor
 // 拦截并记录所有Claude API请求
 import { appendFileSync, mkdirSync } from 'node:fs';
+import { homedir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, basename } from 'node:path';
 
@@ -18,7 +19,7 @@ function generateLogFilePath() {
     + String(now.getMinutes()).padStart(2, '0')
     + String(now.getSeconds()).padStart(2, '0');
   const projectName = basename(process.cwd()).replace(/[^a-zA-Z0-9_\-\.]/g, '_');
-  const dir = '/tmp/claude-requests';
+  const dir = join(homedir(), '.claude', 'cc-viewer');
   try { mkdirSync(dir, { recursive: true }); } catch {}
   return join(dir, `${projectName}_${ts}.jsonl`);
 }
@@ -215,6 +216,7 @@ export function setupInterceptor() {
           response: null,
           duration: 0,
           isStream: body?.stream === true,
+          isHeartbeat: /\/api\/eval\/sdk-/.test(urlStr),
           mainAgent: !!body?.system && Array.isArray(body?.tools) && body.tools.length > 10 &&
             ['Task', 'Edit', 'Bash'].every(n => body.tools.some(t => t.name === n))
         };

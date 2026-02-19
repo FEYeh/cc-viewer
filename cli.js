@@ -1,10 +1,24 @@
 #!/usr/bin/env node
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, unlinkSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
+
+const INJECT_START = '// >>> Start CC Viewer Web Service >>>';
+const INJECT_END = '// <<< Start CC Viewer Web Service <<<';
+const INJECT_IMPORT = "import '../../cc-viewer/interceptor.js';";
+const INJECT_BLOCK = `${INJECT_START}\n${INJECT_IMPORT}\n${INJECT_END}`;
+const SHOW_ALL_FILE = '/tmp/cc-viewer-show-all';
+
+// 解析 --all 参数
+const showAll = process.argv.includes('--all');
+if (showAll) {
+  try { writeFileSync(SHOW_ALL_FILE, '1'); } catch {}
+} else {
+  try { unlinkSync(SHOW_ALL_FILE); } catch {}
+}
 
 const INJECT_START = '// >>> Start CC Viewer Web Service >>>';
 const INJECT_END = '// <<< Start CC Viewer Web Service <<<';
