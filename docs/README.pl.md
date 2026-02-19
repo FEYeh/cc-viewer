@@ -16,9 +16,9 @@ Po instalacji uruchom:
 ccv
 ```
 
-Ta komenda automatycznie wstrzykuje skrypt monitorujący do lokalnie zainstalowanego Claude Code i dodaje hook automatycznego ponownego wstrzykiwania do konfiguracji powłoki (`~/.zshrc` lub `~/.bashrc`). Następnie używaj Claude Code jak zwykle i otwórz `http://localhost:7008` w przeglądarce, aby zobaczyć interfejs monitorowania.
+Ta komenda automatycznie konfiguruje lokalnie zainstalowane Claude Code do monitorowania i dodaje hook automatycznej naprawy do konfiguracji powłoki (`~/.zshrc` lub `~/.bashrc`). Następnie używaj Claude Code jak zwykle i otwórz `http://localhost:7008` w przeglądarce, aby zobaczyć interfejs monitorowania.
 
-Po aktualizacji Claude Code nie jest wymagane żadne ręczne działanie — przy następnym uruchomieniu `claude` automatycznie wykryje i ponownie wstrzyknie.
+Po aktualizacji Claude Code nie jest wymagane żadne ręczne działanie — przy następnym uruchomieniu `claude` automatycznie wykryje i ponownie skonfiguruje.
 
 ### Odinstalowanie
 
@@ -26,7 +26,7 @@ Po aktualizacji Claude Code nie jest wymagane żadne ręczne działanie — przy
 ccv --uninstall
 ```
 
-Czyści wstrzyknięcie cli.js i hook konfiguracji powłoki w jednym kroku.
+Czyści konfigurację cli.js i hook konfiguracji powłoki w jednym kroku.
 
 ## Funkcje
 
@@ -52,8 +52,8 @@ Kliknij przycisk "Chat mode" w prawym górnym rogu, aby przetworzyć pełną his
 - Bloki `thinking` domyślnie zwinięte, kliknij aby rozwinąć
 - `tool_use` wyświetlane jako kompaktowe karty wywołań narzędzi (Bash, Read, Edit, Write, Glob, Grep, Task mają dedykowane wyświetlanie)
 - Wiadomości wyboru użytkownika (AskUserQuestion) wyświetlane w formacie pytanie-odpowiedź
-- Tagi wstrzyknięcia systemowego (`<system-reminder>`, `<project-reminder>`, itp.) automatycznie zwinięte
-- Tekst wstrzyknięty przez system automatycznie filtrowany, pokazuje tylko rzeczywiste dane wejściowe użytkownika
+- Tagi systemowe (`<system-reminder>`, `<project-reminder>`, itp.) automatycznie zwinięte
+- Tekst systemowy automatycznie filtrowany, pokazuje tylko rzeczywiste dane wejściowe użytkownika
 - Wyświetlanie podzielone na wiele sesji (automatycznie segmentowane po `/compact`, `/clear`, itp.)
 - Każda wiadomość pokazuje znacznik czasu z dokładnością do sekundy
 

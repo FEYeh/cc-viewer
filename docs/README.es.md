@@ -16,9 +16,9 @@ Después de la instalación, ejecute:
 ccv
 ```
 
-Este comando inyecta automáticamente el script de monitoreo en su Claude Code instalado localmente y agrega un hook de reinyección automática en su configuración de shell (`~/.zshrc` o `~/.bashrc`). Luego use Claude Code como de costumbre y abra `http://localhost:7008` en su navegador para ver la interfaz de monitoreo.
+Este comando configura automáticamente su Claude Code instalado localmente para el monitoreo y agrega un hook de reparación automática en su configuración de shell (`~/.zshrc` o `~/.bashrc`). Luego use Claude Code como de costumbre y abra `http://localhost:7008` en su navegador para ver la interfaz de monitoreo.
 
-Después de una actualización de Claude Code, no se necesita ninguna acción manual — la próxima vez que ejecute `claude`, detectará y reinyectará automáticamente.
+Después de una actualización de Claude Code, no se necesita ninguna acción manual — la próxima vez que ejecute `claude`, detectará y reconfigurará automáticamente.
 
 ### Desinstalar
 
@@ -26,7 +26,7 @@ Después de una actualización de Claude Code, no se necesita ninguna acción ma
 ccv --uninstall
 ```
 
-Limpia la inyección de cli.js y el hook de configuración de shell en un solo paso.
+Limpia la configuración de cli.js y el hook de configuración de shell en un solo paso.
 
 ## Características
 
@@ -52,8 +52,8 @@ Haga clic en el botón "Chat mode" en la esquina superior derecha para analizar 
 - Bloques `thinking` colapsados por defecto, clic para expandir
 - `tool_use` mostrado como tarjetas compactas de llamada a herramientas (Bash, Read, Edit, Write, Glob, Grep, Task tienen visualizaciones dedicadas)
 - Mensajes de selección del usuario (AskUserQuestion) mostrados en formato de pregunta y respuesta
-- Etiquetas de inyección del sistema (`<system-reminder>`, `<project-reminder>`, etc.) auto-colapsadas
-- Texto inyectado por el sistema auto-filtrado, mostrando solo la entrada real del usuario
+- Etiquetas del sistema (`<system-reminder>`, `<project-reminder>`, etc.) auto-colapsadas
+- Texto del sistema auto-filtrado, mostrando solo la entrada real del usuario
 - Visualización segmentada multi-sesión (segmentación automática después de `/compact`, `/clear`, etc.)
 - Cada mensaje muestra una marca de tiempo con precisión de segundos
 

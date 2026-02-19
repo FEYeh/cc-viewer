@@ -16,9 +16,9 @@ Após a instalação, execute:
 ccv
 ```
 
-Este comando injeta automaticamente o script de monitoramento no Claude Code instalado localmente e adiciona um hook de reinjeção automática na configuração do seu shell (`~/.zshrc` ou `~/.bashrc`). Em seguida, use o Claude Code normalmente e abra `http://localhost:7008` no navegador para visualizar a interface de monitoramento.
+Este comando configura automaticamente o Claude Code instalado localmente para monitoramento e adiciona um hook de reparo automático na configuração do seu shell (`~/.zshrc` ou `~/.bashrc`). Em seguida, use o Claude Code normalmente e abra `http://localhost:7008` no navegador para visualizar a interface de monitoramento.
 
-Após a atualização do Claude Code, nenhuma ação manual é necessária — na próxima vez que você executar `claude`, ele detectará e reinjetará automaticamente.
+Após a atualização do Claude Code, nenhuma ação manual é necessária — na próxima vez que você executar `claude`, ele detectará e reconfigurará automaticamente.
 
 ### Desinstalar
 
@@ -26,7 +26,7 @@ Após a atualização do Claude Code, nenhuma ação manual é necessária — n
 ccv --uninstall
 ```
 
-Limpa a injeção do cli.js e o hook de configuração do shell em uma única etapa.
+Limpa a configuração do cli.js e o hook de configuração do shell em uma única etapa.
 
 ## Funcionalidades
 
@@ -52,8 +52,8 @@ Clique no botão "Modo Chat" no canto superior direito para analisar o históric
 - Blocos `thinking` recolhidos por padrão, clique para expandir
 - `tool_use` exibido como cartões compactos de chamada de ferramenta (Bash, Read, Edit, Write, Glob, Grep, Task possuem exibições dedicadas)
 - Mensagens de seleção do usuário (AskUserQuestion) exibidas em formato de perguntas e respostas
-- Tags de injeção do sistema (`<system-reminder>`, `<project-reminder>`, etc.) recolhidas automaticamente
-- Texto injetado pelo sistema filtrado automaticamente, mostrando apenas a entrada real do usuário
+- Tags do sistema (`<system-reminder>`, `<project-reminder>`, etc.) recolhidas automaticamente
+- Texto do sistema filtrado automaticamente, mostrando apenas a entrada real do usuário
 - Exibição segmentada por múltiplas sessões (segmentação automática após `/compact`, `/clear`, etc.)
 - Cada mensagem exibe um timestamp com precisão de segundos
 

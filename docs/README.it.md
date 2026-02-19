@@ -16,9 +16,9 @@ Dopo l'installazione, eseguire:
 ccv
 ```
 
-Questo comando inietta automaticamente lo script di monitoraggio nel Claude Code installato localmente e aggiunge un hook di reiniezione automatica nella configurazione della shell (`~/.zshrc` o `~/.bashrc`). Quindi utilizzare Claude Code come al solito e aprire `http://localhost:7008` nel browser per visualizzare l'interfaccia di monitoraggio.
+Questo comando configura automaticamente il Claude Code installato localmente per il monitoraggio e aggiunge un hook di riparazione automatica nella configurazione della shell (`~/.zshrc` o `~/.bashrc`). Quindi utilizzare Claude Code come al solito e aprire `http://localhost:7008` nel browser per visualizzare l'interfaccia di monitoraggio.
 
-Dopo un aggiornamento di Claude Code, non è necessaria alcuna azione manuale — al prossimo avvio di `claude`, il rilevamento e la reiniezione avverranno automaticamente.
+Dopo un aggiornamento di Claude Code, non è necessaria alcuna azione manuale — al prossimo avvio di `claude`, il rilevamento e la riconfigurazione avverranno automaticamente.
 
 ### Disinstallazione
 
@@ -26,7 +26,7 @@ Dopo un aggiornamento di Claude Code, non è necessaria alcuna azione manuale �
 ccv --uninstall
 ```
 
-Pulisce l'iniezione di cli.js e l'hook di configurazione della shell in un unico passaggio.
+Pulisce la configurazione di cli.js e l'hook di configurazione della shell in un unico passaggio.
 
 ## Funzionalità
 
@@ -52,8 +52,8 @@ Fare clic sul pulsante "Chat mode" in alto a destra per analizzare la cronologia
 - Blocchi `thinking` compressi per impostazione predefinita, fare clic per espandere
 - `tool_use` mostrato come schede compatte di chiamata strumenti (Bash, Read, Edit, Write, Glob, Grep, Task hanno ciascuno visualizzazioni dedicate)
 - Messaggi di selezione dell'utente (AskUserQuestion) mostrati in formato domanda e risposta
-- Tag di iniezione di sistema (`<system-reminder>`, `<project-reminder>`, ecc.) auto-compressi
-- Testo iniettato dal sistema auto-filtrato, mostrando solo l'input reale dell'utente
+- Tag di sistema (`<system-reminder>`, `<project-reminder>`, ecc.) auto-compressi
+- Testo di sistema auto-filtrato, mostrando solo l'input reale dell'utente
 - Visualizzazione segmentata multi-sessione (segmentazione automatica dopo `/compact`, `/clear`, ecc.)
 - Ogni messaggio mostra un timestamp preciso al secondo
 

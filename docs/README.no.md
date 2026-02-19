@@ -16,9 +16,9 @@ Etter installasjon, kjør:
 ccv
 ```
 
-Denne kommandoen injiserer automatisk overvåkingsskriptet i din lokalt installerte Claude Code og legger til en automatisk reinjeksjonskrok i shell-konfigurasjonen din (`~/.zshrc` eller `~/.bashrc`). Bruk deretter Claude Code som vanlig og åpne `http://localhost:7008` i nettleseren for å se overvåkingsgrensesnittet.
+Denne kommandoen konfigurerer automatisk din lokalt installerte Claude Code for overvåking og legger til en automatisk reparasjonskrok i shell-konfigurasjonen din (`~/.zshrc` eller `~/.bashrc`). Bruk deretter Claude Code som vanlig og åpne `http://localhost:7008` i nettleseren for å se overvåkingsgrensesnittet.
 
-Etter at Claude Code oppdateres, trengs ingen manuell handling — neste gang du kjører `claude`, vil den automatisk oppdage og reinjisere.
+Etter at Claude Code oppdateres, trengs ingen manuell handling — neste gang du kjører `claude`, vil den automatisk oppdage og rekonfigurere.
 
 ### Avinstallering
 
@@ -26,7 +26,7 @@ Etter at Claude Code oppdateres, trengs ingen manuell handling — neste gang du
 ccv --uninstall
 ```
 
-Rydder opp cli.js-injeksjonen og shell-konfigurasjonskroken i ett steg.
+Rydder opp cli.js-konfigurasjonen og shell-konfigurasjonskroken i ett steg.
 
 ## Funksjoner
 
@@ -52,8 +52,8 @@ Klikk på "Chat-modus"-knappen øverst til høyre for å analysere Main Agent si
 - `thinking`-blokker er skjult som standard, klikk for å utvide
 - `tool_use` vises som kompakte verktøykallkort (Bash, Read, Edit, Write, Glob, Grep, Task har hver sin dedikerte visning)
 - Brukervalg-meldinger (AskUserQuestion) vises i spørsmål-og-svar-format
-- Systeminjeksjonstagger (`<system-reminder>`, `<project-reminder>`, osv.) automatisk skjult
-- Systeminjisert tekst automatisk filtrert, viser kun reell brukerinndata
+- Systemtagger (`<system-reminder>`, `<project-reminder>`, osv.) automatisk skjult
+- Systemtekst automatisk filtrert, viser kun reell brukerinndata
 - Flersesjonsegmentert visning (automatisk segmentert etter `/compact`, `/clear`, osv.)
 - Hver melding viser et tidsstempel nøyaktig til sekundet
 

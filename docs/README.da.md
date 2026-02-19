@@ -16,9 +16,9 @@ Efter installation, kør:
 ccv
 ```
 
-Denne kommando injicerer automatisk overvågningsscriptet i din lokalt installerede Claude Code og tilføjer en auto-reinject hook til din shell-konfiguration (`~/.zshrc` eller `~/.bashrc`). Brug derefter Claude Code som normalt og åbn `http://localhost:7008` i din browser for at se overvågningsgrænsefladen.
+Denne kommando konfigurerer automatisk din lokalt installerede Claude Code til overvågning og tilføjer en auto-reparations hook til din shell-konfiguration (`~/.zshrc` eller `~/.bashrc`). Brug derefter Claude Code som normalt og åbn `http://localhost:7008` i din browser for at se overvågningsgrænsefladen.
 
-Efter Claude Code opdaterer, er der ingen manuel handling nødvendig — næste gang du kører `claude`, vil den automatisk registrere og geninjicere.
+Efter Claude Code opdaterer, er der ingen manuel handling nødvendig — næste gang du kører `claude`, vil den automatisk registrere og genkonfigurere.
 
 ### Afinstallation
 
@@ -26,7 +26,7 @@ Efter Claude Code opdaterer, er der ingen manuel handling nødvendig — næste 
 ccv --uninstall
 ```
 
-Rydder op i cli.js-injektionen og shell-konfigurationens hook i ét trin.
+Rydder op i cli.js-konfigurationen og shell-konfigurationens hook i ét trin.
 
 ## Funktioner
 
@@ -52,8 +52,8 @@ Klik på "Chat mode"-knappen øverst til højre for at parse Main Agent's fulde 
 - `thinking`-blokke skjult som standard, klik for at udvide
 - `tool_use` vist som kompakte værktøjskaldskort (Bash, Read, Edit, Write, Glob, Grep, Task har hver deres dedikerede visning)
 - Brugervalgmeddelelser (AskUserQuestion) vist i spørgsmål-og-svar-format
-- Systeminjektionstags (`<system-reminder>`, `<project-reminder>`, osv.) automatisk skjult
-- Systeminjiceret tekst automatisk filtreret, viser kun reel brugerinput
+- Systemtags (`<system-reminder>`, `<project-reminder>`, osv.) automatisk skjult
+- Systemtekst automatisk filtreret, viser kun reel brugerinput
 - Visning opdelt i flere sessioner (automatisk opdelt efter `/compact`, `/clear`, osv.)
 - Hver meddelelse viser et tidsstempel nøjagtigt til sekundet
 

@@ -56,9 +56,29 @@ function checkPortAlive(port) {
   });
 }
 
+function registerLogToServer(port, logFile) {
+  return new Promise((resolve) => {
+    const data = JSON.stringify({ logFile });
+    const req = httpRequest({
+      host: HOST, port, path: '/api/register-log', method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) },
+      timeout: 2000,
+    }, (res) => {
+      res.resume();
+      resolve(true);
+    });
+    req.on('error', () => resolve(false));
+    req.on('timeout', () => { req.destroy(); resolve(false); });
+    req.write(data);
+    req.end();
+  });
+}
+
 let clients = [];
 let server;
 let actualPort = START_PORT;
+// 跟踪所有被 watch 的日志文件
+const watchedFiles = new Map();
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -103,11 +123,13 @@ function sendToClients(entry) {
   });
 }
 
-function startWatching() {
+function watchLogFile(logFile) {
+  if (watchedFiles.has(logFile)) return;
   let lastSize = 0;
-  watchFile(LOG_FILE, { interval: 500 }, () => {
+  watchedFiles.set(logFile, true);
+  watchFile(logFile, { interval: 500 }, () => {
     try {
-      const content = readFileSync(LOG_FILE, 'utf-8');
+      const content = readFileSync(logFile, 'utf-8');
       const newContent = content.slice(lastSize);
       lastSize = content.length;
 
@@ -128,6 +150,10 @@ function startWatching() {
   });
 }
 
+function startWatching() {
+  watchLogFile(LOG_FILE);
+}
+
 function handleRequest(req, res) {
   const { url, method } = req;
 
@@ -139,6 +165,29 @@ function handleRequest(req, res) {
   if (method === 'OPTIONS') {
     res.writeHead(200);
     res.end();
+    return;
+  }
+
+  // 注册新的日志文件进行 watch（供新进程复用旧服务时调用）
+  if (url === '/api/register-log' && method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const { logFile } = JSON.parse(body);
+        if (logFile && typeof logFile === 'string' && logFile.startsWith(LOG_DIR) && existsSync(logFile)) {
+          watchLogFile(logFile);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ ok: true }));
+        } else {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Invalid log file path' }));
+        }
+      } catch {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Invalid request body' }));
+      }
+    });
     return;
   }
 
@@ -308,6 +357,7 @@ export async function startViewer() {
           const alive = await checkPortAlive(existingPort);
           if (alive) {
             actualPort = existingPort;
+            await registerLogToServer(existingPort, LOG_FILE);
             return null;
           }
         }
@@ -326,6 +376,7 @@ export async function startViewer() {
           const alive = await checkPortAlive(existingPort);
           if (alive) {
             actualPort = existingPort;
+            await registerLogToServer(existingPort, LOG_FILE);
             releaseLock();
             console.log(t('server.reuse', { host: HOST, port: existingPort }));
             return null;
@@ -378,7 +429,10 @@ export async function startViewer() {
 }
 
 export function stopViewer() {
-  unwatchFile(LOG_FILE);
+  for (const logFile of watchedFiles.keys()) {
+    unwatchFile(logFile);
+  }
+  watchedFiles.clear();
   clients.forEach(client => client.end());
   clients = [];
   if (server) {

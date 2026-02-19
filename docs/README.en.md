@@ -16,9 +16,9 @@ After installation, run:
 ccv
 ```
 
-This command automatically injects the monitoring script into your locally installed Claude Code and adds an auto-reinject hook to your shell config (`~/.zshrc` or `~/.bashrc`). Then use Claude Code as usual and open `http://localhost:7008` in your browser to view the monitoring interface.
+This command automatically configures your locally installed Claude Code for monitoring and adds an auto-repair hook to your shell config (`~/.zshrc` or `~/.bashrc`). Then use Claude Code as usual and open `http://localhost:7008` in your browser to view the monitoring interface.
 
-After Claude Code updates, no manual action is needed — the next time you run `claude`, it will automatically detect and reinject.
+After Claude Code updates, no manual action is needed — the next time you run `claude`, it will automatically detect and reconfigure.
 
 ### Uninstall
 
@@ -26,7 +26,7 @@ After Claude Code updates, no manual action is needed — the next time you run 
 ccv --uninstall
 ```
 
-Cleans up the cli.js injection and the shell config hook in one step.
+Cleans up the cli.js configuration and the shell config hook in one step.
 
 ## Features
 
@@ -52,8 +52,8 @@ Click the "Chat mode" button in the top right to parse Main Agent's full convers
 - `thinking` blocks collapsed by default, click to expand
 - `tool_use` shown as compact tool call cards (Bash, Read, Edit, Write, Glob, Grep, Task each have dedicated displays)
 - User selection messages (AskUserQuestion) shown in Q&A format
-- System injection tags (`<system-reminder>`, `<project-reminder>`, etc.) auto-collapsed
-- System-injected text auto-filtered, showing only real user input
+- System tags (`<system-reminder>`, `<project-reminder>`, etc.) auto-collapsed
+- System text auto-filtered, showing only real user input
 - Multi-session segmented display (auto-segmented after `/compact`, `/clear`, etc.)
 - Each message shows a timestamp accurate to the second
 

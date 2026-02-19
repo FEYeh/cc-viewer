@@ -16,9 +16,9 @@ Après l'installation, exécutez :
 ccv
 ```
 
-Cette commande injecte automatiquement le script de surveillance dans votre Claude Code installé localement et ajoute un hook de réinjection automatique dans votre configuration shell (`~/.zshrc` ou `~/.bashrc`). Utilisez ensuite Claude Code comme d'habitude et ouvrez `http://localhost:7008` dans votre navigateur pour afficher l'interface de surveillance.
+Cette commande configure automatiquement votre Claude Code installé localement pour la surveillance et ajoute un hook de réparation automatique dans votre configuration shell (`~/.zshrc` ou `~/.bashrc`). Utilisez ensuite Claude Code comme d'habitude et ouvrez `http://localhost:7008` dans votre navigateur pour afficher l'interface de surveillance.
 
-Après une mise à jour de Claude Code, aucune action manuelle n'est nécessaire — au prochain lancement de `claude`, la détection et la réinjection se feront automatiquement.
+Après une mise à jour de Claude Code, aucune action manuelle n'est nécessaire — au prochain lancement de `claude`, la détection et la reconfiguration se feront automatiquement.
 
 ### Désinstallation
 
@@ -26,7 +26,7 @@ Après une mise à jour de Claude Code, aucune action manuelle n'est nécessaire
 ccv --uninstall
 ```
 
-Nettoie l'injection cli.js et le hook de configuration shell en une seule étape.
+Nettoie la configuration cli.js et le hook de configuration shell en une seule étape.
 
 ## Fonctionnalités
 
@@ -52,8 +52,8 @@ Cliquez sur le bouton « Chat mode » en haut à droite pour analyser l'historiq
 - Blocs `thinking` repliés par défaut, cliquez pour déplier
 - `tool_use` affiché sous forme de cartes compactes d'appel d'outils (Bash, Read, Edit, Write, Glob, Grep, Task ont chacun un affichage dédié)
 - Messages de sélection utilisateur (AskUserQuestion) affichés au format question-réponse
-- Balises d'injection système (`<system-reminder>`, `<project-reminder>`, etc.) auto-repliées
-- Texte injecté par le système auto-filtré, affichant uniquement les saisies réelles de l'utilisateur
+- Balises système (`<system-reminder>`, `<project-reminder>`, etc.) auto-repliées
+- Texte système auto-filtré, affichant uniquement les saisies réelles de l'utilisateur
 - Affichage segmenté multi-session (segmentation automatique après `/compact`, `/clear`, etc.)
 - Chaque message affiche un horodatage précis à la seconde
 

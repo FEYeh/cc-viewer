@@ -16,9 +16,9 @@ Kurulumdan sonra çalıştırın:
 ccv
 ```
 
-Bu komut, yerel olarak kurulu Claude Code'unuza izleme betiğini otomatik olarak enjekte eder ve shell yapılandırmanıza (`~/.zshrc` veya `~/.bashrc`) otomatik yeniden enjeksiyon hook'u ekler. Ardından Claude Code'u her zamanki gibi kullanın ve izleme arayüzünü görüntülemek için tarayıcınızda `http://localhost:7008` adresini açın.
+Bu komut, yerel olarak kurulu Claude Code'unuzu izleme için otomatik olarak yapılandırır ve shell yapılandırmanıza (`~/.zshrc` veya `~/.bashrc`) otomatik onarım hook'u ekler. Ardından Claude Code'u her zamanki gibi kullanın ve izleme arayüzünü görüntülemek için tarayıcınızda `http://localhost:7008` adresini açın.
 
-Claude Code güncellemesinden sonra manuel işlem gerekmez — bir sonraki `claude` çalıştırmanızda otomatik olarak algılayıp yeniden enjekte eder.
+Claude Code güncellemesinden sonra manuel işlem gerekmez — bir sonraki `claude` çalıştırmanızda otomatik olarak algılayıp yeniden yapılandırır.
 
 ### Kaldırma
 
@@ -26,7 +26,7 @@ Claude Code güncellemesinden sonra manuel işlem gerekmez — bir sonraki `clau
 ccv --uninstall
 ```
 
-cli.js enjeksiyonunu ve shell yapılandırma hook'unu tek adımda temizler.
+cli.js yapılandırmasını ve shell yapılandırma hook'unu tek adımda temizler.
 
 ## Özellikler
 
@@ -52,8 +52,8 @@ Main Agent'ın tam konuşma geçmişini sohbet arayüzüne dönüştürmek için
 - `thinking` blokları varsayılan olarak daraltılmış, genişletmek için tıklayın
 - `tool_use` kompakt araç çağrısı kartları olarak gösterilir (Bash, Read, Edit, Write, Glob, Grep, Task her biri özel görünüme sahip)
 - Kullanıcı seçim mesajları (AskUserQuestion) soru-cevap formatında gösterilir
-- Sistem enjeksiyon etiketleri (`<system-reminder>`, `<project-reminder>`, vb.) otomatik daraltılır
-- Sistem tarafından enjekte edilen metin otomatik filtrelenir, yalnızca gerçek kullanıcı girişi gösterilir
+- Sistem etiketleri (`<system-reminder>`, `<project-reminder>`, vb.) otomatik daraltılır
+- Sistem metni otomatik filtrelenir, yalnızca gerçek kullanıcı girişi gösterilir
 - Çoklu session segmentli görüntüleme (`/compact`, `/clear` vb. sonrasında otomatik segmentleme)
 - Her mesaj saniye hassasiyetinde zaman damgası gösterir
 

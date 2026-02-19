@@ -137,23 +137,25 @@ if (showAll) {
 
 try {
   const cliResult = injectCliJs();
-  if (cliResult === 'exists') {
-    console.log(t('cli.inject.exists'));
-  } else {
-    console.log(t('cli.inject.success'));
-  }
-
   const shellResult = installShellHook();
-  if (shellResult.status === 'installed') {
-    console.log(t('cli.hook.installed', { path: shellResult.path }));
-  } else if (shellResult.status === 'exists') {
-    console.log(t('cli.hook.exists', { path: shellResult.path }));
+
+  if (cliResult === 'exists' && shellResult.status === 'exists') {
+    console.log(t('cli.alreadyWorking'));
   } else {
-    console.log(t('cli.hook.fail', { error: shellResult.error }));
+    if (cliResult === 'exists') {
+      console.log(t('cli.inject.exists'));
+    } else {
+      console.log(t('cli.inject.success'));
+    }
+
+    if (shellResult.status === 'installed') {
+      console.log(t('cli.hook.installed', { path: shellResult.path }));
+    } else if (shellResult.status !== 'exists') {
+      console.log(t('cli.hook.fail', { error: shellResult.error }));
+    }
   }
 
   console.log(t('cli.usage.hint'));
-  console.log(t('cli.usage.uninstallHint'));
 } catch (err) {
   if (err.code === 'ENOENT') {
     console.error(t('cli.inject.notFound', { path: cliPath }));

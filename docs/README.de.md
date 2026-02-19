@@ -16,9 +16,9 @@ Nach der Installation ausführen:
 ccv
 ```
 
-Dieser Befehl injiziert automatisch das Überwachungsskript in Ihr lokal installiertes Claude Code und fügt einen Auto-Reinject-Hook in Ihre Shell-Konfiguration (`~/.zshrc` oder `~/.bashrc`) ein. Verwenden Sie dann Claude Code wie gewohnt und öffnen Sie `http://localhost:7008` in Ihrem Browser, um die Überwachungsoberfläche anzuzeigen.
+Dieser Befehl konfiguriert automatisch Ihr lokal installiertes Claude Code für die Überwachung und fügt einen Auto-Reparatur-Hook in Ihre Shell-Konfiguration (`~/.zshrc` oder `~/.bashrc`) ein. Verwenden Sie dann Claude Code wie gewohnt und öffnen Sie `http://localhost:7008` in Ihrem Browser, um die Überwachungsoberfläche anzuzeigen.
 
-Nach einem Update von Claude Code ist keine manuelle Aktion erforderlich — beim nächsten Start von `claude` wird die Injektion automatisch erkannt und erneut durchgeführt.
+Nach einem Update von Claude Code ist keine manuelle Aktion erforderlich — beim nächsten Start von `claude` wird die Konfiguration automatisch erkannt und erneut durchgeführt.
 
 ### Deinstallation
 
@@ -26,7 +26,7 @@ Nach einem Update von Claude Code ist keine manuelle Aktion erforderlich — bei
 ccv --uninstall
 ```
 
-Bereinigt die cli.js-Injektion und den Shell-Konfigurations-Hook in einem Schritt.
+Bereinigt die cli.js-Konfiguration und den Shell-Konfigurations-Hook in einem Schritt.
 
 ## Funktionen
 
@@ -52,8 +52,8 @@ Klicken Sie auf die Schaltfläche „Chat mode" oben rechts, um den vollständig
 - `thinking`-Blöcke standardmäßig eingeklappt, zum Aufklappen klicken
 - `tool_use` als kompakte Tool-Aufruf-Karten dargestellt (Bash, Read, Edit, Write, Glob, Grep, Task haben jeweils eigene Darstellungen)
 - Benutzerauswahl-Nachrichten (AskUserQuestion) im Frage-Antwort-Format angezeigt
-- System-Injektions-Tags (`<system-reminder>`, `<project-reminder>`, usw.) automatisch eingeklappt
-- Systeminjizierter Text automatisch gefiltert, nur echte Benutzereingaben werden angezeigt
+- System-Tags (`<system-reminder>`, `<project-reminder>`, usw.) automatisch eingeklappt
+- Systemtext automatisch gefiltert, nur echte Benutzereingaben werden angezeigt
 - Mehrsitzungs-Segmentanzeige (automatische Segmentierung nach `/compact`, `/clear`, usw.)
 - Jede Nachricht zeigt einen sekundengenauen Zeitstempel
 

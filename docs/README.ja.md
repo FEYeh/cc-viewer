@@ -16,9 +16,9 @@ npm install -g cc-viewer
 ccv
 ```
 
-このコマンドは、ローカルにインストールされた Claude Code に監視スクリプトを自動的にインジェクトし、shell 設定ファイル（`~/.zshrc` または `~/.bashrc`）に自動再インジェクト hook を追加します。その後、Claude Code を通常通り使用し、ブラウザで `http://localhost:7008` を開いて監視インターフェースを確認してください。
+このコマンドは、ローカルにインストールされた Claude Code を自動的に監視用に設定し、shell 設定ファイル（`~/.zshrc` または `~/.bashrc`）に自動修復 hook を追加します。その後、Claude Code を通常通り使用し、ブラウザで `http://localhost:7008` を開いて監視インターフェースを確認してください。
 
-Claude Code の更新後、手動操作は不要です。次回 `claude` を実行すると、自動的に検出して再インジェクトします。
+Claude Code の更新後、手動操作は不要です。次回 `claude` を実行すると、自動的に検出して再設定します。
 
 ### アンインストール
 
@@ -26,7 +26,7 @@ Claude Code の更新後、手動操作は不要です。次回 `claude` を実�
 ccv --uninstall
 ```
 
-cli.js のインジェクションコードと shell 設定ファイルの hook をワンステップでクリーンアップします。
+cli.js の設定と shell 設定ファイルの hook をワンステップでクリーンアップします。
 
 ## 機能
 
@@ -52,8 +52,8 @@ cli.js のインジェクションコードと shell 設定ファイルの hook 
 - `thinking` ブロックはデフォルトで折りたたみ、クリックで展開
 - `tool_use` はコンパクトなツール呼び出しカードとして表示（Bash、Read、Edit、Write、Glob、Grep、Task 等に専用表示）
 - ユーザー選択メッセージ（AskUserQuestion）は Q&A 形式で表示
-- システム注入タグ（`<system-reminder>`、`<project-reminder>` 等）自動折りたたみ
-- システム注入テキスト自動フィルタリング、実際のユーザー入力のみ表示
+- システムタグ（`<system-reminder>`、`<project-reminder>` 等）自動折りたたみ
+- システムテキスト自動フィルタリング、実際のユーザー入力のみ表示
 - マルチ session 分割表示（`/compact`、`/clear` 等の操作後に自動分割）
 - 各メッセージに秒単位の正確なタイムスタンプを表示
 

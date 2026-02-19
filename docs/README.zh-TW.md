@@ -16,9 +16,9 @@ npm install -g cc-viewer
 ccv
 ```
 
-該命令會自動將監控腳本注入到本地安裝的 Claude Code 中，並在 shell 設定檔（`~/.zshrc` 或 `~/.bashrc`）中新增自動重注入 hook。之後正常使用 Claude Code，開啟瀏覽器存取 `http://localhost:7008` 即可查看監控介面。
+該命令會自動配置本地安裝的 Claude Code 以啟用監控，並在 shell 設定檔（`~/.zshrc` 或 `~/.bashrc`）中新增自動修復 hook。之後正常使用 Claude Code，開啟瀏覽器存取 `http://localhost:7008` 即可查看監控介面。
 
-Claude Code 更新後無需手動操作，下次執行 `claude` 時會自動偵測並重新注入。
+Claude Code 更新後無需手動操作，下次執行 `claude` 時會自動偵測並重新配置。
 
 ### 解除安裝
 
@@ -26,7 +26,7 @@ Claude Code 更新後無需手動操作，下次執行 `claude` 時會自動偵�
 ccv --uninstall
 ```
 
-一鍵清理 cli.js 中的注入程式碼和 shell 設定檔中的 hook。
+一鍵清理 cli.js 中的配置和 shell 設定檔中的 hook。
 
 ## 功能
 
@@ -52,8 +52,8 @@ ccv --uninstall
 - `thinking` 區塊預設摺疊，點擊展開查看思考過程
 - `tool_use` 顯示為緊湊的工具呼叫卡片（Bash、Read、Edit、Write、Glob、Grep、Task 等均有專屬展示）
 - 使用者選擇型訊息（AskUserQuestion）以問答形式展示
-- 系統注入標籤（`<system-reminder>`、`<project-reminder>` 等）自動摺疊
-- 自動過濾系統注入文字，只展示使用者的真實輸入
+- 系統標籤（`<system-reminder>`、`<project-reminder>` 等）自動摺疊
+- 自動過濾系統文字，只展示使用者的真實輸入
 - 支援多 session 分段展示（`/compact`、`/clear` 等操作後自動分段）
 - 每條訊息顯示精確到秒的時間戳
 
