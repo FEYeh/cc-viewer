@@ -18,7 +18,9 @@ function generateLogFilePath() {
     + String(now.getHours()).padStart(2, '0')
     + String(now.getMinutes()).padStart(2, '0')
     + String(now.getSeconds()).padStart(2, '0');
-  const projectName = basename(process.cwd()).replace(/[^a-zA-Z0-9_\-\.]/g, '_');
+  let cwd;
+  try { cwd = process.cwd(); } catch { cwd = homedir(); }
+  const projectName = basename(cwd).replace(/[^a-zA-Z0-9_\-\.]/g, '_');
   const dir = join(homedir(), '.claude', 'cc-viewer');
   try { mkdirSync(dir, { recursive: true }); } catch {}
   return join(dir, `${projectName}_${ts}.jsonl`);
@@ -208,7 +210,7 @@ export function setupInterceptor() {
 
         requestEntry = {
           timestamp,
-          project: basename(process.cwd()),
+          project: (() => { try { return basename(process.cwd()); } catch { return 'unknown'; } })(),
           url: urlStr,
           method: options?.method || 'GET',
           headers,
