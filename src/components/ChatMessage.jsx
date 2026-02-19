@@ -262,7 +262,7 @@ class ChatMessage extends React.Component {
   }
 
   renderAssistantMessage() {
-    const { content, toolResultMap = {} } = this.props;
+    const { content, toolResultMap = {}, modelInfo } = this.props;
     // content is an array of blocks: thinking, text, tool_use
     const thinkingBlocks = content.filter(b => b.type === 'thinking');
     const textBlocks = content.filter(b => b.type === 'text');
@@ -316,11 +316,11 @@ class ChatMessage extends React.Component {
 
     return (
       <div style={{ display: 'flex', gap: 10, padding: '8px 0' }}>
-        <div style={{ ...avatarBase, background: '#065f46' }}
-          dangerouslySetInnerHTML={{ __html: getSvgAvatar('agent') }}
+        <div style={{ ...avatarBase, background: modelInfo?.color || '#065f46' }}
+          dangerouslySetInnerHTML={{ __html: modelInfo?.svg || getSvgAvatar('agent') }}
         />
         <div style={{ minWidth: 0, flex: 1 }}>
-          {this.renderLabel('MainAgent')}
+          {this.renderLabel(modelInfo?.name || 'MainAgent')}
           <div style={{ ...bubbleBase, background: '#1a2332', color: '#e5e7eb' }}>
             {innerContent}
           </div>

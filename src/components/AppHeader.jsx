@@ -2,6 +2,28 @@ import React from 'react';
 import { Space, Tag, Button, Badge, Typography, Dropdown, Popover, Modal, Collapse } from 'antd';
 import { MessageOutlined, FileTextOutlined, ImportOutlined, DownOutlined, DashboardOutlined, SaveOutlined, ExportOutlined } from '@ant-design/icons';
 import { isSystemText } from '../utils/helpers';
+import { t, getLang, setLang } from '../i18n';
+
+const LANG_OPTIONS = [
+  { value: 'zh', short: 'zh', label: '简体中文' },
+  { value: 'en', short: 'en', label: 'English' },
+  { value: 'zh-TW', short: 'zh-TW', label: '繁體中文' },
+  { value: 'ko', short: 'ko', label: '한국어' },
+  { value: 'ja', short: 'ja', label: '日本語' },
+  { value: 'de', short: 'de', label: 'Deutsch' },
+  { value: 'es', short: 'es', label: 'Español' },
+  { value: 'fr', short: 'fr', label: 'Français' },
+  { value: 'it', short: 'it', label: 'Italiano' },
+  { value: 'da', short: 'da', label: 'Dansk' },
+  { value: 'pl', short: 'pl', label: 'Polski' },
+  { value: 'ru', short: 'ru', label: 'Русский' },
+  { value: 'ar', short: 'ar', label: 'العربية' },
+  { value: 'no', short: 'no', label: 'Norsk' },
+  { value: 'pt-BR', short: 'pt-BR', label: 'Português (Brasil)' },
+  { value: 'th', short: 'th', label: 'ไทย' },
+  { value: 'tr', short: 'tr', label: 'Türkçe' },
+  { value: 'uk', short: 'uk', label: 'Українська' },
+];
 
 const { Text } = Typography;
 
@@ -72,7 +94,7 @@ class AppHeader extends React.Component {
 
     const remaining = Math.max(0, cacheExpireAt - Date.now());
     if (remaining <= 0) {
-      this.setState({ countdownText: '已失效' });
+      this.setState({ countdownText: t('ui.cacheExpired') });
       this._expiredTimer = setTimeout(() => {
         this.setState({ countdownText: '' });
       }, 5000);
@@ -84,9 +106,9 @@ class AppHeader extends React.Component {
     if (totalSec >= 60) {
       const m = Math.floor(totalSec / 60);
       const s = totalSec % 60;
-      text = `${m}分${String(s).padStart(2, '0')}秒`;
+      text = t('ui.minuteSecond', { m: m, s: String(s).padStart(2, '0') });
     } else {
-      text = `${totalSec}秒`;
+      text = t('ui.second', { s: totalSec });
     }
     this.setState({ countdownText: text });
     this._rafId = requestAnimationFrame(this.updateCountdown);
@@ -103,7 +125,7 @@ class AppHeader extends React.Component {
       const before = text.slice(lastIndex, match.index).trim();
       if (before) segments.push({ type: 'text', content: before });
       sysIndex++;
-      segments.push({ type: 'system', content: match[1].trim(), label: `系统上下文_${sysIndex}` });
+      segments.push({ type: 'system', content: match[1].trim(), label: t('ui.systemContext', { index: sysIndex }) });
       lastIndex = match.index + match[0].length;
     }
     const after = text.slice(lastIndex).trim();
@@ -274,7 +296,7 @@ class AppHeader extends React.Component {
                     <td style={td}>{formatTokenCount(s.cacheRead)}</td>
                   </tr>
                   <tr>
-                    <td style={label}>命中率</td>
+                    <td style={label}>{t('ui.hitRate')}</td>
                     <td colSpan={2} style={td}>{cacheHitRate}%</td>
                   </tr>
                 </tbody>
@@ -380,7 +402,7 @@ class AppHeader extends React.Component {
         )}
         {/* 用户的回答（当前请求的 response） */}
         <div style={{ padding: '10px 14px' }}>
-          <div style={{ fontSize: 12, color: '#888', marginBottom: 6 }}>👤 用户选择</div>
+          <div style={{ fontSize: 12, color: '#888', marginBottom: 6 }}>👤 {t('ui.userSelection')}</div>
           <pre style={{
             whiteSpace: 'pre-wrap',
             wordBreak: 'break-word',
@@ -389,27 +411,27 @@ class AppHeader extends React.Component {
             color: '#d9d9d9',
             margin: 0,
             fontWeight: 600,
-          }}>{answerText || '无回答'}</pre>
+          }}>{answerText || t('ui.noAnswer')}</pre>
         </div>
       </div>
     );
   }
 
   render() {
-    const { requestCount, viewMode, cacheType, onToggleViewMode, onImportLocalLogs, isLocalLog, localLogFile } = this.props;
+    const { requestCount, viewMode, cacheType, onToggleViewMode, onImportLocalLogs, onLangChange, isLocalLog, localLogFile } = this.props;
     const { countdownText } = this.state;
 
     const menuItems = [
       {
         key: 'import-local',
         icon: <ImportOutlined />,
-        label: '导入本地日志',
+        label: t('ui.importLocalLogs'),
         onClick: onImportLocalLogs,
       },
       {
         key: 'save-log',
         icon: <SaveOutlined />,
-        label: '当前日志另存为',
+        label: t('ui.saveLog'),
         onClick: () => {
           const a = document.createElement('a');
           a.href = '/api/download-log';
@@ -419,7 +441,7 @@ class AppHeader extends React.Component {
       {
         key: 'export-prompts',
         icon: <ExportOutlined />,
-        label: '导出用户Prompt',
+        label: t('ui.exportPrompts'),
         onClick: this.handleShowPrompts,
       },
     ];
@@ -446,32 +468,51 @@ class AppHeader extends React.Component {
           >
             <Tag style={{ borderRadius: 12, cursor: 'pointer', background: '#2a2a2a', border: '1px solid #3a3a3a', color: '#ccc' }}>
               <DashboardOutlined style={{ marginRight: 4 }} />
-              Token 消耗统计
+              {t('ui.tokenStats')}
             </Tag>
           </Popover>
           <Tag color="green" style={{ borderRadius: 12 }}>
             <Badge status="processing" color="green" />
-            <span style={{ marginLeft: 4 }}>{isLocalLog ? `历史日志: ${localLogFile}` : '实时监控中'}</span>
+            <span style={{ marginLeft: 4 }}>{isLocalLog ? t('ui.historyLog', { file: localLogFile }) : t('ui.liveMonitoring')}</span>
           </Tag>
         </Space>
 
         <Space size="middle">
           {countdownText && (
-            <Tag color={countdownText === '已失效' ? 'red' : 'green'}>
-              MainAgent缓存{cacheType ? `(${cacheType})` : ''}失效倒计时：
+            <Tag color={countdownText === t('ui.cacheExpired') ? 'red' : 'green'}>
+              {t('ui.cacheCountdown', { type: cacheType ? `(${cacheType})` : '' })}
               <strong style={{ fontVariantNumeric: 'tabular-nums' }}>{countdownText}</strong>
             </Tag>
           )}
+          <Dropdown
+            trigger={['hover']}
+            placement="bottom"
+            menu={{
+              items: LANG_OPTIONS.map(o => ({
+                key: o.value,
+                label: o.label,
+                style: o.value === getLang() ? { color: '#3b82f6' } : {},
+              })),
+              onClick: ({ key }) => { setLang(key); if (onLangChange) onLangChange(); },
+            }}
+          >
+            <span style={{
+              color: '#888', fontSize: 12, cursor: 'pointer', userSelect: 'none',
+              border: '1px solid #555', borderRadius: 4, padding: '2px 8px',
+            }}>
+              {LANG_OPTIONS.find(o => o.value === getLang())?.short || 'zh'}
+            </span>
+          </Dropdown>
           <Button
-            size="small"
+            type={viewMode === 'raw' ? 'primary' : 'default'}
             icon={viewMode === 'raw' ? <MessageOutlined /> : <FileTextOutlined />}
             onClick={onToggleViewMode}
           >
-            {viewMode === 'raw' ? '对话模式' : '原文模式'}
+            {viewMode === 'raw' ? t('ui.chatMode') : t('ui.rawMode')}
           </Button>
         </Space>
         <Modal
-          title="用户 Prompt"
+          title={t('ui.userPrompt')}
           open={this.state.promptModalVisible}
           onCancel={() => this.setState({ promptModalVisible: false })}
           footer={null}
@@ -479,10 +520,10 @@ class AppHeader extends React.Component {
         >
           <div style={{ maxHeight: 500, overflow: 'auto' }}>
             {this.state.promptData.length === 0 && (
-              <div style={{ color: '#999', padding: 12 }}>暂无用户 Prompt</div>
+              <div style={{ color: '#999', padding: 12 }}>{t('ui.noPrompt')}</div>
             )}
             {this.state.promptData.map((p, i) => {
-              const ts = p.timestamp ? new Date(p.timestamp).toLocaleString() : '未知时间';
+              const ts = p.timestamp ? new Date(p.timestamp).toLocaleString() : t('ui.unknownTime');
               return (
                 <div key={i}>
                   <div style={{

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Typography } from 'antd';
+import { t } from '../i18n';
 
 const { Text } = Typography;
 
@@ -296,7 +297,7 @@ function ToolResultView({ toolName, toolInput, resultText }) {
   const displayText = resultText.length > 5000 ? resultText.substring(0, 5000) + '\n... (truncated)' : resultText;
 
   // Build title
-  let title = toolName ? `${toolName} 返回` : 'Result';
+  let title = toolName ? t('ui.toolReturnNamed', { name: toolName }) : 'Result';
   if (toolInput) {
     const filePath = toolInput.file_path || toolInput.path || '';
     if (filePath) {
@@ -331,7 +332,7 @@ function ToolResultView({ toolName, toolInput, resultText }) {
           style={{ fontSize: 11, color: '#484f58', cursor: 'pointer', userSelect: 'none' }}
           onClick={() => setCollapsed(c => !c)}
         >
-          {collapsed ? '▶ 展开' : '▼ 收起'}
+          {collapsed ? t('ui.expand') : t('ui.collapse')}
         </Text>
       </div>
       {!collapsed && (

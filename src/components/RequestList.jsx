@@ -1,5 +1,6 @@
 import React from 'react';
 import { List, Tag, Empty } from 'antd';
+import { t } from '../i18n';
 
 function formatTokens(n) {
   if (n == null || n === 0) return null;
@@ -57,7 +58,7 @@ class RequestList extends React.Component {
     if (requests.length === 0) {
       return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-          <Empty description="等待请求..." />
+          <Empty description={t('ui.waitingRequests')} />
         </div>
       );
     }

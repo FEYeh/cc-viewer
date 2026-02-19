@@ -2,6 +2,7 @@ import React from 'react';
 import { Tabs, Collapse, Typography, Button, Tag, Empty, Space, message } from 'antd';
 import { CopyOutlined, FileTextOutlined, CodeOutlined } from '@ant-design/icons';
 import JsonViewer from './JsonViewer';
+import { t } from '../i18n';
 
 const { Text, Paragraph } = Typography;
 
@@ -37,12 +38,12 @@ class DetailPanel extends React.Component {
     const data = type === 'request' ? request.body : request.response?.body;
     if (data == null) return;
     const text = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
-    navigator.clipboard.writeText(text).then(() => message.success('复制成功'));
+    navigator.clipboard.writeText(text).then(() => message.success(t('ui.copySuccess')));
   }
 
   renderHeaders(headers) {
     if (!headers || Object.keys(headers).length === 0) {
-      return <Text type="secondary">无 Headers</Text>;
+      return <Text type="secondary">{t('ui.noHeaders')}</Text>;
     }
     return (
       <div style={{ fontSize: 12 }}>
@@ -62,12 +63,12 @@ class DetailPanel extends React.Component {
 
   renderBody(data, type) {
     const { bodyViewMode } = this.state;
-    if (data == null) return <Text type="secondary">无 Body</Text>;
+    if (data == null) return <Text type="secondary">{t('ui.noBody')}</Text>;
 
     if (typeof data === 'string' && data.includes('Streaming Response')) {
       return (
         <div style={{ padding: 20, background: '#1a1a1a', borderRadius: 6, border: '1px solid #2a2a2a' }}>
-          <Text type="secondary">⚡ 流式响应 — 此请求使用了流式传输（SSE），响应内容无法完整捕获。</Text>
+          <Text type="secondary">{t('ui.streamingResponse')}</Text>
         </div>
       );
     }
@@ -177,7 +178,7 @@ class DetailPanel extends React.Component {
                 </div>
               </>
             ) : (
-              <Empty description="响应数据未捕获" />
+              <Empty description={t('ui.responseNotCaptured')} />
             )}
           </div>
         ),

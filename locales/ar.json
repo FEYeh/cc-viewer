@@ -1,0 +1,62 @@
+{
+  "cli.inject.success": "✅ CC Viewer تم الحقن بنجاح",
+  "cli.inject.exists": "✅ CC Viewer محقون بالفعل، لا حاجة لأي إجراء",
+  "cli.inject.fail": "❌ فشل الحقن: {error}",
+  "cli.inject.notFound": "❌ لم يتم العثور على Claude Code cli.js: {path}",
+  "cli.inject.notFoundHint": "   يرجى التأكد من تثبيت @anthropic-ai/claude-code",
+  "cli.hook.installed": "✅ تم كتابة hook إعادة الحقن التلقائي في {path}",
+  "cli.hook.exists": "✅ hook إعادة الحقن التلقائي موجود بالفعل في {path}",
+  "cli.hook.fail": "⚠️  فشل كتابة shell hook: {error}",
+  "cli.usage.hint": "\nقم بتشغيل claude مباشرة. سيتم إعادة الحقن تلقائياً بعد تحديثات Claude Code",
+  "cli.usage.uninstallHint": "لإلغاء التثبيت، قم بتشغيل: ccv --uninstall",
+  "cli.uninstall.cliCleaned": "✅ تم تنظيف حقن cli.js",
+  "cli.uninstall.cliNotFound": "⚠️  لم يتم العثور على Claude Code cli.js، تم التخطي",
+  "cli.uninstall.cliFail": "❌ فشل تنظيف حقن cli.js",
+  "cli.uninstall.hookRemoved": "✅ تم إزالة shell hook من {path}",
+  "cli.uninstall.hookClean": "✅ لا حاجة للتنظيف في {path}",
+  "cli.uninstall.hookFail": "❌ فشل تنظيف shell hook: {error}",
+  "cli.uninstall.done": "\n🗑️  تم إلغاء تثبيت CC Viewer بالكامل",
+
+  "server.started": "\n🔍 تم تشغيل CC Viewer: http://{host}:{port}\n",
+  "server.reuse": "\n🔍 CC Viewer يعمل بالفعل: http://{host}:{port}\n",
+  "server.portsBusy": "⚠️  المنافذ {start}-{end} كلها مشغولة، لم يتم تشغيل خدمة المراقبة",
+
+  "ui.requestList": "الطلبات",
+  "ui.totalRequests": "الإجمالي: {count}",
+  "ui.waitingRequests": "في انتظار الطلبات...",
+  "ui.importLocalLogs": "استيراد السجلات المحلية",
+  "ui.saveLog": "حفظ السجل الحالي",
+  "ui.exportPrompts": "تصدير Prompt المستخدم",
+  "ui.tokenStats": "إحصائيات Token",
+  "ui.liveMonitoring": "مباشر",
+  "ui.historyLog": "السجل: {file}",
+  "ui.chatMode": "وضع المحادثة",
+  "ui.rawMode": "العودة للوضع الخام",
+  "ui.cacheExpired": "منتهي الصلاحية",
+  "ui.cacheCountdown": "ينتهي cache{type} لـ MainAgent خلال: ",
+  "ui.minuteSecond": "{m}د{s}ث",
+  "ui.second": "{s}ث",
+  "ui.hitRate": "معدل الإصابة",
+  "ui.userPrompt": "Prompt المستخدم",
+  "ui.noPrompt": "لا توجد Prompt للمستخدم بعد",
+  "ui.unknownTime": "وقت غير معروف",
+  "ui.userSelection": "👤 اختيار المستخدم",
+  "ui.noAnswer": "لا إجابة",
+  "ui.systemContext": "سياق النظام #{index}",
+  "ui.logCount": "{count} سجلات",
+  "ui.noLogs": "لا توجد ملفات سجلات",
+
+  "ui.toolReturn": "نتيجة الأداة",
+  "ui.toolReturnNamed": "نتيجة {name}",
+  "ui.lastResponse": "Last Response",
+
+  "ui.copySuccess": "تم النسخ",
+  "ui.noHeaders": "لا يوجد Headers",
+  "ui.noBody": "لا يوجد Body",
+  "ui.streamingResponse": "⚡ استجابة متدفقة — استخدم هذا الطلب بث SSE، لا يمكن التقاط محتوى الاستجابة بالكامل.",
+  "ui.responseNotCaptured": "لم يتم التقاط بيانات الاستجابة",
+
+  "ui.expand": "▶ توسيع",
+  "ui.collapse": "▼ طي",
+  "ui.noChat": "لا توجد بيانات محادثة MainAgent"
+}

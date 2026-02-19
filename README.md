@@ -1,6 +1,8 @@
 # CC-Viewer
 
-Claude Code API 请求监控系统，实时捕获并可视化展示 Claude Code 的所有 API 请求与响应。
+Claude Code 请求监控系统，实时捕获并可视化展示 Claude Code 的所有 API 请求与响应。方便开发者监控自己的 Context，以便于 Vibe Coding 过程中回顾和排查问题。
+
+[English](./docs/README.en.md) | [繁體中文](./docs/README.zh-TW.md) | [한국어](./docs/README.ko.md) | [日本語](./docs/README.ja.md) | [Deutsch](./docs/README.de.md) | [Español](./docs/README.es.md) | [Français](./docs/README.fr.md) | [Italiano](./docs/README.it.md) | [Dansk](./docs/README.da.md) | [Polski](./docs/README.pl.md) | [Русский](./docs/README.ru.md) | [العربية](./docs/README.ar.md) | [Norsk](./docs/README.no.md) | [Português (Brasil)](./docs/README.pt-BR.md) | [ไทย](./docs/README.th.md) | [Türkçe](./docs/README.tr.md) | [Українська](./docs/README.uk.md)
 
 ## 使用方法
 
@@ -14,7 +16,17 @@ npm install -g cc-viewer
 ccv
 ```
 
-该命令会自动将监控脚本注入到本地安装的 Claude Code 中。之后正常使用 Claude Code，打开浏览器访问 `http://localhost:7008` 即可查看监控界面。
+该命令会自动将监控脚本注入到本地安装的 Claude Code 中，并在 shell 配置文件（`~/.zshrc` 或 `~/.bashrc`）中添加自动重注入 hook。之后正常使用 Claude Code，打开浏览器访问 `http://localhost:7008` 即可查看监控界面。
+
+Claude Code 更新后无需手动操作，下次运行 `claude` 时会自动检测并重新注入。
+
+### 卸载
+
+```bash
+ccv --uninstall
+```
+
+一键清理 cli.js 中的注入代码和 shell 配置文件中的 hook。
 
 ## 功能
 
@@ -60,25 +72,11 @@ Header 区域的「Token 消耗统计」悬浮面板：
 - 当前日志另存为：下载当前监控的 JSONL 日志文件
 - 导出用户 Prompt：提取并展示所有用户输入，支持 system-reminder 折叠查看
 
-### 数据解析
+### 多语言支持
 
-| 消息类型 | 识别方式 | 展示 |
-|---------|---------|------|
-| 用户输入 | `role: "user"` + 非系统标签文本 | 蓝色气泡 |
-| 用户选择 | `[SUGGESTION MODE:]` + `tool_result` | 问答卡片 |
-| Agent 文本回复 | `role: "assistant"` + `type: "text"` | Markdown 渲染 |
-| Agent 工具调用 | `role: "assistant"` + `type: "tool_use"` | 工具调用卡片 + 内联结果 |
-| Agent 思考 | `role: "assistant"` + `type: "thinking"` | 可折叠思考块 |
+CC-Viewer 支持 18 种语言，根据系统语言环境自动切换：
 
-对于 `Task` 类型的工具调用，会从 `input` 中提取 `subagent_type` 和 `description` 来标识具体的 Sub Agent。
-
-## 技术栈
-
-- 前端：React + Ant Design，暗色主题
-- Markdown 渲染：[marked](https://github.com/markedjs/marked)
-- 后端：Node.js 原生 HTTP 服务 + SSE 实时推送
-- 请求拦截：通过 `globalThis.fetch` 拦截，支持流式响应组装
-- 构建：Vite
+简体中文 | English | 繁體中文 | 한국어 | Deutsch | Español | Français | Italiano | Dansk | 日本語 | Polski | Русский | العربية | Norsk | Português (Brasil) | ไทย | Türkçe | Українська
 
 ## License
 

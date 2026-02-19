@@ -28,6 +28,10 @@ serverCode = serverCode.replace(
   "import { LOG_FILE } from 'cc-viewer/interceptor.js';",
   "import { LOG_FILE } from '../interceptor.js';"
 );
+serverCode = serverCode.replace(
+  "import { t } from './i18n.js';",
+  "import { t } from '../i18n.js';"
+);
 writeFileSync(join(LIB, 'server.js'), serverCode);
 
 console.log('✅ Build 完成，输出目录: lib/');

@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, extname, basename } from 'node:path';
 import { homedir } from 'node:os';
 import { LOG_FILE } from 'cc-viewer/interceptor.js';
+import { t } from './i18n.js';
 
 const LOG_DIR = join(homedir(), '.claude', 'cc-viewer');
 const SHOW_ALL_FILE = '/tmp/cc-viewer-show-all';
@@ -326,7 +327,7 @@ export async function startViewer() {
           if (alive) {
             actualPort = existingPort;
             releaseLock();
-            console.log(`\n🔍 CC Viewer 已在运行: http://${HOST}:${existingPort}\n`);
+            console.log(t('server.reuse', { host: HOST, port: existingPort }));
             return null;
           }
         }
@@ -340,7 +341,7 @@ export async function startViewer() {
     return new Promise((resolve, reject) => {
       function tryListen(port) {
         if (port > MAX_PORT) {
-          console.log(`⚠️  端口 ${START_PORT}-${MAX_PORT} 均被占用，请求监控服务未启动`);
+          console.log(t('server.portsBusy', { start: START_PORT, end: MAX_PORT }));
           releaseLock();
           resolve(null);
           return;
@@ -353,7 +354,7 @@ export async function startViewer() {
           actualPort = port;
           try { writeFileSync(PORT_FILE, String(port)); } catch {}
           releaseLock();
-          console.log(`\n🔍 Claude 请求监控服务已启动: http://${HOST}:${port}\n`);
+          console.log(t('server.started', { host: HOST, port }));
           startWatching();
           resolve(server);
         });

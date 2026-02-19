@@ -1,0 +1,83 @@
+# CC-Viewer
+
+Claude Code リクエスト監視システム。Claude Code のすべての API リクエストとレスポンスをリアルタイムでキャプチャし、視覚化します。Vibe Coding 中に Context を監視し、レビューやデバッグに役立ちます。
+
+[简体中文](../README.md) | [English](./README.en.md) | [繁體中文](./README.zh-TW.md) | [한국어](./README.ko.md) | [Deutsch](./README.de.md) | [Español](./README.es.md) | [Français](./README.fr.md) | [Italiano](./README.it.md) | [Dansk](./README.da.md) | [Polski](./README.pl.md) | [Русский](./README.ru.md) | [العربية](./README.ar.md) | [Norsk](./README.no.md) | [Português (Brasil)](./README.pt-BR.md) | [ไทย](./README.th.md) | [Türkçe](./README.tr.md) | [Українська](./README.uk.md)
+
+## 使用方法
+
+```bash
+npm install -g cc-viewer
+```
+
+インストール後、実行：
+
+```bash
+ccv
+```
+
+このコマンドは、ローカルにインストールされた Claude Code に監視スクリプトを自動的にインジェクトし、shell 設定ファイル（`~/.zshrc` または `~/.bashrc`）に自動再インジェクト hook を追加します。その後、Claude Code を通常通り使用し、ブラウザで `http://localhost:7008` を開いて監視インターフェースを確認してください。
+
+Claude Code の更新後、手動操作は不要です。次回 `claude` を実行すると、自動的に検出して再インジェクトします。
+
+### アンインストール
+
+```bash
+ccv --uninstall
+```
+
+cli.js のインジェクションコードと shell 設定ファイルの hook をワンステップでクリーンアップします。
+
+## 機能
+
+### リクエスト監視（Raw モード）
+
+- Claude Code からのすべての API リクエストをリアルタイムキャプチャ（ストリーミングレスポンス含む）
+- 左パネルにリクエストメソッド、URL、所要時間、ステータスコードを表示
+- Main Agent と Sub Agent リクエストを自動識別・ラベリング
+- 右パネルで Request / Response タブ切り替え対応
+- Request Body の `messages`、`system`、`tools` はデフォルトで1階層展開
+- Response Body はデフォルトで全展開
+- JSON ビューとプレーンテキストビューの切り替え対応
+- JSON コンテンツのワンクリックコピー
+
+### チャットモード
+
+右上の「チャットモード」ボタンをクリックして、Main Agent の完全な会話履歴をチャットインターフェースに解析：
+
+- ユーザーメッセージ左揃え（青い吹き出し）
+- Main Agent の返信左揃え（ダークグレーの吹き出し）、Markdown レンダリング対応
+- ツール呼び出し結果が対応する Assistant メッセージ内にインライン表示
+- `thinking` ブロックはデフォルトで折りたたみ、クリックで展開
+- `tool_use` はコンパクトなツール呼び出しカードとして表示（Bash、Read、Edit、Write、Glob、Grep、Task 等に専用表示）
+- ユーザー選択メッセージ（AskUserQuestion）は Q&A 形式で表示
+- システム注入タグ（`<system-reminder>`、`<project-reminder>` 等）自動折りたたみ
+- システム注入テキスト自動フィルタリング、実際のユーザー入力のみ表示
+- マルチ session 分割表示（`/compact`、`/clear` 等の操作後に自動分割）
+- 各メッセージに秒単位の正確なタイムスタンプを表示
+
+### Token 消費統計
+
+ヘッダー領域のホバーパネル：
+
+- モデル別 input/output token 数量のグループ統計
+- Cache creation/read 数量およびキャッシュヒット率の表示
+- Main Agent キャッシュ有効期限カウントダウン
+
+### ログ管理
+
+左上の CC-Viewer ドロップダウンメニュー：
+
+- ローカルログのインポート：プロジェクト別にグループ化された履歴ログファイルを閲覧、新しいウィンドウで開く
+- 現在のログを保存：現在監視中の JSONL ログファイルをダウンロード
+- ユーザー Prompt のエクスポート：すべてのユーザー入力を抽出・表示、system-reminder 折りたたみ表示対応
+
+### 多言語サポート
+
+CC-Viewer は 18 言語をサポートし、システムロケールに基づいて自動切り替えします：
+
+简体中文 | English | 繁體中文 | 한국어 | Deutsch | Español | Français | Italiano | Dansk | 日本語 | Polski | Русский | العربية | Norsk | Português (Brasil) | ไทย | Türkçe | Українська
+
+## License
+
+MIT

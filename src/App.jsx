@@ -6,6 +6,7 @@ import RequestList from './components/RequestList';
 import DetailPanel from './components/DetailPanel';
 import ChatView from './components/ChatView';
 import PanelResizer from './components/PanelResizer';
+import { t, getLang } from './i18n';
 
 const chatMdStyles = `
 .chat-md pre {
@@ -65,7 +66,8 @@ class App extends React.Component {
       importModalVisible: false,
       localLogs: {},       // { projectName: [{file, timestamp, size}] }
       localLogsLoading: false,
-      showAll: false,      // 是否显示心跳请求
+      showAll: false,
+      lang: getLang(),      // 是否显示心跳请求
     };
     this.eventSource = null;
     this._autoSelectTimer = null;
@@ -255,6 +257,10 @@ class App extends React.Component {
     }));
   };
 
+  handleLangChange = () => {
+    this.setState({ lang: getLang() });
+  };
+
   handleTabChange = (key) => {
     this.setState({ currentTab: key });
   };
@@ -342,6 +348,7 @@ class App extends React.Component {
               cacheExpireAt={cacheExpireAt}
               cacheType={cacheType}
               onToggleViewMode={this.handleToggleViewMode}
+              onLangChange={this.handleLangChange}
               onImportLocalLogs={this.handleImportLocalLogs}
               isLocalLog={!!this._isLocalLog}
               localLogFile={this._localLogFile}
@@ -372,8 +379,8 @@ class App extends React.Component {
                     justifyContent: 'space-between',
                     alignItems: 'center',
                   }}>
-                    <span>请求列表</span>
-                    <span style={{ fontSize: 12, color: '#555', fontWeight: 400 }}>总请求数: {filteredRequests.length}</span>
+                    <span>{t('ui.requestList')}</span>
+                    <span style={{ fontSize: 12, color: '#555', fontWeight: 400 }}>{t('ui.totalRequests', { count: filteredRequests.length })}</span>
                   </div>
                   <div style={{ flex: 1, overflow: 'hidden' }}>
                     <RequestList
@@ -401,7 +408,7 @@ class App extends React.Component {
         </Layout>
 
         <Modal
-          title="导入本地日志"
+          title={t('ui.importLocalLogs')}
           open={this.state.importModalVisible}
           onCancel={this.handleCloseImportModal}
           footer={null}
@@ -412,7 +419,7 @@ class App extends React.Component {
             <div style={{ textAlign: 'center', padding: 40 }}><Spin /></div>
           ) : Object.keys(this.state.localLogs).length === 0 ? (
             <div style={{ textAlign: 'center', color: '#999', padding: 40 }}>
-              暂无日志文件
+              {t('ui.noLogs')}
             </div>
           ) : (
             <Collapse
@@ -423,7 +430,7 @@ class App extends React.Component {
                   <span>
                     <FolderOutlined style={{ marginRight: 8 }} />
                     {project}
-                    <Tag style={{ marginLeft: 8 }}>{logs.length} 个日志</Tag>
+                    <Tag style={{ marginLeft: 8 }}>{t('ui.logCount', { count: logs.length })}</Tag>
                   </span>
                 ),
                 children: (

@@ -1,0 +1,83 @@
+# CC-Viewer
+
+Un sistema de monitoreo de solicitudes para Claude Code que captura y visualiza todas las solicitudes y respuestas de API en tiempo real. Ayuda a los desarrolladores a monitorear su Context para revisión y depuración durante el Vibe Coding.
+
+[简体中文](../README.md) | [繁體中文](./README.zh-TW.md) | [한국어](./README.ko.md) | [日本語](./README.ja.md) | [Deutsch](./README.de.md) | [Español](./README.es.md) | [Français](./README.fr.md) | [Italiano](./README.it.md) | [Dansk](./README.da.md) | [Polski](./README.pl.md) | [Русский](./README.ru.md) | [العربية](./README.ar.md) | [Norsk](./README.no.md) | [Português (Brasil)](./README.pt-BR.md) | [ไทย](./README.th.md) | [Türkçe](./README.tr.md) | [Українська](./README.uk.md)
+
+## Uso
+
+```bash
+npm install -g cc-viewer
+```
+
+Después de la instalación, ejecute:
+
+```bash
+ccv
+```
+
+Este comando inyecta automáticamente el script de monitoreo en su Claude Code instalado localmente y agrega un hook de reinyección automática en su configuración de shell (`~/.zshrc` o `~/.bashrc`). Luego use Claude Code como de costumbre y abra `http://localhost:7008` en su navegador para ver la interfaz de monitoreo.
+
+Después de una actualización de Claude Code, no se necesita ninguna acción manual — la próxima vez que ejecute `claude`, detectará y reinyectará automáticamente.
+
+### Desinstalar
+
+```bash
+ccv --uninstall
+```
+
+Limpia la inyección de cli.js y el hook de configuración de shell en un solo paso.
+
+## Características
+
+### Monitoreo de solicitudes (Raw Mode)
+
+- Captura en tiempo real de todas las solicitudes de API de Claude Code, incluyendo respuestas en streaming
+- El panel izquierdo muestra el método de solicitud, URL, duración y código de estado
+- Identifica y etiqueta automáticamente las solicitudes de Main Agent y Sub Agent
+- El panel derecho soporta cambio entre pestañas Request / Response
+- El Request Body expande `messages`, `system`, `tools` un nivel por defecto
+- El Response Body completamente expandido por defecto
+- Alternar entre vista JSON y vista de texto plano
+- Copiar contenido JSON con un clic
+
+### Chat Mode
+
+Haga clic en el botón "Chat mode" en la esquina superior derecha para analizar el historial completo de conversación del Main Agent en una interfaz de chat:
+
+- Mensajes del usuario alineados a la izquierda (burbujas azules)
+- Respuestas del Main Agent alineadas a la izquierda (burbujas gris oscuro) con renderizado Markdown
+- Resultados de llamadas a herramientas mostrados en línea dentro del mensaje Assistant correspondiente
+- Bloques `thinking` colapsados por defecto, clic para expandir
+- `tool_use` mostrado como tarjetas compactas de llamada a herramientas (Bash, Read, Edit, Write, Glob, Grep, Task tienen visualizaciones dedicadas)
+- Mensajes de selección del usuario (AskUserQuestion) mostrados en formato de pregunta y respuesta
+- Etiquetas de inyección del sistema (`<system-reminder>`, `<project-reminder>`, etc.) auto-colapsadas
+- Texto inyectado por el sistema auto-filtrado, mostrando solo la entrada real del usuario
+- Visualización segmentada multi-sesión (segmentación automática después de `/compact`, `/clear`, etc.)
+- Cada mensaje muestra una marca de tiempo con precisión de segundos
+
+### Estadísticas de Token
+
+Panel flotante en el área del encabezado:
+
+- Conteo de Token agrupado por modelo (entrada/salida)
+- Conteos de creación/lectura de Cache y tasa de aciertos de Cache
+- Cuenta regresiva de expiración del Cache del Main Agent
+
+### Gestión de Logs
+
+A través del menú desplegable de CC-Viewer en la esquina superior izquierda:
+
+- Importar logs locales: explorar archivos de log históricos, agrupados por proyecto, se abre en nueva ventana
+- Guardar log actual: descargar el archivo de log JSONL de monitoreo actual
+- Exportar prompts del usuario: extraer y mostrar todas las entradas del usuario, con vista colapsable de system-reminder
+
+### Soporte multilingüe
+
+CC-Viewer soporta 18 idiomas, cambiando automáticamente según la configuración regional del sistema:
+
+简体中文 | English | 繁體中文 | 한국어 | Deutsch | Español | Français | Italiano | Dansk | 日本語 | Polski | Русский | العربية | Norsk | Português (Brasil) | ไทย | Türkçe | Українська
+
+## Licencia
+
+MIT

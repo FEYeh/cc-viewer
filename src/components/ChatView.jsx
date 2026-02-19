@@ -1,23 +1,79 @@
 import React from 'react';
-import { Empty, Typography, Divider } from 'antd';
+import { Empty, Typography, Divider, Spin } from 'antd';
 import ChatMessage from './ChatMessage';
-import { extractToolResultText, isSystemText } from '../utils/helpers';
+import { extractToolResultText, isSystemText, getModelInfo } from '../utils/helpers';
 import { renderAssistantText } from '../utils/systemTags';
+import { t } from '../i18n';
 
 const { Text } = Typography;
+
+const QUEUE_THRESHOLD = 20;
+
+function randomInterval() {
+  return 1000 + Math.random() * 500;
+}
 
 class ChatView extends React.Component {
   constructor(props) {
     super(props);
     this.containerRef = React.createRef();
+    this.state = {
+      visibleCount: 0,
+      loading: false,
+      allItems: [],
+    };
+    this._queueTimer = null;
+    this._prevItemsLen = 0;
   }
 
   componentDidMount() {
-    this.scrollToBottom();
+    this.startRender();
   }
 
-  componentDidUpdate() {
-    this.scrollToBottom();
+  componentDidUpdate(prevProps) {
+    if (prevProps.mainAgentSessions !== this.props.mainAgentSessions) {
+      this.startRender();
+    }
+  }
+
+  componentWillUnmount() {
+    if (this._queueTimer) clearTimeout(this._queueTimer);
+  }
+
+  startRender() {
+    if (this._queueTimer) clearTimeout(this._queueTimer);
+
+    const allItems = this.buildAllItems();
+    const prevLen = this._prevItemsLen;
+    this._prevItemsLen = allItems.length;
+
+    const newCount = allItems.length - prevLen;
+
+    if (newCount <= 0 || (prevLen > 0 && newCount <= 3)) {
+      this.setState({ allItems, visibleCount: allItems.length, loading: false }, () => this.scrollToBottom());
+      return;
+    }
+
+    if (allItems.length > QUEUE_THRESHOLD) {
+      this.setState({ allItems, visibleCount: 0, loading: true });
+      this._queueTimer = setTimeout(() => {
+        this.setState({ visibleCount: allItems.length, loading: false }, () => this.scrollToBottom());
+      }, 300);
+    } else {
+      const startFrom = Math.max(0, prevLen);
+      this.setState({ allItems, visibleCount: startFrom, loading: false });
+      this.queueNext(startFrom, allItems.length);
+    }
+  }
+
+  queueNext(current, total) {
+    if (current >= total) return;
+    this._queueTimer = setTimeout(() => {
+      this.setState({ visibleCount: current + 1 }, () => {
+        this.scrollToBottom();
+        this.queueNext(current + 1, total);
+      });
+    }, randomInterval());
   }
 
   scrollToBottom() {
@@ -25,8 +81,7 @@ class ChatView extends React.Component {
     if (el) el.scrollTop = el.scrollHeight;
   }
 
-  renderSessionMessages(messages, keyPrefix, msgTimestamps) {
-    // 构建 tool_use_id → tool_use 映射
+  renderSessionMessages(messages, keyPrefix, msgTimestamps, modelInfo) {
     const toolUseMap = {};
     for (const msg of messages) {
       if (msg.role === 'assistant' && Array.isArray(msg.content)) {
@@ -38,14 +93,13 @@ class ChatView extends React.Component {
       }
     }
 
-    // 构建 tool_use_id → tool_result 映射
     const toolResultMap = {};
     for (const msg of messages) {
       if (msg.role === 'user' && Array.isArray(msg.content)) {
         for (const block of msg.content) {
           if (block.type === 'tool_result') {
             const matchedTool = toolUseMap[block.tool_use_id];
-            let label = '工具返回';
+            let label = t('ui.toolReturn');
             let toolName = null;
             let toolInput = null;
             if (matchedTool) {
@@ -56,7 +110,7 @@ class ChatView extends React.Component {
                 const desc = matchedTool.input.description || '';
                 label = `SubAgent: ${st}${desc ? ' — ' + desc : ''}`;
               } else {
-                label = matchedTool.name + ' 返回';
+                label = t('ui.toolReturnNamed', { name: matchedTool.name });
               }
             }
             toolResultMap[block.tool_use_id] = {
@@ -79,12 +133,10 @@ class ChatView extends React.Component {
 
       if (msg.role === 'user') {
         if (Array.isArray(content)) {
-          // 检测是否为 suggestion mode（用户选择）
           const suggestionText = content.find(b => b.type === 'text' && /^\[SUGGESTION MODE:/i.test((b.text || '').trim()));
           const toolResults = content.filter(b => b.type === 'tool_result');
 
           if (suggestionText && toolResults.length > 0) {
-            // 用户选择型消息
             let questions = null;
             let answers = {};
             for (const tr of toolResults) {
@@ -106,9 +158,7 @@ class ChatView extends React.Component {
               );
             }
           } else {
-            // 普通用户消息 — tool_result 不再单独渲染，已归入 assistant 消息
             const textBlocks = content.filter(b => b.type === 'text' && !isSystemText(b.text));
-
             for (let ti = 0; ti < textBlocks.length; ti++) {
               renderedMessages.push(
                 <ChatMessage key={`${keyPrefix}-user-${mi}-${ti}`} role="user" text={textBlocks[ti].text} timestamp={ts} />
@@ -123,11 +173,11 @@ class ChatView extends React.Component {
       } else if (msg.role === 'assistant') {
         if (Array.isArray(content)) {
           renderedMessages.push(
-            <ChatMessage key={`${keyPrefix}-asst-${mi}`} role="assistant" content={content} toolResultMap={toolResultMap} timestamp={ts} />
+            <ChatMessage key={`${keyPrefix}-asst-${mi}`} role="assistant" content={content} toolResultMap={toolResultMap} timestamp={ts} modelInfo={modelInfo} />
           );
         } else if (typeof content === 'string') {
           renderedMessages.push(
-            <ChatMessage key={`${keyPrefix}-asst-${mi}`} role="assistant" content={[{ type: 'text', text: content }]} toolResultMap={toolResultMap} timestamp={ts} />
+            <ChatMessage key={`${keyPrefix}-asst-${mi}`} role="assistant" content={[{ type: 'text', text: content }]} toolResultMap={toolResultMap} timestamp={ts} modelInfo={modelInfo} />
           );
         }
       }
@@ -136,49 +186,74 @@ class ChatView extends React.Component {
     return renderedMessages;
   }
 
-  render() {
-    const { mainAgentSessions } = this.props;
+  buildAllItems() {
+    const { mainAgentSessions, requests } = this.props;
+    if (!mainAgentSessions || mainAgentSessions.length === 0) return [];
 
-    if (!mainAgentSessions || mainAgentSessions.length === 0) {
-      return (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-          <Empty description="暂无 mainAgent 对话数据" />
-        </div>
-      );
+    // 从最新的 mainAgent 请求中提取模型名
+    let modelName = null;
+    if (requests) {
+      for (let i = requests.length - 1; i >= 0; i--) {
+        if (requests[i].mainAgent && requests[i].body?.model) {
+          modelName = requests[i].body.model;
+          break;
+        }
+      }
     }
+    const modelInfo = getModelInfo(modelName);
 
-    const allRendered = [];
+    const allItems = [];
 
     mainAgentSessions.forEach((session, si) => {
-      // session 之间加分隔线（第一个 session 之前不加）
       if (si > 0) {
-        allRendered.push(
+        allItems.push(
           <Divider key={`session-div-${si}`} style={{ borderColor: '#333', margin: '16px 0' }}>
-            <Text style={{ fontSize: 11, color: '#555' }}>此处基模出现userId切换会让上下文出现部分丢失</Text>
+            <Text style={{ fontSize: 11, color: '#555' }}>Session</Text>
           </Divider>
         );
       }
 
-      // 渲染该 session 的 messages
-      allRendered.push(...this.renderSessionMessages(session.messages, `s${si}`, session.msgTimestamps));
+      allItems.push(...this.renderSessionMessages(session.messages, `s${si}`, session.msgTimestamps, modelInfo));
 
-      // 最后一个 session 渲染 response
       if (si === mainAgentSessions.length - 1 && session.response?.body?.content) {
         const respContent = session.response.body.content;
         if (Array.isArray(respContent)) {
-          allRendered.push(
+          allItems.push(
             <React.Fragment key="resp-divider">
               <Divider style={{ borderColor: '#2a2a2a', margin: '8px 0' }}>
-                <Text type="secondary" style={{ fontSize: 11 }}>Last Response</Text>
+                <Text type="secondary" style={{ fontSize: 11 }}>{t('ui.lastResponse')}</Text>
               </Divider>
             </React.Fragment>
           );
-          allRendered.push(
-            <ChatMessage key="resp-asst" role="assistant" content={respContent} />
+          allItems.push(
+            <ChatMessage key="resp-asst" role="assistant" content={respContent} modelInfo={modelInfo} />
           );
         }
       }
     });
+
+    return allItems;
+  }
+
+  render() {
+    const { mainAgentSessions } = this.props;
+    const { allItems, visibleCount, loading } = this.state;
+
+    if (!mainAgentSessions || mainAgentSessions.length === 0) {
+      return (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+          <Empty description={t('ui.noChat')} />
+        </div>
+      );
+    }
+
+    if (loading) {
+      return (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+          <Spin size="large" />
+        </div>
+      );
+    }
 
     return (
       <div
@@ -191,7 +266,7 @@ class ChatView extends React.Component {
           flexDirection: 'column',
         }}
       >
-        {allRendered}
+        {allItems.slice(0, visibleCount)}
       </div>
     );
   }

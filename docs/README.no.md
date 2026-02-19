@@ -1,0 +1,83 @@
+# CC-Viewer
+
+Et overvåkingssystem for forespørsler i Claude Code som fanger opp og visualiserer alle API-forespørsler og -svar i sanntid. Hjelper utviklere med å overvåke Context for gjennomgang og feilsøking under Vibe Coding.
+
+[简体中文](../README.md) | [English](./README.en.md) | [繁體中文](./README.zh-TW.md) | [한국어](./README.ko.md) | [日本語](./README.ja.md) | [Deutsch](./README.de.md) | [Español](./README.es.md) | [Français](./README.fr.md) | [Italiano](./README.it.md) | [Dansk](./README.da.md) | [Polski](./README.pl.md) | [Русский](./README.ru.md) | [العربية](./README.ar.md) | [Português (Brasil)](./README.pt-BR.md) | [ไทย](./README.th.md) | [Türkçe](./README.tr.md) | [Українська](./README.uk.md)
+
+## Bruk
+
+```bash
+npm install -g cc-viewer
+```
+
+Etter installasjon, kjør:
+
+```bash
+ccv
+```
+
+Denne kommandoen injiserer automatisk overvåkingsskriptet i din lokalt installerte Claude Code og legger til en automatisk reinjeksjonskrok i shell-konfigurasjonen din (`~/.zshrc` eller `~/.bashrc`). Bruk deretter Claude Code som vanlig og åpne `http://localhost:7008` i nettleseren for å se overvåkingsgrensesnittet.
+
+Etter at Claude Code oppdateres, trengs ingen manuell handling — neste gang du kjører `claude`, vil den automatisk oppdage og reinjisere.
+
+### Avinstallering
+
+```bash
+ccv --uninstall
+```
+
+Rydder opp cli.js-injeksjonen og shell-konfigurasjonskroken i ett steg.
+
+## Funksjoner
+
+### Forespørselsovervåking (Raw-modus)
+
+- Sanntidsfangst av alle API-forespørsler fra Claude Code, inkludert strømmende svar
+- Venstre panel viser forespørselsmetode, URL, varighet og statuskode
+- Identifiserer og merker automatisk Main Agent- og Sub Agent-forespørsler
+- Høyre panel støtter veksling mellom Request / Response-faner
+- Request Body utvider `messages`, `system`, `tools` ett nivå som standard
+- Response Body er fullt utvidet som standard
+- Veksle mellom JSON-visning og ren tekstvisning
+- Kopier JSON-innhold med ett klikk
+
+### Chat-modus
+
+Klikk på "Chat-modus"-knappen øverst til høyre for å analysere Main Agent sin fullstendige samtalehistorikk til et chat-grensesnitt:
+
+- Brukermeldinger venstrejustert (blå bobler)
+- Main Agent-svar venstrejustert (mørke grå bobler) med Markdown-gjengivelse
+- Verktøykallresultater vises innebygd i den tilhørende Assistant-meldingen
+- `thinking`-blokker er skjult som standard, klikk for å utvide
+- `tool_use` vises som kompakte verktøykallkort (Bash, Read, Edit, Write, Glob, Grep, Task har hver sin dedikerte visning)
+- Brukervalg-meldinger (AskUserQuestion) vises i spørsmål-og-svar-format
+- Systeminjeksjonstagger (`<system-reminder>`, `<project-reminder>`, osv.) automatisk skjult
+- Systeminjisert tekst automatisk filtrert, viser kun reell brukerinndata
+- Flersesjonsegmentert visning (automatisk segmentert etter `/compact`, `/clear`, osv.)
+- Hver melding viser et tidsstempel nøyaktig til sekundet
+
+### Token-statistikk
+
+Svevepanel i topptekstområdet:
+
+- Token-antall gruppert etter modell (input/output)
+- Cache creation/read-antall og cache-treffrate
+- Main Agent cache-utløpsnedtelling
+
+### Loggadministrasjon
+
+Via CC-Viewer-rullegardinmenyen øverst til venstre:
+
+- Importer lokale logger: bla gjennom historiske loggfiler, gruppert etter prosjekt, åpnes i nytt vindu
+- Lagre gjeldende logg: last ned den gjeldende overvåkings-JSONL-loggfilen
+- Eksporter brukerforespørsler: trekk ut og vis alle brukerinndata, med system-reminder sammenleggbar visning
+
+### Flerspråklig støtte
+
+CC-Viewer støtter 18 språk og bytter automatisk basert på systemets lokalinnstilling:
+
+简体中文 | English | 繁體中文 | 한국어 | Deutsch | Español | Français | Italiano | Dansk | 日本語 | Polski | Русский | العربية | Norsk | Português (Brasil) | ไทย | Türkçe | Українська
+
+## License
+
+MIT

@@ -1,0 +1,83 @@
+# CC-Viewer
+
+Claude Code 請求監控系統，即時擷取並視覺化展示 Claude Code 的所有 API 請求與回應。方便開發者監控自己的 Context，以便於 Vibe Coding 過程中回顧和排查問題。
+
+[简体中文](../README.md) | [English](./README.en.md) | [한국어](./README.ko.md) | [日本語](./README.ja.md) | [Deutsch](./README.de.md) | [Español](./README.es.md) | [Français](./README.fr.md) | [Italiano](./README.it.md) | [Dansk](./README.da.md) | [Polski](./README.pl.md) | [Русский](./README.ru.md) | [العربية](./README.ar.md) | [Norsk](./README.no.md) | [Português (Brasil)](./README.pt-BR.md) | [ไทย](./README.th.md) | [Türkçe](./README.tr.md) | [Українська](./README.uk.md)
+
+## 使用方法
+
+```bash
+npm install -g cc-viewer
+```
+
+安裝完成後執行：
+
+```bash
+ccv
+```
+
+該命令會自動將監控腳本注入到本地安裝的 Claude Code 中，並在 shell 設定檔（`~/.zshrc` 或 `~/.bashrc`）中新增自動重注入 hook。之後正常使用 Claude Code，開啟瀏覽器存取 `http://localhost:7008` 即可查看監控介面。
+
+Claude Code 更新後無需手動操作，下次執行 `claude` 時會自動偵測並重新注入。
+
+### 解除安裝
+
+```bash
+ccv --uninstall
+```
+
+一鍵清理 cli.js 中的注入程式碼和 shell 設定檔中的 hook。
+
+## 功能
+
+### 請求監控（原文模式）
+
+- 即時擷取 Claude Code 發出的所有 API 請求，包括串流回應
+- 左側請求列表展示請求方法、URL、耗時、狀態碼
+- 自動識別並標記 Main Agent 和 Sub Agent 請求
+- 右側詳情面板支援 Request / Response 兩個 Tab 切換查看
+- Request Body 中 `messages`、`system`、`tools` 預設展開一層子屬性
+- Response Body 預設全部展開
+- 支援 JSON 檢視與純文字檢視切換
+- 支援一鍵複製 JSON 內容
+
+### 對話模式
+
+點擊右上角「對話模式」按鈕，將 Main Agent 的完整對話歷史解析為聊天介面：
+
+- 使用者訊息左對齊（藍色氣泡）
+- Main Agent 回覆左對齊（深灰氣泡），支援 Markdown 渲染
+- 工具呼叫結果內嵌顯示在對應的 Assistant 訊息內部
+- `thinking` 區塊預設摺疊，點擊展開查看思考過程
+- `tool_use` 顯示為緊湊的工具呼叫卡片（Bash、Read、Edit、Write、Glob、Grep、Task 等均有專屬展示）
+- 使用者選擇型訊息（AskUserQuestion）以問答形式展示
+- 系統注入標籤（`<system-reminder>`、`<project-reminder>` 等）自動摺疊
+- 自動過濾系統注入文字，只展示使用者的真實輸入
+- 支援多 session 分段展示（`/compact`、`/clear` 等操作後自動分段）
+- 每條訊息顯示精確到秒的時間戳
+
+### Token 消耗統計
+
+Header 區域的「Token 消耗統計」懸浮面板：
+
+- 按模型分組統計 input/output token 數量
+- 顯示 cache creation/read 數量及快取命中率
+- Main Agent 快取失效倒數計時
+
+### 日誌管理
+
+透過左上角 CC-Viewer 下拉選單：
+
+- 匯入本地日誌：瀏覽歷史日誌檔案，按專案分組，在新視窗開啟
+- 當前日誌另存為：下載當前監控的 JSONL 日誌檔案
+- 匯出使用者 Prompt：擷取並展示所有使用者輸入，支援 system-reminder 摺疊查看
+
+### 多語言支援
+
+CC-Viewer 支援 18 種語言，根據系統語言環境自動切換：
+
+简体中文 | English | 繁體中文 | 한국어 | Deutsch | Español | Français | Italiano | Dansk | 日本語 | Polski | Русский | العربية | Norsk | Português (Brasil) | ไทย | Türkçe | Українська
+
+## License
+
+MIT

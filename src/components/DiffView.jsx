@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Typography } from 'antd';
+import { t } from '../i18n';
 
 const { Text } = Typography;
 
@@ -36,7 +37,7 @@ function DiffView({ file_path, old_string, new_string }) {
           style={{ color: '#6b7280', fontSize: 11, cursor: 'pointer', userSelect: 'none' }}
           onClick={() => setCollapsed(c => !c)}
         >
-          {collapsed ? '▶ 展开' : '▼ 收起'}
+          {collapsed ? t('ui.expand') : t('ui.collapse')}
         </Text>
       </div>
       {!collapsed && (
