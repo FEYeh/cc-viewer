@@ -45,8 +45,8 @@ cli.js enjeksiyonunu ve shell yapılandırma hook'unu tek adımda temizler.
 
 Main Agent'ın tam konuşma geçmişini sohbet arayüzüne dönüştürmek için sağ üstteki "Chat modu" düğmesine tıklayın:
 
-- Kullanıcı mesajları sola hizalı (mavi balonlar)
-- Main Agent yanıtları sola hizalı (koyu gri balonlar), Markdown oluşturma desteğiyle
+- Kullanıcı mesajları sağa hizalı (mavi balonlar), Main Agent yanıtları sola hizalı (koyu balonlar) Markdown oluşturma desteğiyle
+- `/compact` mesajları otomatik algılanır ve daraltılmış gösterilir, tam özeti genişletmek için tıklayın
 - Araç çağrısı sonuçları ilgili Assistant mesajı içinde satır içi görüntülenir
 - `thinking` blokları varsayılan olarak daraltılmış, genişletmek için tıklayın
 - `tool_use` kompakt araç çağrısı kartları olarak gösterilir (Bash, Read, Edit, Write, Glob, Grep, Task her biri özel görünüme sahip)
@@ -69,8 +69,10 @@ Başlık alanındaki üzerine gelme paneli:
 Sol üstteki CC-Viewer açılır menüsü aracılığıyla:
 
 - Yerel logları içe aktar: proje bazında gruplandırılmış geçmiş log dosyalarına göz at, yeni pencerede aç
-- Mevcut logu kaydet: mevcut izleme JSONL log dosyasını indir
+- Yerel JSONL dosyası yükle: doğrudan yerel bir `.jsonl` dosyası seçip yükle (200MB'a kadar)
+- Mevcut logu indir: mevcut izleme JSONL log dosyasını indir
 - Kullanıcı promptlarını dışa aktar: tüm kullanıcı girişlerini çıkar ve görüntüle, system-reminder daraltılabilir görünümüyle
+- Promptları TXT olarak dışa aktar: kullanıcı promptlarını yerel bir `.txt` dosyasına aktar
 
 ### Çoklu Dil Desteği
 

@@ -45,8 +45,8 @@ Czyści wstrzyknięcie cli.js i hook konfiguracji powłoki w jednym kroku.
 
 Kliknij przycisk "Chat mode" w prawym górnym rogu, aby przetworzyć pełną historię konwersacji Main Agent na interfejs czatu:
 
-- Wiadomości użytkownika wyrównane do lewej (niebieskie dymki)
-- Odpowiedzi Main Agent wyrównane do lewej (ciemnoszare dymki) z renderowaniem Markdown
+- Wiadomości użytkownika wyrównane do prawej (niebieskie dymki), odpowiedzi Main Agent wyrównane do lewej (ciemne dymki) z renderowaniem Markdown
+- Wiadomości `/compact` automatycznie wykrywane i wyświetlane w formie zwiniętej, kliknij aby rozwinąć pełne podsumowanie
 - Wyniki wywołań narzędzi wyświetlane inline w odpowiedniej wiadomości Assistant
 - Bloki `thinking` domyślnie zwinięte, kliknij aby rozwinąć
 - `tool_use` wyświetlane jako kompaktowe karty wywołań narzędzi (Bash, Read, Edit, Write, Glob, Grep, Task mają dedykowane wyświetlanie)
@@ -69,8 +69,10 @@ Panel po najechaniu w obszarze nagłówka:
 Przez menu rozwijane CC-Viewer w lewym górnym rogu:
 
 - Importuj lokalne logi: przeglądaj historyczne pliki logów, pogrupowane według projektu, otwiera w nowym oknie
-- Zapisz bieżący log: pobierz bieżący plik logu monitorowania JSONL
+- Wczytaj lokalny plik JSONL: bezpośrednio wybierz i wczytaj lokalny plik `.jsonl` (do 200MB)
+- Pobierz bieżący log: pobierz bieżący plik logu monitorowania JSONL
 - Eksportuj prompty użytkownika: wyodrębnij i wyświetl wszystkie dane wejściowe użytkownika, z rozwijanym widokiem system-reminder
+- Eksportuj prompty do TXT: eksportuj prompty użytkownika do lokalnego pliku `.txt`
 
 ### Obsługa wielu języków
 

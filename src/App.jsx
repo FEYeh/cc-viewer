@@ -1,6 +1,6 @@
 import React from 'react';
-import { ConfigProvider, Layout, theme, Modal, Collapse, List, Tag, Spin } from 'antd';
-import { FolderOutlined, FileTextOutlined } from '@ant-design/icons';
+import { ConfigProvider, Layout, theme, Modal, Collapse, List, Tag, Spin, Button, message } from 'antd';
+import { FolderOutlined, FileTextOutlined, UploadOutlined } from '@ant-design/icons';
 import AppHeader from './components/AppHeader';
 import RequestList from './components/RequestList';
 import DetailPanel from './components/DetailPanel';
@@ -298,6 +298,55 @@ class App extends React.Component {
     this.setState({ importModalVisible: false });
   };
 
+  handleLoadLocalJsonlFile = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.jsonl';
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.size > 200 * 1024 * 1024) {
+        message.error(t('ui.fileTooLarge'));
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const content = ev.target.result;
+          const entries = content.split('\n---\n').filter(line => line.trim()).map(entry => {
+            try { return JSON.parse(entry); } catch { return null; }
+          }).filter(Boolean);
+          if (entries.length === 0) {
+            message.error(t('ui.noLogs'));
+            return;
+          }
+          let mainAgentSessions = [];
+          for (const entry of entries) {
+            if (entry.mainAgent && entry.body && Array.isArray(entry.body.messages)) {
+              mainAgentSessions = this.mergeMainAgentSessions(mainAgentSessions, entry);
+            }
+          }
+          const filtered = entries.filter(r =>
+            !r.isHeartbeat && !/\/api\/eval\/sdk-/.test(r.url || '') && !/\/messages\/count_tokens/.test(r.url || '')
+          );
+          this._isLocalLog = true;
+          this._localLogFile = file.name;
+          if (this.eventSource) { this.eventSource.close(); this.eventSource = null; }
+          this.setState({
+            requests: entries,
+            selectedIndex: filtered.length > 0 ? filtered.length - 1 : null,
+            mainAgentSessions,
+            importModalVisible: false,
+          });
+        } catch (err) {
+          message.error(t('ui.noLogs'));
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  };
+
   formatTimestamp(ts) {
     // 20260217_224218 -> 2026-02-17 22:42:18
     if (!ts || ts.length < 15) return ts;
@@ -415,6 +464,11 @@ class App extends React.Component {
           width={600}
           styles={{ body: { maxHeight: '60vh', overflow: 'auto' } }}
         >
+          <div style={{ marginBottom: 12 }}>
+            <Button icon={<UploadOutlined />} onClick={this.handleLoadLocalJsonlFile}>
+              {t('ui.loadLocalJsonl')}
+            </Button>
+          </div>
           {this.state.localLogsLoading ? (
             <div style={{ textAlign: 'center', padding: 40 }}><Spin /></div>
           ) : Object.keys(this.state.localLogs).length === 0 ? (

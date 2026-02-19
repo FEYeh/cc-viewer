@@ -1,6 +1,6 @@
 import React from 'react';
 import { Space, Tag, Button, Badge, Typography, Dropdown, Popover, Modal, Collapse } from 'antd';
-import { MessageOutlined, FileTextOutlined, ImportOutlined, DownOutlined, DashboardOutlined, SaveOutlined, ExportOutlined } from '@ant-design/icons';
+import { MessageOutlined, FileTextOutlined, ImportOutlined, DownOutlined, DashboardOutlined, SaveOutlined, ExportOutlined, DownloadOutlined } from '@ant-design/icons';
 import { isSystemText } from '../utils/helpers';
 import { t, getLang, setLang } from '../i18n';
 
@@ -233,6 +233,62 @@ class AppHeader extends React.Component {
     });
   }
 
+  handleExportPromptsTxt = () => {
+    const { requests = [] } = this.props;
+    const lines = [];
+    let prevUserCount = 0;
+    let prevLastMsg = '';
+    const mainAgentRequests = requests.filter(r => r.mainAgent);
+    for (let ri = 0; ri < mainAgentRequests.length; ri++) {
+      const req = mainAgentRequests[ri];
+      const messages = req.body?.messages || [];
+      const timestamp = req.timestamp || '';
+      const userMsgs = [];
+      for (const msg of messages) {
+        if (msg.role !== 'user') continue;
+        if (typeof msg.content === 'string') {
+          const text = msg.content.trim();
+          if (!text) continue;
+          // 跳过系统文本（以 XML tag 开头的）
+          if (/^<[a-zA-Z_][\w-]*[\s>]/i.test(text)) continue;
+          // 跳过 /compact 命令
+          if (/^\/compact\b/i.test(text)) continue;
+          // SUGGESTION MODE 保留用户选择
+          if (/^\[SUGGESTION MODE:/i.test(text)) continue;
+          userMsgs.push(text);
+        } else if (Array.isArray(msg.content)) {
+          const parts = [];
+          for (const b of msg.content) {
+            if (b.type !== 'text' || !b.text?.trim()) continue;
+            const text = b.text.trim();
+            if (/^<[a-zA-Z_][\w-]*[\s>]/i.test(text)) continue;
+            if (/^\/compact\b/i.test(text)) continue;
+            if (/^\[SUGGESTION MODE:/i.test(text)) continue;
+            parts.push(text);
+          }
+          if (parts.length > 0) userMsgs.push(parts.join('\n'));
+        }
+      }
+      const lastMsg = userMsgs.length > 0 ? userMsgs[userMsgs.length - 1] : '';
+      if (userMsgs.length > 0 && (userMsgs.length > prevUserCount || lastMsg !== prevLastMsg)) {
+        const ts = timestamp ? new Date(timestamp).toLocaleString() : '';
+        if (ts) lines.push(`--- ${ts} ---`);
+        lines.push(lastMsg);
+        lines.push('');
+      }
+      prevUserCount = userMsgs.length;
+      prevLastMsg = lastMsg;
+    }
+    if (lines.length === 0) return;
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `user-prompts-${new Date().toISOString().slice(0, 10)}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   renderTokenStats() {
     const { requests = [] } = this.props;
     const byModel = computeTokenStats(requests);
@@ -435,6 +491,7 @@ class AppHeader extends React.Component {
         onClick: () => {
           const a = document.createElement('a');
           a.href = '/api/download-log';
+          a.download = '';
           a.click();
         },
       },
@@ -518,6 +575,11 @@ class AppHeader extends React.Component {
           footer={null}
           width={700}
         >
+          <div style={{ marginBottom: 12 }}>
+            <Button icon={<DownloadOutlined />} onClick={this.handleExportPromptsTxt}>
+              {t('ui.exportPromptsTxt')}
+            </Button>
+          </div>
           <div style={{ maxHeight: 500, overflow: 'auto' }}>
             {this.state.promptData.length === 0 && (
               <div style={{ color: '#999', padding: 12 }}>{t('ui.noPrompt')}</div>

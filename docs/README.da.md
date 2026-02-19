@@ -45,8 +45,8 @@ Rydder op i cli.js-injektionen og shell-konfigurationens hook i ét trin.
 
 Klik på "Chat mode"-knappen øverst til højre for at parse Main Agent's fulde samtalehistorik til en chatgrænseflade:
 
-- Brugermeddelelser venstrejusteret (blå bobler)
-- Main Agent-svar venstrejusteret (mørkegrå bobler) med Markdown-gengivelse
+- Brugermeddelelser højrejusteret (blå bobler), Main Agent-svar venstrejusteret (mørke bobler) med Markdown-gengivelse
+- `/compact`-meddelelser registreres automatisk og vises sammenklappet, klik for at udvide fuld opsummering
 - Værktøjskaldsresultater vist inline i den tilhørende Assistant-meddelelse
 - `thinking`-blokke skjult som standard, klik for at udvide
 - `tool_use` vist som kompakte værktøjskaldskort (Bash, Read, Edit, Write, Glob, Grep, Task har hver deres dedikerede visning)
@@ -69,8 +69,10 @@ Svævepanel i headerområdet:
 Via CC-Viewer-rullemenuen øverst til venstre:
 
 - Importér lokale logs: gennemse historiske logfiler, grupperet efter projekt, åbner i nyt vindue
-- Gem nuværende log: download den aktuelle overvågnings-JSONL-logfil
+- Indlæs lokal JSONL-fil: vælg og indlæs en lokal `.jsonl`-fil direkte (op til 200 MB)
+- Download nuværende log: download den aktuelle overvågnings-JSONL-logfil
 - Eksportér brugerprompter: udtræk og vis alle brugerinput, med system-reminder sammenklappelig visning
+- Eksportér prompter til TXT: eksportér brugerprompter til en lokal `.txt`-fil
 
 ### Flersproget understøttelse
 

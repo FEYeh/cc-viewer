@@ -45,8 +45,8 @@ ccv --uninstall
 
 点击右上角「对话模式」按钮，将 Main Agent 的完整对话历史解析为聊天界面：
 
-- 用户消息左对齐（蓝色气泡）
-- Main Agent 回复左对齐（深灰气泡），支持 Markdown 渲染
+- 用户消息右对齐（蓝色气泡），Main Agent 回复左对齐（深色气泡），支持 Markdown 渲染
+- `/compact` 消息自动识别并折叠展示，点击展开查看完整摘要
 - 工具调用结果内联显示在对应的 Assistant 消息内部
 - `thinking` 块默认折叠，点击展开查看思考过程
 - `tool_use` 显示为紧凑的工具调用卡片（Bash、Read、Edit、Write、Glob、Grep、Task 等均有专属展示）
@@ -69,8 +69,10 @@ Header 区域的「Token 消耗统计」悬浮面板：
 通过左上角 CC-Viewer 下拉菜单：
 
 - 导入本地日志：浏览历史日志文件，按项目分组，在新窗口打开
+- 加载本地 JSONL 文件：直接选择本地 `.jsonl` 文件加载查看（支持最大 200MB）
 - 当前日志另存为：下载当前监控的 JSONL 日志文件
 - 导出用户 Prompt：提取并展示所有用户输入，支持 system-reminder 折叠查看
+- 导出 Prompt 为 TXT：将用户 Prompt 导出为本地 `.txt` 文件
 
 ### 多语言支持
 

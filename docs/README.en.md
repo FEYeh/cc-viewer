@@ -45,8 +45,8 @@ Cleans up the cli.js injection and the shell config hook in one step.
 
 Click the "Chat mode" button in the top right to parse Main Agent's full conversation history into a chat interface:
 
-- User messages left-aligned (blue bubbles)
-- Main Agent replies left-aligned (dark gray bubbles) with Markdown rendering
+- User messages right-aligned (blue bubbles), Main Agent replies left-aligned (dark bubbles) with Markdown rendering
+- `/compact` messages auto-detected and displayed collapsed, click to expand full summary
 - Tool call results displayed inline within the corresponding Assistant message
 - `thinking` blocks collapsed by default, click to expand
 - `tool_use` shown as compact tool call cards (Bash, Read, Edit, Write, Glob, Grep, Task each have dedicated displays)
@@ -69,8 +69,10 @@ Hover panel in the header area:
 Via the CC-Viewer dropdown menu in the top left:
 
 - Import local logs: browse historical log files, grouped by project, opens in new window
-- Save current log: download the current monitoring JSONL log file
+- Load local JSONL file: directly select and load a local `.jsonl` file (up to 200MB)
+- Download current log: download the current monitoring JSONL log file
 - Export user prompts: extract and display all user inputs, with system-reminder collapsible view
+- Export prompts to TXT: export user prompts to a local `.txt` file
 
 ### Multi-language Support
 

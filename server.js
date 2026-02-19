@@ -264,7 +264,7 @@ function handleRequest(req, res) {
     // 去掉 query string
     filePath = filePath.split('?')[0];
 
-    const fullPath = join(__dirname, filePath);
+    const fullPath = join(__dirname, 'dist', filePath);
 
     try {
       if (existsSync(fullPath) && statSync(fullPath).isFile()) {
@@ -281,7 +281,7 @@ function handleRequest(req, res) {
 
     // SPA fallback: 非 API/非静态文件请求返回 index.html
     try {
-      const indexPath = join(__dirname, 'index.html');
+      const indexPath = join(__dirname, 'dist', 'index.html');
       const html = readFileSync(indexPath, 'utf-8');
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       res.end(html);

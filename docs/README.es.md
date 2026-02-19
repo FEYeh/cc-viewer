@@ -45,8 +45,8 @@ Limpia la inyección de cli.js y el hook de configuración de shell en un solo p
 
 Haga clic en el botón "Chat mode" en la esquina superior derecha para analizar el historial completo de conversación del Main Agent en una interfaz de chat:
 
-- Mensajes del usuario alineados a la izquierda (burbujas azules)
-- Respuestas del Main Agent alineadas a la izquierda (burbujas gris oscuro) con renderizado Markdown
+- Mensajes del usuario alineados a la derecha (burbujas azules), respuestas del Main Agent alineadas a la izquierda (burbujas oscuras) con renderizado Markdown
+- Mensajes `/compact` detectados automáticamente y mostrados colapsados, clic para expandir el resumen completo
 - Resultados de llamadas a herramientas mostrados en línea dentro del mensaje Assistant correspondiente
 - Bloques `thinking` colapsados por defecto, clic para expandir
 - `tool_use` mostrado como tarjetas compactas de llamada a herramientas (Bash, Read, Edit, Write, Glob, Grep, Task tienen visualizaciones dedicadas)
@@ -69,8 +69,10 @@ Panel flotante en el área del encabezado:
 A través del menú desplegable de CC-Viewer en la esquina superior izquierda:
 
 - Importar logs locales: explorar archivos de log históricos, agrupados por proyecto, se abre en nueva ventana
-- Guardar log actual: descargar el archivo de log JSONL de monitoreo actual
+- Cargar archivo JSONL local: seleccionar y cargar directamente un archivo `.jsonl` local (hasta 200 MB)
+- Descargar log actual: descargar el archivo de log JSONL de monitoreo actual
 - Exportar prompts del usuario: extraer y mostrar todas las entradas del usuario, con vista colapsable de system-reminder
+- Exportar prompts a TXT: exportar los prompts del usuario a un archivo `.txt` local
 
 ### Soporte multilingüe
 

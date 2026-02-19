@@ -19,7 +19,7 @@ const avatarBase = {
 };
 
 const bubbleBase = {
-  borderRadius: 12,
+  borderRadius: 8,
   padding: '10px 14px',
   maxWidth: '100%',
   fontSize: 14,
@@ -228,18 +228,60 @@ class ChatMessage extends React.Component {
   }
 
   renderUserMessage() {
-    const { text } = this.props;
+    const { text, timestamp } = this.props;
+    const timeStr = this.formatTime(timestamp);
+
+    // 检测 /compact 消息
+    const isCompact = text && text.includes('This session is being continued from a previous conversation that ran out of context');
+
+    if (isCompact) {
+      return (
+        <div style={{ display: 'flex', gap: 10, padding: '8px 0', justifyContent: 'flex-end' }}>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+              {timeStr && <Text style={{ fontSize: 10, color: '#6b7280', flexShrink: 0 }}>{timeStr}</Text>}
+              <Text type="secondary" style={{ fontSize: 11, marginLeft: 'auto' }}>User — /compact</Text>
+            </div>
+            <div style={{ ...bubbleBase, background: '#1668dc', color: '#e5e7eb' }}>
+              <Collapse
+                ghost
+                size="small"
+                items={[{
+                  key: '1',
+                  label: <Text style={{ fontSize: 12, color: '#93c5fd' }}>Compact Summary</Text>,
+                  children: <pre style={{
+                    fontSize: 12,
+                    color: '#d1d5db',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-all',
+                    margin: 0,
+                  }}>{text}</pre>,
+                }]}
+                style={{ margin: 0 }}
+              />
+            </div>
+          </div>
+          <div style={{ ...avatarBase, background: '#1e40af' }}
+            dangerouslySetInnerHTML={{ __html: getSvgAvatar('user') }}
+          />
+        </div>
+      );
+    }
+
     return (
-      <div style={{ display: 'flex', gap: 10, padding: '8px 0' }}>
-        <div style={{ ...avatarBase, background: '#1e40af' }}
-          dangerouslySetInnerHTML={{ __html: getSvgAvatar('user') }}
-        />
+      <div style={{ display: 'flex', gap: 10, padding: '8px 0', justifyContent: 'flex-end' }}>
         <div style={{ minWidth: 0, flex: 1 }}>
-          {this.renderLabel('User')}
-          <div style={{ ...bubbleBase, background: '#1e3a5f', color: '#e5e7eb' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+            {timeStr && <Text style={{ fontSize: 10, color: '#6b7280', flexShrink: 0 }}>{timeStr}</Text>}
+            <Text type="secondary" style={{ fontSize: 11, marginLeft: 'auto' }}>User</Text>
+          </div>
+          <div style={{ ...bubbleBase, background: '#1668dc', color: '#e5e7eb' }}>
             {escapeHtml(text)}
           </div>
         </div>
+        <div style={{ ...avatarBase, background: '#1e40af' }}
+          dangerouslySetInnerHTML={{ __html: getSvgAvatar('user') }}
+        />
       </div>
     );
   }
@@ -321,7 +363,7 @@ class ChatMessage extends React.Component {
         />
         <div style={{ minWidth: 0, flex: 1 }}>
           {this.renderLabel(modelInfo?.name || 'MainAgent')}
-          <div style={{ ...bubbleBase, background: '#1a2332', color: '#e5e7eb' }}>
+          <div style={{ ...bubbleBase, background: 'rgb(20,20,20)', color: '#e5e7eb' }}>
             {innerContent}
           </div>
         </div>

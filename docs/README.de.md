@@ -45,8 +45,8 @@ Bereinigt die cli.js-Injektion und den Shell-Konfigurations-Hook in einem Schrit
 
 Klicken Sie auf die Schaltfläche „Chat mode" oben rechts, um den vollständigen Gesprächsverlauf des Main Agent als Chat-Oberfläche darzustellen:
 
-- Benutzernachrichten linksbündig (blaue Blasen)
-- Main Agent-Antworten linksbündig (dunkelgraue Blasen) mit Markdown-Rendering
+- Benutzernachrichten rechtsbündig (blaue Blasen), Main Agent-Antworten linksbündig (dunkle Blasen) mit Markdown-Rendering
+- `/compact`-Nachrichten werden automatisch erkannt und eingeklappt angezeigt, zum Aufklappen der vollständigen Zusammenfassung klicken
 - Tool-Aufruf-Ergebnisse werden inline innerhalb der entsprechenden Assistant-Nachricht angezeigt
 - `thinking`-Blöcke standardmäßig eingeklappt, zum Aufklappen klicken
 - `tool_use` als kompakte Tool-Aufruf-Karten dargestellt (Bash, Read, Edit, Write, Glob, Grep, Task haben jeweils eigene Darstellungen)
@@ -69,8 +69,10 @@ Hover-Panel im Kopfbereich:
 Über das CC-Viewer-Dropdown-Menü oben links:
 
 - Lokale Logs importieren: historische Log-Dateien durchsuchen, nach Projekt gruppiert, öffnet in neuem Fenster
-- Aktuelles Log speichern: aktuelle Überwachungs-JSONL-Log-Datei herunterladen
+- Lokale JSONL-Datei laden: eine lokale `.jsonl`-Datei direkt auswählen und laden (bis zu 200 MB)
+- Aktuelles Log herunterladen: aktuelle Überwachungs-JSONL-Log-Datei herunterladen
 - Benutzer-Prompts exportieren: alle Benutzereingaben extrahieren und anzeigen, mit einklappbarer system-reminder-Ansicht
+- Prompts als TXT exportieren: Benutzer-Prompts in eine lokale `.txt`-Datei exportieren
 
 ### Mehrsprachige Unterstützung
 
