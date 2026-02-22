@@ -22,12 +22,12 @@ function generateNewLogFilePath() {
   let cwd;
   try { cwd = process.cwd(); } catch { cwd = homedir(); }
   const projectName = basename(cwd).replace(/[^a-zA-Z0-9_\-\.]/g, '_');
-  const dir = join(homedir(), '.claude', 'cc-viewer');
+  const dir = join(homedir(), '.claude', 'cc-viewer', projectName);
   try { mkdirSync(dir, { recursive: true }); } catch {}
   return { filePath: join(dir, `${projectName}_${ts}.jsonl`), dir, projectName };
 }
 
-// 查找同项目最近的日志文件，检查最后一条响应是否在1小时内
+// 查找同项目最近的日志文件
 function findRecentLog(dir, projectName) {
   try {
     const files = readdirSync(dir)
@@ -35,22 +35,7 @@ function findRecentLog(dir, projectName) {
       .sort()
       .reverse();
     if (files.length === 0) return null;
-    const latestFile = join(dir, files[0]);
-    const content = readFileSync(latestFile, 'utf-8');
-    const entries = content.split('\n---\n').filter(s => s.trim());
-    // 从后往前找最后一条有 response 的记录
-    for (let i = entries.length - 1; i >= 0; i--) {
-      try {
-        const entry = JSON.parse(entries[i]);
-        if (entry.response) {
-          const ts = new Date(entry.timestamp).getTime();
-          if (Date.now() - ts < 3600000) {
-            return latestFile;
-          }
-          return null;
-        }
-      } catch {}
-    }
+    return join(dir, files[0]);
   } catch {}
   return null;
 }
@@ -138,7 +123,7 @@ const _initPromise = (async () => {
   } catch {}
 })();
 
-export { LOG_FILE, _initPromise, _resumeState, _choicePromise, resolveResumeChoice };
+export { LOG_FILE, _initPromise, _resumeState, _choicePromise, resolveResumeChoice, _projectName };
 
 const MAX_LOG_SIZE = 200 * 1024 * 1024; // 200MB
 

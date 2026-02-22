@@ -40,6 +40,7 @@ ccv --uninstall
 - Kopiér JSON-indhold med ét klik
 - MainAgent-anmodninger understøtter Body Diff JSON, viser sammenfoldet forskelle med den forrige MainAgent-anmodning (kun ændrede/tilføjede felter)
 - Body Diff JSON-tooltip kan lukkes; når det er lukket, gemmes præferencen på serveren og vises aldrig igen
+- Inline token-forbrugsstatistik per anmodning (input/output tokens, cache-oprettelse/-læsning, hitrate)
 
 ### Chat Mode
 
@@ -48,13 +49,15 @@ Klik på "Chat mode"-knappen øverst til højre for at parse Main Agent's fulde 
 - Brugermeddelelser højrejusteret (blå bobler), Main Agent-svar venstrejusteret (mørke bobler) med Markdown-gengivelse
 - `/compact`-meddelelser registreres automatisk og vises sammenklappet, klik for at udvide fuld opsummering
 - Værktøjskaldsresultater vist inline i den tilhørende Assistant-meddelelse
-- `thinking`-blokke skjult som standard, klik for at udvide
+- `thinking`-blokke skjult som standard, gengivet som Markdown, klik for at udvide
 - `tool_use` vist som kompakte værktøjskaldskort (Bash, Read, Edit, Write, Glob, Grep, Task har hver deres dedikerede visning)
+- Task (SubAgent) værktøjsresultater gengivet som Markdown
 - Brugervalgmeddelelser (AskUserQuestion) vist i spørgsmål-og-svar-format
 - Systemtags (`<system-reminder>`, `<project-reminder>`, osv.) automatisk skjult
 - Systemtekst automatisk filtreret, viser kun reel brugerinput
 - Visning opdelt i flere sessioner (automatisk opdelt efter `/compact`, `/clear`, osv.)
-- Hver meddelelse viser et tidsstempel nøjagtigt til sekundet
+- Hver meddelelse viser et tidsstempel nøjagtigt til sekundet, afledt fra API-anmodningstiming
+- Indstillingspanel: skift standardsammenklappet tilstand for værktøjsresultater og tænkeblokke
 
 ### Token Stats
 

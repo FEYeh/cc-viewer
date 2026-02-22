@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Typography } from 'antd';
 import { t } from '../i18n';
+import { renderMarkdown } from '../utils/markdown';
 import styles from './ToolResultView.module.css';
 
 const { Text } = Typography;
@@ -291,8 +292,9 @@ function highlight(text, lang) {
   return result;
 }
 
-function ToolResultView({ toolName, toolInput, resultText }) {
-  const [collapsed, setCollapsed] = useState(false);
+function ToolResultView({ toolName, toolInput, resultText, defaultCollapsed }) {
+  const [collapsed, setCollapsed] = useState(defaultCollapsed ?? false);
+  useEffect(() => { setCollapsed(defaultCollapsed ?? false); }, [defaultCollapsed]);
   const isCodeTool = CODE_TOOLS.includes(toolName);
   const lang = isCodeTool ? detectLang(toolName, toolInput, resultText) : null;
   const displayText = resultText.length > 5000 ? resultText.substring(0, 5000) + '\n... (truncated)' : resultText;
@@ -309,13 +311,42 @@ function ToolResultView({ toolName, toolInput, resultText }) {
   }
 
   if (!isCodeTool) {
-    // Non-code tool: plain text
+    // Task tool: render as markdown
+    if (toolName === 'Task') {
+      return (
+        <div className={styles.plainResult}>
+          <div className={styles.codeHeader}>
+            <Text type="secondary" className={styles.plainTitle}>{title}</Text>
+            <Text
+              className={styles.codeToggle}
+              onClick={() => setCollapsed(c => !c)}
+            >
+              {collapsed ? t('ui.expand') : t('ui.collapse')}
+            </Text>
+          </div>
+          {!collapsed && (
+            <div className={`chat-md ${styles.markdownBody}`} dangerouslySetInnerHTML={{ __html: renderMarkdown(displayText) }} />
+          )}
+        </div>
+      );
+    }
+    // Non-code tool: plain text with collapse support
     return (
       <div className={styles.plainResult}>
-        <Text type="secondary" className={styles.plainTitle}>{title}</Text>
-        <pre className={styles.plainPre}>
-          {displayText}
-        </pre>
+        <div className={styles.codeHeader}>
+          <Text type="secondary" className={styles.plainTitle}>{title}</Text>
+          <Text
+            className={styles.codeToggle}
+            onClick={() => setCollapsed(c => !c)}
+          >
+            {collapsed ? t('ui.expand') : t('ui.collapse')}
+          </Text>
+        </div>
+        {!collapsed && (
+          <pre className={styles.plainPre}>
+            {displayText}
+          </pre>
+        )}
       </div>
     );
   }

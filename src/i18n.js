@@ -1,26 +1,13 @@
-import zh from '../locales/zh.json';
-import en from '../locales/en.json';
-import zhTW from '../locales/zh-TW.json';
-import ko from '../locales/ko.json';
-import de from '../locales/de.json';
-import es from '../locales/es.json';
-import fr from '../locales/fr.json';
-import it from '../locales/it.json';
-import da from '../locales/da.json';
-import ja from '../locales/ja.json';
-import pl from '../locales/pl.json';
-import ru from '../locales/ru.json';
-import ar from '../locales/ar.json';
-import no from '../locales/no.json';
-import ptBR from '../locales/pt-BR.json';
-import th from '../locales/th.json';
-import tr from '../locales/tr.json';
-import uk from '../locales/uk.json';
+import i18nData from '../locales/i18n.json';
 
-const locales = {
-  zh, en, 'zh-TW': zhTW, ko, de, es, fr, it, da, ja,
-  pl, ru, ar, no, 'pt-BR': ptBR, th, tr, uk,
-};
+// 将 { key: { lang: text } } 转换为 { lang: { key: text } }
+const locales = {};
+for (const [key, translations] of Object.entries(i18nData)) {
+  for (const [lang, text] of Object.entries(translations)) {
+    if (!locales[lang]) locales[lang] = {};
+    locales[lang][key] = text;
+  }
+}
 
 let currentLang = 'zh';
 

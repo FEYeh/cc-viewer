@@ -34,6 +34,10 @@ class ChatView extends React.Component {
   componentDidUpdate(prevProps) {
     if (prevProps.mainAgentSessions !== this.props.mainAgentSessions) {
       this.startRender();
+    } else if (prevProps.collapseToolResults !== this.props.collapseToolResults || prevProps.expandThinking !== this.props.expandThinking) {
+      // 设置变化时重建消息列表，使已渲染的 ToolResultView 获得新的 defaultCollapsed
+      const allItems = this.buildAllItems();
+      this.setState({ allItems, visibleCount: allItems.length });
     }
   }
 
@@ -82,8 +86,8 @@ class ChatView extends React.Component {
     if (el) el.scrollTop = el.scrollHeight;
   }
 
-  renderSessionMessages(messages, keyPrefix, msgTimestamps, modelInfo) {
-    const { userProfile } = this.props;
+  renderSessionMessages(messages, keyPrefix, modelInfo) {
+    const { userProfile, collapseToolResults, expandThinking } = this.props;
     const toolUseMap = {};
     for (const msg of messages) {
       if (msg.role === 'assistant' && Array.isArray(msg.content)) {
@@ -131,7 +135,7 @@ class ChatView extends React.Component {
     for (let mi = 0; mi < messages.length; mi++) {
       const msg = messages[mi];
       const content = msg.content;
-      const ts = msgTimestamps && msgTimestamps[mi] ? msgTimestamps[mi] : null;
+      const ts = msg._timestamp || null;
 
       if (msg.role === 'user') {
         if (Array.isArray(content)) {
@@ -177,11 +181,11 @@ class ChatView extends React.Component {
       } else if (msg.role === 'assistant') {
         if (Array.isArray(content)) {
           renderedMessages.push(
-            <ChatMessage key={`${keyPrefix}-asst-${mi}`} role="assistant" content={content} toolResultMap={toolResultMap} timestamp={ts} modelInfo={modelInfo} />
+            <ChatMessage key={`${keyPrefix}-asst-${mi}`} role="assistant" content={content} toolResultMap={toolResultMap} timestamp={ts} modelInfo={modelInfo} collapseToolResults={collapseToolResults} expandThinking={expandThinking} />
           );
         } else if (typeof content === 'string') {
           renderedMessages.push(
-            <ChatMessage key={`${keyPrefix}-asst-${mi}`} role="assistant" content={[{ type: 'text', text: content }]} toolResultMap={toolResultMap} timestamp={ts} modelInfo={modelInfo} />
+            <ChatMessage key={`${keyPrefix}-asst-${mi}`} role="assistant" content={[{ type: 'text', text: content }]} toolResultMap={toolResultMap} timestamp={ts} modelInfo={modelInfo} collapseToolResults={collapseToolResults} expandThinking={expandThinking} />
           );
         }
       }
@@ -191,7 +195,7 @@ class ChatView extends React.Component {
   }
 
   buildAllItems() {
-    const { mainAgentSessions, requests } = this.props;
+    const { mainAgentSessions, requests, collapseToolResults, expandThinking } = this.props;
     if (!mainAgentSessions || mainAgentSessions.length === 0) return [];
 
     // 从最新的 mainAgent 请求中提取模型名
@@ -217,7 +221,7 @@ class ChatView extends React.Component {
         );
       }
 
-      allItems.push(...this.renderSessionMessages(session.messages, `s${si}`, session.msgTimestamps, modelInfo));
+      allItems.push(...this.renderSessionMessages(session.messages, `s${si}`, modelInfo));
 
       if (si === mainAgentSessions.length - 1 && session.response?.body?.content) {
         const respContent = session.response.body.content;
@@ -230,7 +234,7 @@ class ChatView extends React.Component {
             </React.Fragment>
           );
           allItems.push(
-            <ChatMessage key="resp-asst" role="assistant" content={respContent} modelInfo={modelInfo} />
+            <ChatMessage key="resp-asst" role="assistant" content={respContent} modelInfo={modelInfo} collapseToolResults={collapseToolResults} expandThinking={expandThinking} />
           );
         }
       }

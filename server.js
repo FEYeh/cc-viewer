@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, extname, basename } from 'node:path';
 import { homedir, userInfo, platform } from 'node:os';
 import { execSync } from 'node:child_process';
-import { LOG_FILE, _initPromise, _resumeState, resolveResumeChoice } from './interceptor.js';
+import { LOG_FILE, _initPromise, _resumeState, resolveResumeChoice, _projectName } from './interceptor.js';
 import { t } from './i18n.js';
 
 const LOG_DIR = join(homedir(), '.claude', 'cc-viewer');
@@ -256,9 +256,8 @@ function handleRequest(req, res) {
     }
 
     const entries = readLogFile();
-    entries.forEach(entry => {
-      res.write(`data: ${JSON.stringify(entry)}\n\n`);
-    });
+    // 初始化时发送 full_reload 事件（而非逐条发送），让前端可以批量处理时间戳
+    res.write(`event: full_reload\ndata: ${JSON.stringify(entries)}\n\n`);
 
     req.on('close', () => {
       clients = clients.filter(client => client !== res);
@@ -282,6 +281,13 @@ function handleRequest(req, res) {
     return;
   }
 
+  // 当前监控的项目名称
+  if (url === '/api/project-name' && method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ projectName: _projectName || '' }));
+    return;
+  }
+
   // macOS 用户头像和显示名
   if (url === '/api/user-profile' && method === 'GET') {
     const profile = getUserProfile();
@@ -290,23 +296,30 @@ function handleRequest(req, res) {
     return;
   }
 
-  // 列出本地日志文件（按项目分组）
+  // 列出本地日志文件（按项目分组，遍历项目子目录）
   if (url === '/api/local-logs' && method === 'GET') {
     try {
-      const files = existsSync(LOG_DIR)
-        ? readdirSync(LOG_DIR).filter(f => f.endsWith('.jsonl')).sort().reverse()
-        : [];
-      // 按项目名分组: {projectName: [{file, timestamp, size}]}
       const grouped = {};
-      for (const f of files) {
-        const match = f.match(/^(.+?)_(\d{8}_\d{6})\.jsonl$/);
-        if (!match) continue;
-        const project = match[1];
-        const ts = match[2]; // 20260217_224218
-        const filePath = join(LOG_DIR, f);
-        const size = statSync(filePath).size;
-        if (!grouped[project]) grouped[project] = [];
-        grouped[project].push({ file: f, timestamp: ts, size });
+      if (existsSync(LOG_DIR)) {
+        const entries = readdirSync(LOG_DIR, { withFileTypes: true });
+        for (const entry of entries) {
+          if (!entry.isDirectory()) continue;
+          const project = entry.name;
+          const projectDir = join(LOG_DIR, project);
+          const files = readdirSync(projectDir)
+            .filter(f => f.endsWith('.jsonl'))
+            .sort()
+            .reverse();
+          for (const f of files) {
+            const match = f.match(/^(.+?)_(\d{8}_\d{6})\.jsonl$/);
+            if (!match) continue;
+            const ts = match[2];
+            const filePath = join(projectDir, f);
+            const size = statSync(filePath).size;
+            if (!grouped[project]) grouped[project] = [];
+            grouped[project].push({ file: `${project}/${f}`, timestamp: ts, size });
+          }
+        }
       }
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(grouped));
@@ -317,11 +330,11 @@ function handleRequest(req, res) {
     return;
   }
 
-  // 读取指定本地日志文件
+  // 读取指定本地日志文件（支持 project/file 路径）
   if (url.startsWith('/api/local-log?') && method === 'GET') {
     const params = new URLSearchParams(url.split('?')[1]);
     const file = params.get('file');
-    if (!file || file.includes('..') || file.includes('/')) {
+    if (!file || file.includes('..')) {
       res.writeHead(400, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: 'Invalid file name' }));
       return;

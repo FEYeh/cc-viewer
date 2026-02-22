@@ -40,6 +40,7 @@ ccv --uninstall
 - Cópia de conteúdo JSON com um clique
 - Requisições MainAgent suportam Body Diff JSON, exibindo de forma recolhida as diferenças com a requisição MainAgent anterior (apenas campos alterados/adicionados)
 - O tooltip do Body Diff JSON pode ser fechado; uma vez fechado, a preferência é salva no servidor e nunca mais exibida
+- Estatísticas de uso de Token inline por requisição (tokens de entrada/saída, criação/leitura de cache, taxa de acerto)
 
 ### Modo Chat
 
@@ -48,13 +49,15 @@ Clique no botão "Modo Chat" no canto superior direito para analisar o históric
 - Mensagens do usuário alinhadas à direita (bolhas azuis), respostas do Main Agent alinhadas à esquerda (bolhas escuras) com renderização Markdown
 - Mensagens `/compact` detectadas automaticamente e exibidas recolhidas, clique para expandir o resumo completo
 - Resultados de chamadas de ferramentas exibidos inline na mensagem do Assistant correspondente
-- Blocos `thinking` recolhidos por padrão, clique para expandir
+- Blocos `thinking` recolhidos por padrão, renderizados como Markdown, clique para expandir
 - `tool_use` exibido como cartões compactos de chamada de ferramenta (Bash, Read, Edit, Write, Glob, Grep, Task possuem exibições dedicadas)
+- Resultados de ferramentas Task (SubAgent) renderizados como Markdown
 - Mensagens de seleção do usuário (AskUserQuestion) exibidas em formato de perguntas e respostas
 - Tags do sistema (`<system-reminder>`, `<project-reminder>`, etc.) recolhidas automaticamente
 - Texto do sistema filtrado automaticamente, mostrando apenas a entrada real do usuário
 - Exibição segmentada por múltiplas sessões (segmentação automática após `/compact`, `/clear`, etc.)
-- Cada mensagem exibe um timestamp com precisão de segundos
+- Cada mensagem exibe um timestamp com precisão de segundos, derivado do timing da requisição API
+- Painel de configurações: alternar o estado de recolhimento padrão para resultados de ferramentas e blocos de pensamento
 
 ### Estatísticas de Token
 

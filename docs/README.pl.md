@@ -40,6 +40,7 @@ ccv --uninstall
 - Kopiowanie zawartości JSON jednym kliknięciem
 - Żądania MainAgent obsługują Body Diff JSON, wyświetlając zwinięte różnice z poprzednim żądaniem MainAgent (tylko zmienione/dodane pola)
 - Podpowiedź Body Diff JSON można zamknąć; po zamknięciu preferencja jest zapisywana po stronie serwera i nigdy więcej nie jest wyświetlana
+- Statystyki zużycia Token inline dla każdego żądania (tokeny wejściowe/wyjściowe, tworzenie/odczyt cache, współczynnik trafień)
 
 ### Chat Mode
 
@@ -48,13 +49,15 @@ Kliknij przycisk "Chat mode" w prawym górnym rogu, aby przetworzyć pełną his
 - Wiadomości użytkownika wyrównane do prawej (niebieskie dymki), odpowiedzi Main Agent wyrównane do lewej (ciemne dymki) z renderowaniem Markdown
 - Wiadomości `/compact` automatycznie wykrywane i wyświetlane w formie zwiniętej, kliknij aby rozwinąć pełne podsumowanie
 - Wyniki wywołań narzędzi wyświetlane inline w odpowiedniej wiadomości Assistant
-- Bloki `thinking` domyślnie zwinięte, kliknij aby rozwinąć
+- Bloki `thinking` domyślnie zwinięte, renderowane jako Markdown, kliknij aby rozwinąć
 - `tool_use` wyświetlane jako kompaktowe karty wywołań narzędzi (Bash, Read, Edit, Write, Glob, Grep, Task mają dedykowane wyświetlanie)
+- Wyniki narzędzi Task (SubAgent) renderowane jako Markdown
 - Wiadomości wyboru użytkownika (AskUserQuestion) wyświetlane w formacie pytanie-odpowiedź
 - Tagi systemowe (`<system-reminder>`, `<project-reminder>`, itp.) automatycznie zwinięte
 - Tekst systemowy automatycznie filtrowany, pokazuje tylko rzeczywiste dane wejściowe użytkownika
 - Wyświetlanie podzielone na wiele sesji (automatycznie segmentowane po `/compact`, `/clear`, itp.)
-- Każda wiadomość pokazuje znacznik czasu z dokładnością do sekundy
+- Każda wiadomość pokazuje znacznik czasu z dokładnością do sekundy, wyznaczony na podstawie czasu żądania API
+- Panel ustawień: przełączanie domyślnego stanu zwinięcia wyników narzędzi i bloków myślenia
 
 ### Token Stats
 

@@ -1,4 +1,4 @@
 node_modules
 lib
 dist
-.claude
+.claude/setting.local.json

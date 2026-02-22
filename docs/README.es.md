@@ -40,6 +40,7 @@ ccv --uninstall
 - Copiar contenido JSON con un clic
 - Las solicitudes MainAgent soportan Body Diff JSON, mostrando plegado las diferencias con la solicitud MainAgent anterior (solo campos cambiados/añadidos)
 - El tooltip de Body Diff JSON se puede cerrar; una vez cerrado, la preferencia se guarda en el servidor y no se muestra de nuevo
+- Estadísticas de uso de Token en línea por solicitud (tokens de entrada/salida, creación/lectura de caché, tasa de aciertos)
 
 ### Chat Mode
 
@@ -48,13 +49,15 @@ Haga clic en el botón "Chat mode" en la esquina superior derecha para analizar 
 - Mensajes del usuario alineados a la derecha (burbujas azules), respuestas del Main Agent alineadas a la izquierda (burbujas oscuras) con renderizado Markdown
 - Mensajes `/compact` detectados automáticamente y mostrados colapsados, clic para expandir el resumen completo
 - Resultados de llamadas a herramientas mostrados en línea dentro del mensaje Assistant correspondiente
-- Bloques `thinking` colapsados por defecto, clic para expandir
+- Bloques `thinking` colapsados por defecto, renderizados como Markdown, clic para expandir
 - `tool_use` mostrado como tarjetas compactas de llamada a herramientas (Bash, Read, Edit, Write, Glob, Grep, Task tienen visualizaciones dedicadas)
+- Resultados de herramientas Task (SubAgent) renderizados como Markdown
 - Mensajes de selección del usuario (AskUserQuestion) mostrados en formato de pregunta y respuesta
 - Etiquetas del sistema (`<system-reminder>`, `<project-reminder>`, etc.) auto-colapsadas
 - Texto del sistema auto-filtrado, mostrando solo la entrada real del usuario
 - Visualización segmentada multi-sesión (segmentación automática después de `/compact`, `/clear`, etc.)
-- Cada mensaje muestra una marca de tiempo con precisión de segundos
+- Cada mensaje muestra una marca de tiempo con precisión de segundos, derivada del timing de la solicitud API
+- Panel de configuración: alternar el estado de colapso predeterminado para resultados de herramientas y bloques de pensamiento
 
 ### Estadísticas de Token
 

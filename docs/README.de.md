@@ -40,6 +40,7 @@ ccv --uninstall
 - JSON-Inhalt mit einem Klick kopieren
 - MainAgent-Anfragen unterstützen Body Diff JSON, zeigt eingeklappt die Unterschiede zur vorherigen MainAgent-Anfrage (nur geänderte/neue Felder)
 - Body Diff JSON-Tooltip kann geschlossen werden; nach dem Schließen wird die Einstellung serverseitig gespeichert und nie wieder angezeigt
+- Inline-Token-Nutzungsstatistiken pro Anfrage (Eingabe-/Ausgabe-Token, Cache-Erstellung/-Lesen, Trefferquote)
 
 ### Chat Mode
 
@@ -48,13 +49,15 @@ Klicken Sie auf die Schaltfläche „Chat mode" oben rechts, um den vollständig
 - Benutzernachrichten rechtsbündig (blaue Blasen), Main Agent-Antworten linksbündig (dunkle Blasen) mit Markdown-Rendering
 - `/compact`-Nachrichten werden automatisch erkannt und eingeklappt angezeigt, zum Aufklappen der vollständigen Zusammenfassung klicken
 - Tool-Aufruf-Ergebnisse werden inline innerhalb der entsprechenden Assistant-Nachricht angezeigt
-- `thinking`-Blöcke standardmäßig eingeklappt, zum Aufklappen klicken
+- `thinking`-Blöcke standardmäßig eingeklappt, als Markdown gerendert, zum Aufklappen klicken
 - `tool_use` als kompakte Tool-Aufruf-Karten dargestellt (Bash, Read, Edit, Write, Glob, Grep, Task haben jeweils eigene Darstellungen)
+- Task (SubAgent) Tool-Ergebnisse werden als Markdown gerendert
 - Benutzerauswahl-Nachrichten (AskUserQuestion) im Frage-Antwort-Format angezeigt
 - System-Tags (`<system-reminder>`, `<project-reminder>`, usw.) automatisch eingeklappt
 - Systemtext automatisch gefiltert, nur echte Benutzereingaben werden angezeigt
 - Mehrsitzungs-Segmentanzeige (automatische Segmentierung nach `/compact`, `/clear`, usw.)
-- Jede Nachricht zeigt einen sekundengenauen Zeitstempel
+- Jede Nachricht zeigt einen sekundengenauen Zeitstempel, abgeleitet aus dem API-Anfrage-Timing
+- Einstellungspanel: Standard-Einklappstatus für Tool-Ergebnisse und Thinking-Blöcke umschalten
 
 ### Token-Statistiken
 

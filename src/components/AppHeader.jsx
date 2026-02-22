@@ -1,6 +1,6 @@
 import React from 'react';
-import { Space, Tag, Button, Badge, Typography, Dropdown, Popover, Modal, Collapse } from 'antd';
-import { MessageOutlined, FileTextOutlined, ImportOutlined, DownOutlined, DashboardOutlined, SaveOutlined, ExportOutlined, DownloadOutlined } from '@ant-design/icons';
+import { Space, Tag, Button, Badge, Typography, Dropdown, Popover, Modal, Collapse, Drawer, Switch } from 'antd';
+import { MessageOutlined, FileTextOutlined, ImportOutlined, DownOutlined, DashboardOutlined, SaveOutlined, ExportOutlined, DownloadOutlined, SettingOutlined } from '@ant-design/icons';
 import { isSystemText } from '../utils/helpers';
 import { t, getLang, setLang } from '../i18n';
 import styles from './AppHeader.module.css';
@@ -55,7 +55,7 @@ function computeTokenStats(requests) {
 class AppHeader extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { countdownText: '', promptModalVisible: false, promptData: [] };
+    this.state = { countdownText: '', promptModalVisible: false, promptData: [], settingsDrawerVisible: false };
     this._rafId = null;
     this._expiredTimer = null;
     this.updateCountdown = this.updateCountdown.bind(this);
@@ -347,7 +347,7 @@ class AppHeader extends React.Component {
   }
 
   render() {
-    const { requestCount, viewMode, cacheType, onToggleViewMode, onImportLocalLogs, onLangChange, isLocalLog, localLogFile } = this.props;
+    const { requestCount, viewMode, cacheType, onToggleViewMode, onImportLocalLogs, onLangChange, isLocalLog, localLogFile, projectName, collapseToolResults, onCollapseToolResultsChange, expandThinking, onExpandThinkingChange } = this.props;
     const { countdownText } = this.state;
 
     const menuItems = [
@@ -397,7 +397,7 @@ class AppHeader extends React.Component {
           </Popover>
           <Tag color="green" className={styles.liveTag}>
             <Badge status="processing" color="green" />
-            <span className={styles.liveTagText}>{isLocalLog ? t('ui.historyLog', { file: localLogFile }) : t('ui.liveMonitoring')}</span>
+            <span className={styles.liveTagText}>{isLocalLog ? t('ui.historyLog', { file: localLogFile }) : (t('ui.liveMonitoring') + (projectName ? `:${projectName}` : ''))}</span>
           </Tag>
         </Space>
 
@@ -407,6 +407,11 @@ class AppHeader extends React.Component {
               {t('ui.cacheCountdown', { type: cacheType ? `(${cacheType})` : '' })}
               <strong className={styles.countdownStrong}>{countdownText}</strong>
             </Tag>
+          )}
+          {viewMode === 'chat' && (
+            <span className={styles.settingsBtn} onClick={() => this.setState({ settingsDrawerVisible: true })}>
+              <SettingOutlined /> {t('ui.settings')}
+            </span>
           )}
           <Dropdown
             trigger={['hover']}
@@ -461,6 +466,28 @@ class AppHeader extends React.Component {
             })}
           </div>
         </Modal>
+        <Drawer
+          title={t('ui.settings')}
+          placement="right"
+          width={320}
+          open={this.state.settingsDrawerVisible}
+          onClose={() => this.setState({ settingsDrawerVisible: false })}
+        >
+          <div className={styles.settingsItem}>
+            <span className={styles.settingsLabel}>{t('ui.collapseToolResults')}</span>
+            <Switch
+              checked={!!collapseToolResults}
+              onChange={(checked) => onCollapseToolResultsChange && onCollapseToolResultsChange(checked)}
+            />
+          </div>
+          <div className={styles.settingsItem}>
+            <span className={styles.settingsLabel}>{t('ui.expandThinking')}</span>
+            <Switch
+              checked={!!expandThinking}
+              onChange={(checked) => onExpandThinkingChange && onExpandThinkingChange(checked)}
+            />
+          </div>
+        </Drawer>
       </div>
     );
   }

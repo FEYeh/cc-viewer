@@ -7,6 +7,12 @@ import styles from './DetailPanel.module.css';
 
 const { Text, Paragraph } = Typography;
 
+function formatTokenCount(n) {
+  if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+  return String(n);
+}
+
 class DetailPanel extends React.Component {
   constructor(props) {
     super(props);
@@ -42,7 +48,6 @@ class DetailPanel extends React.Component {
       nextProps.request !== this.props.request ||
       nextProps.currentTab !== this.props.currentTab ||
       nextProps.onTabChange !== this.props.onTabChange ||
-      nextProps.requests !== this.props.requests ||
       nextProps.selectedIndex !== this.props.selectedIndex ||
       nextState.bodyViewMode !== this.state.bodyViewMode ||
       nextState.diffExpanded !== this.state.diffExpanded ||
@@ -310,23 +315,58 @@ class DetailPanel extends React.Component {
       },
     ];
 
+    const usage = request.response?.body?.usage;
+    const tokenStats = usage ? (() => {
+      const input = usage.input_tokens || 0;
+      const output = usage.output_tokens || 0;
+      const cacheCreate = usage.cache_creation_input_tokens || 0;
+      const cacheRead = usage.cache_read_input_tokens || 0;
+      const totalInput = input + cacheCreate + cacheRead;
+      const hitRate = totalInput > 0 ? ((cacheRead / totalInput) * 100).toFixed(1) : '0.0';
+      return { input, output, cacheCreate, cacheRead, hitRate };
+    })() : null;
+
     return (
       <div className={styles.container}>
         <div className={styles.urlSection}>
-          <Paragraph
-            className={styles.urlText}
-            ellipsis={{ rows: 2, expandable: true }}
-          >
-            {request.url}
-          </Paragraph>
-          <Space size="small" wrap>
-            <Tag color={request.method === 'POST' ? 'blue' : 'green'}>{request.method}</Tag>
-            <Text type="secondary" className={styles.metaText}>🕐 {time}</Text>
-            {request.duration && <Text type="secondary" className={styles.metaText}>⏱️ {request.duration}ms</Text>}
-            {request.response && (
-              <Tag color={statusOk ? 'success' : 'error'}>HTTP {request.response.status}</Tag>
-            )}
-          </Space>
+          <div className={styles.urlLeft}>
+            <Paragraph
+              className={styles.urlText}
+              ellipsis={{ rows: 2, expandable: true }}
+            >
+              {request.url}
+            </Paragraph>
+            <Space size="small" wrap>
+              <Tag color={request.method === 'POST' ? 'blue' : 'green'}>{request.method}</Tag>
+              <Text type="secondary" className={styles.metaText}>🕐 {time}</Text>
+              {request.duration && <Text type="secondary" className={styles.metaText}>⏱️ {request.duration}ms</Text>}
+              {request.response && (
+                <Tag color={statusOk ? 'success' : 'error'}>HTTP {request.response.status}</Tag>
+              )}
+            </Space>
+          </div>
+          {tokenStats && (
+            <div className={styles.tokenStatsBox}>
+              <div className={styles.tokenGrid}>
+                <div className={styles.tokenRows}>
+                  <div className={styles.tokenRow}>
+                    <span className={styles.tokenLabel}>Token</span>
+                    <span className={styles.tokenTd}>input: {formatTokenCount(tokenStats.input)}</span>
+                    <span className={styles.tokenTd}>output: {formatTokenCount(tokenStats.output)}</span>
+                  </div>
+                  <div className={`${styles.tokenRow} ${styles.tokenRowBorder}`}>
+                    <span className={styles.tokenLabel}>Cache</span>
+                    <span className={styles.tokenTd}>create: {formatTokenCount(tokenStats.cacheCreate)}</span>
+                    <span className={styles.tokenTd}>read: {formatTokenCount(tokenStats.cacheRead)}</span>
+                  </div>
+                </div>
+                <div className={styles.tokenHitRate}>
+                  <div>{tokenStats.hitRate}%</div>
+                  <div className={styles.tokenHitRateLabel}>{t('ui.hitRate')}</div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <Tabs

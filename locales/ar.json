@@ -1,68 +1,0 @@
-{
-  "cli.alreadyWorking": "CC Viewer يعمل بالفعل",
-  "cli.inject.success": "تم تثبيت CC Viewer بنجاح",
-  "cli.inject.exists": "CC Viewer مثبت بالفعل، لا حاجة لأي إجراء",
-  "cli.inject.fail": "❌ فشل التثبيت: {error}",
-  "cli.inject.notFound": "❌ لم يتم العثور على Claude Code cli.js: {path}",
-  "cli.inject.notFoundHint": "   يرجى التأكد من تثبيت @anthropic-ai/claude-code",
-  "cli.hook.exists": "hook الإصلاح التلقائي موجود بالفعل في {path}",
-  "cli.hook.fail": "⚠️  فشل كتابة shell hook: {error}",
-  "cli.usage.hint": "\nلإلغاء التثبيت، قم بتشغيل: ccv --uninstall",
-  "cli.usage.uninstallHint": "",
-  "cli.uninstall.cliCleaned": "✅ تم تنظيف cli.js",
-  "cli.uninstall.cliNotFound": "⚠️  لم يتم العثور على Claude Code cli.js، تم التخطي",
-  "cli.uninstall.cliFail": "❌ فشل تنظيف cli.js",
-  "cli.uninstall.hookRemoved": "✅ تم إزالة shell hook من {path}",
-  "cli.uninstall.hookClean": "✅ لا حاجة للتنظيف في {path}",
-  "cli.uninstall.hookFail": "❌ فشل تنظيف shell hook: {error}",
-  "cli.uninstall.done": "\n🗑️  تم إلغاء تثبيت CC Viewer بالكامل",
-  "server.started": "\nتم تشغيل CC Viewer: http://{host}:{port}\n",
-  "server.reuse": "\nCC Viewer يعمل بالفعل: http://{host}:{port}\n",
-  "server.portsBusy": "⚠️  المنافذ {start}-{end} كلها مشغولة، لم يتم تشغيل خدمة المراقبة",
-  "ui.requestList": "الطلبات",
-  "ui.totalRequests": "الإجمالي: {count}",
-  "ui.waitingRequests": "في انتظار الطلبات...",
-  "ui.importLocalLogs": "استيراد السجلات المحلية",
-  "ui.loadLocalJsonl": "اختيار ملف JSONL محلي",
-  "ui.fileTooLarge": "حجم الملف لا يمكن أن يتجاوز 200 ميجابايت",
-  "ui.saveLog": "تحميل السجل الحالي",
-  "ui.exportPrompts": "تصدير Prompt المستخدم",
-  "ui.exportPromptsTxt": "تصدير إلى ملف .txt محلي",
-  "ui.tokenStats": "إحصائيات Token",
-  "ui.liveMonitoring": "مباشر",
-  "ui.historyLog": "السجل: {file}",
-  "ui.chatMode": "وضع المحادثة",
-  "ui.rawMode": "العودة للوضع الخام",
-  "ui.cacheExpired": "منتهي الصلاحية",
-  "ui.cacheCountdown": "ينتهي cache{type} لـ MainAgent خلال: ",
-  "ui.minuteSecond": "{m}د{s}ث",
-  "ui.second": "{s}ث",
-  "ui.hitRate": "معدل الإصابة",
-  "ui.userPrompt": "Prompt المستخدم",
-  "ui.noPrompt": "لا توجد Prompt للمستخدم بعد",
-  "ui.unknownTime": "وقت غير معروف",
-  "ui.logCount": "{count} سجلات",
-  "ui.noLogs": "لا توجد ملفات سجلات",
-  "ui.toolReturn": "نتيجة الأداة",
-  "ui.toolReturnNamed": "نتيجة {name}",
-  "ui.lastResponse": "Last Response",
-  "ui.copySuccess": "تم النسخ",
-  "ui.noHeaders": "لا يوجد Headers",
-  "ui.noBody": "لا يوجد Body",
-  "ui.streamingResponse": "⚡ استجابة متدفقة — استخدم هذا الطلب بث SSE، لا يمكن التقاط محتوى الاستجابة بالكامل.",
-  "ui.responseNotCaptured": "لم يتم التقاط بيانات الاستجابة",
-  "ui.expand": "▶ توسيع",
-  "ui.collapse": "▼ طي",
-  "ui.noChat": "لا توجد بيانات محادثة MainAgent",
-  "ui.diffWithPrev": "الفرق مع الطلب السابق",
-  "ui.diffSessionChanged": "حجم نص الطلب انخفض، ربما بسبب /clear أو /compact أو تغيير الجلسة",
-  "cli.resume.prompt": "تم العثور على سجل حديث (خلال ساعة واحدة): {file}",
-  "cli.resume.continue": "متابعة",
-  "cli.resume.new": "جديد",
-  "ui.resume.title": "تم اكتشاف سجل حديث",
-  "ui.resume.message": "تم العثور على سجل حديث (خلال ساعة واحدة): {file}. هل تريد المتابعة؟",
-  "ui.resume.continue": "متابعة",
-  "ui.resume.new": "سجل جديد",
-  "ui.diffTooltip": "لتجنب قراءة النص الكامل الطويل، يتم عرض الأجزاء التزايدية فقط من MainAgent — عادةً فقط الرسائل الجديدة",
-  "ui.copy": "نسخ"
-}

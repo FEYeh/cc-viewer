@@ -57,6 +57,34 @@
   padding: 2px 8px;
 }
 
+/* Settings button */
+.settingsBtn {
+  color: #888;
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid #555;
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+
+.settingsBtn:hover {
+  color: #bbb;
+  border-color: #777;
+}
+
+/* Settings drawer items */
+.settingsItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.settingsLabel {
+  font-size: 14px;
+}
+
 /* Token stats popover - empty state */
 .tokenStatsEmpty {
   padding: 8px 4px;

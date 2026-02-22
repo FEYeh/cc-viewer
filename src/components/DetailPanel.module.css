@@ -14,6 +14,81 @@
 .urlSection {
   padding: 12px 0;
   border-bottom: 1px solid #1f1f1f;
+  display: flex;
+  align-items: flex-start;
+}
+
+.urlLeft {
+  flex: 1;
+  min-width: 0;
+}
+
+.tokenStatsBox {
+  flex-shrink: 0;
+  padding-left: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.tokenGrid {
+  display: flex;
+  border: 1px solid #303030;
+  border-radius: 6px;
+  overflow: hidden;
+  min-width: 360px;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.tokenRows {
+  flex: 1;
+}
+
+.tokenRow {
+  display: flex;
+}
+
+.tokenRowBorder {
+  border-top: 1px solid #303030;
+}
+
+.tokenLabel {
+  color: #888;
+  padding: 4px 8px;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.tokenTd {
+  flex: 1;
+  color: #d1d5db;
+  text-align: right;
+  padding: 4px 8px;
+  font-family: monospace;
+  white-space: nowrap;
+}
+
+.tokenHitRate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #d1d5db;
+  padding: 4px 8px;
+  font-family: monospace;
+  white-space: nowrap;
+  border-left: 1px solid #303030;
+  min-width: 100px;
+}
+
+.tokenHitRateLabel {
+  color: #888;
+  font-size: 10px;
+  font-family: sans-serif;
+}
+
+.tokenRowBorder td {
+  border-top: 1px solid #303030;
 }
 
 .urlText {

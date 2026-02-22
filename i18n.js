@@ -4,22 +4,15 @@ import { dirname, join } from 'node:path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const SUPPORTED_LANGS = [
-  'zh', 'en', 'zh-TW', 'ko', 'de', 'es', 'fr', 'it', 'da', 'ja',
-  'pl', 'ru', 'ar', 'no', 'pt-BR', 'th', 'tr', 'uk',
-];
+const i18nData = JSON.parse(readFileSync(join(__dirname, 'locales', 'i18n.json'), 'utf-8'));
 
-function loadLocale(lang) {
-  try {
-    return JSON.parse(readFileSync(join(__dirname, 'locales', `${lang}.json`), 'utf-8'));
-  } catch {
-    return {};
-  }
-}
-
+// 将 { key: { lang: text } } 转换为 { lang: { key: text } }
 const locales = {};
-for (const lang of SUPPORTED_LANGS) {
-  locales[lang] = loadLocale(lang);
+for (const [key, translations] of Object.entries(i18nData)) {
+  for (const [lang, text] of Object.entries(translations)) {
+    if (!locales[lang]) locales[lang] = {};
+    locales[lang][key] = text;
+  }
 }
 
 let currentLang = 'zh';

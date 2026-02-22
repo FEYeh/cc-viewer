@@ -40,6 +40,7 @@ ccv --uninstall
 - 支援一鍵複製 JSON 內容
 - MainAgent 請求支援 Body Diff JSON，摺疊展示與上一次 MainAgent 請求的差異（僅顯示變更/新增欄位）
 - Body Diff JSON 提示框支援關閉，關閉後伺服器端持久化偏好，永不再顯示
+- 每個請求內嵌顯示 Token 用量統計（輸入/輸出 Token、快取建立/讀取、命中率）
 
 ### 對話模式
 
@@ -48,13 +49,15 @@ ccv --uninstall
 - 使用者訊息右對齊（藍色氣泡），Main Agent 回覆左對齊（深色氣泡），支援 Markdown 渲染
 - `/compact` 訊息自動偵測並摺疊顯示，點擊展開完整摘要
 - 工具呼叫結果內嵌顯示在對應的 Assistant 訊息內部
-- `thinking` 區塊預設摺疊，點擊展開查看思考過程
+- `thinking` 區塊預設摺疊，以 Markdown 渲染，點擊展開查看思考過程
 - `tool_use` 顯示為緊湊的工具呼叫卡片（Bash、Read、Edit、Write、Glob、Grep、Task 等均有專屬展示）
+- Task（SubAgent）工具結果以 Markdown 渲染
 - 使用者選擇型訊息（AskUserQuestion）以問答形式展示
 - 系統標籤（`<system-reminder>`、`<project-reminder>` 等）自動摺疊
 - 自動過濾系統文字，只展示使用者的真實輸入
 - 支援多 session 分段展示（`/compact`、`/clear` 等操作後自動分段）
-- 每條訊息顯示精確到秒的時間戳
+- 每條訊息顯示精確到秒的時間戳，基於 API 請求時間推算
+- 設定面板：可切換工具結果和思考區塊的預設摺疊狀態
 
 ### Token 消耗統計
 

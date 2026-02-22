@@ -102,8 +102,9 @@
 
 .bubblePlan {
   composes: bubble;
-  background: rgb(20, 20, 20);
-  border: 1px solid #1668dc;
+  background: #141428;
+  border: 5px solid #1668dc;
+  font-size: 12px;
   color: #e5e7eb;
 }
 

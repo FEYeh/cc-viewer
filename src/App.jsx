@@ -6,19 +6,26 @@ import RequestList from './components/RequestList';
 import DetailPanel from './components/DetailPanel';
 import ChatView from './components/ChatView';
 import PanelResizer from './components/PanelResizer';
-import { t, getLang } from './i18n';
+import { t, getLang, setLang } from './i18n';
 import styles from './App.module.css';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
+    // 从 localStorage 恢复缓存倒计时
+    const savedExpireAt = parseInt(localStorage.getItem('ccv_cacheExpireAt'), 10) || null;
+    const savedCacheType = localStorage.getItem('ccv_cacheType') || null;
+    // 只恢复尚未过期的缓存
+    const now = Date.now();
+    const cacheExpireAt = savedExpireAt && savedExpireAt > now ? savedExpireAt : null;
+    const cacheType = cacheExpireAt ? savedCacheType : null;
     this.state = {
       requests: [],
       selectedIndex: null,
       viewMode: 'raw',
       currentTab: 'request',
-      cacheExpireAt: null,
-      cacheType: null,
+      cacheExpireAt,
+      cacheType,
       leftPanelWidth: 380,
       mainAgentSessions: [], // [{ messages, response }]
       importModalVisible: false,
@@ -27,8 +34,11 @@ class App extends React.Component {
       showAll: false,
       lang: getLang(),      // 是否显示心跳请求
       userProfile: null,    // { name, avatar }
+      projectName: '',      // 当前监控的项目名称
       resumeModalVisible: false,
       resumeFileName: '',
+      collapseToolResults: false,
+      expandThinking: false,
     };
     this.eventSource = null;
     this._autoSelectTimer = null;
@@ -46,6 +56,29 @@ class App extends React.Component {
     fetch('/api/user-profile')
       .then(res => res.json())
       .then(data => this.setState({ userProfile: data }))
+      .catch(() => {});
+
+    // 获取当前监控的项目名称
+    fetch('/api/project-name')
+      .then(res => res.json())
+      .then(data => this.setState({ projectName: data.projectName || '' }))
+      .catch(() => {});
+
+    // 获取用户偏好设置
+    fetch('/api/preferences')
+      .then(res => res.json())
+      .then(data => {
+        if (data.lang) {
+          setLang(data.lang);
+          this.setState({ lang: data.lang });
+        }
+        if (data.collapseToolResults !== undefined) {
+          this.setState({ collapseToolResults: !!data.collapseToolResults });
+        }
+        if (data.expandThinking !== undefined) {
+          this.setState({ expandThinking: !!data.expandThinking });
+        }
+      })
       .catch(() => {});
 
     // 检查是否是通过 ?logfile= 打开的历史日志
@@ -80,12 +113,8 @@ class App extends React.Component {
         try {
           const entries = JSON.parse(event.data);
           if (Array.isArray(entries)) {
-            let mainAgentSessions = [];
-            for (const entry of entries) {
-              if (entry.mainAgent && entry.body && Array.isArray(entry.body.messages)) {
-                mainAgentSessions = this.mergeMainAgentSessions(mainAgentSessions, entry);
-              }
-            }
+            this.assignMessageTimestamps(entries);
+            const mainAgentSessions = this.buildSessionsFromEntries(entries);
             const filtered = entries.filter(r =>
               !r.isHeartbeat && !/\/api\/eval\/sdk-/.test(r.url || '') && !/\/messages\/count_tokens/.test(r.url || '')
             );
@@ -111,13 +140,8 @@ class App extends React.Component {
       .then(res => res.json())
       .then(entries => {
         if (Array.isArray(entries)) {
-          // 合并 mainAgent sessions
-          let mainAgentSessions = [];
-          for (const entry of entries) {
-            if (entry.mainAgent && entry.body && Array.isArray(entry.body.messages)) {
-              mainAgentSessions = this.mergeMainAgentSessions(mainAgentSessions, entry);
-            }
-          }
+          this.assignMessageTimestamps(entries);
+          const mainAgentSessions = this.buildSessionsFromEntries(entries);
           const filtered = entries.filter(r =>
             !r.isHeartbeat && !/\/api\/eval\/sdk-/.test(r.url || '') && !/\/messages\/count_tokens/.test(r.url || '')
           );
@@ -154,12 +178,22 @@ class App extends React.Component {
           const usage = entry.response?.body?.usage;
           if (usage?.cache_creation) {
             const cc = usage.cache_creation;
+            // 基于请求时间计算过期时间，而非当前时间
+            const reqTime = entry.timestamp ? new Date(entry.timestamp).getTime() : Date.now();
+            let newExpireAt = null;
+            let newType = null;
             if (cc.ephemeral_1h_input_tokens > 0) {
-              cacheExpireAt = Date.now() + 3600 * 1000;
-              cacheType = '1h';
+              newExpireAt = reqTime + 3600 * 1000;
+              newType = '1h';
             } else if (cc.ephemeral_5m_input_tokens > 0) {
-              cacheExpireAt = Date.now() + 5 * 60 * 1000;
-              cacheType = '5m';
+              newExpireAt = reqTime + 5 * 60 * 1000;
+              newType = '5m';
+            }
+            if (newExpireAt && newExpireAt > Date.now()) {
+              cacheExpireAt = newExpireAt;
+              cacheType = newType;
+              localStorage.setItem('ccv_cacheExpireAt', String(cacheExpireAt));
+              localStorage.setItem('ccv_cacheType', cacheType);
             }
           }
         }
@@ -167,6 +201,23 @@ class App extends React.Component {
         // 合并 mainAgent sessions
         let mainAgentSessions = prev.mainAgentSessions;
         if (entry.mainAgent && entry.body && Array.isArray(entry.body.messages)) {
+          // SSE 实时模式：为消息注入 _timestamp
+          const timestamp = entry.timestamp || new Date().toISOString();
+          const lastSession = mainAgentSessions.length > 0 ? mainAgentSessions[mainAgentSessions.length - 1] : null;
+          const prevMessages = lastSession?.messages || [];
+          const messages = entry.body.messages;
+          const prevCount = prevMessages.length;
+
+          // 检测 session 切换（消息数量骤降）
+          const isNewSession = prevCount > 0 && messages.length < prevCount * 0.5 && (prevCount - messages.length) > 4;
+
+          for (let i = 0; i < messages.length; i++) {
+            if (!isNewSession && i < prevCount && prevMessages[i]._timestamp) {
+              messages[i]._timestamp = prevMessages[i]._timestamp;
+            } else if (!messages[i]._timestamp) {
+              messages[i]._timestamp = timestamp;
+            }
+          }
           mainAgentSessions = this.mergeMainAgentSessions(prev.mainAgentSessions, entry);
         }
 
@@ -196,20 +247,69 @@ class App extends React.Component {
   }
 
   /**
+   * 前置处理：遍历所有 MainAgent entries，根据消息数量递增关系，
+   * 给每条消息注入 _timestamp（首次出现时的 entry.timestamp）。
+   */
+  assignMessageTimestamps(entries) {
+    let timestamps = []; // 累积的时间戳数组，索引对应消息位置
+    let prevUserId = null;
+    for (const entry of entries) {
+      if (!entry.mainAgent || !entry.body || !Array.isArray(entry.body.messages)) continue;
+      const messages = entry.body.messages;
+      const count = messages.length;
+      const userId = entry.body.metadata?.user_id || null;
+      const timestamp = entry.timestamp || new Date().toISOString();
+
+      // 检测 session 切换：消息数量骤降或 userId 变化
+      const prevCount = timestamps.length;
+      const isNewSession = prevCount > 0 && (
+        (count < prevCount * 0.5 && (prevCount - count) > 4) ||
+        (prevUserId && userId && userId !== prevUserId)
+      );
+      if (isNewSession) {
+        timestamps = [];
+      }
+
+      // 新增的消息用当前 entry.timestamp
+      for (let i = timestamps.length; i < count; i++) {
+        timestamps.push(timestamp);
+      }
+
+      // 把累积的时间戳写入当前 entry 的所有消息（每个 entry 的 messages 是独立对象）
+      for (let i = 0; i < count; i++) {
+        messages[i]._timestamp = timestamps[i];
+      }
+      prevUserId = userId;
+    }
+  }
+
+  /**
+   * 从批量 entries 构建 sessions。
+   * 消息时间戳已由 assignMessageTimestamps 预先注入到 message._timestamp。
+   */
+  buildSessionsFromEntries(entries) {
+    let sessions = [];
+    for (const entry of entries) {
+      if (entry.mainAgent && entry.body && Array.isArray(entry.body.messages)) {
+        sessions = this.mergeMainAgentSessions(sessions, entry);
+      }
+    }
+    return sessions;
+  }
+
+  /**
    * 合并 mainAgent sessions。
    * 通过 metadata.user_id 判断 session 归属，
    * user_id 变化时（/clear、session 切换等）新开一段，否则更新当前段。
+   * 消息时间戳已由 assignMessageTimestamps 预先注入到 message._timestamp。
    */
   mergeMainAgentSessions(prevSessions, entry) {
     const newMessages = entry.body.messages;
     const newResponse = entry.response;
     const userId = entry.body.metadata?.user_id || null;
-    const timestamp = entry.timestamp || new Date().toISOString();
 
     if (prevSessions.length === 0) {
-      // 初始化：为每条消息分配当前时间戳
-      const msgTimestamps = newMessages.map(() => timestamp);
-      return [{ userId, messages: newMessages, response: newResponse, msgTimestamps }];
+      return [{ userId, messages: newMessages, response: newResponse }];
     }
 
     const lastSession = prevSessions[prevSessions.length - 1];
@@ -219,28 +319,11 @@ class App extends React.Component {
     const isNewConversation = prevMsgCount > 0 && newMessages.length < prevMsgCount * 0.5 && (prevMsgCount - newMessages.length) > 4;
 
     if (userId && userId === lastSession.userId && !isNewConversation) {
-      // 同一 session，更新最后一段
-      // 保留已有的时间戳，新增消息或内容变化的消息用当前 entry 的时间戳
-      const prevTs = lastSession.msgTimestamps || [];
-      const prevMsgs = lastSession.messages || [];
-      const msgTimestamps = newMessages.map((msg, i) => {
-        if (i >= prevTs.length) return timestamp;
-        // 如果消息内容发生了变化，更新时间戳
-        const prevMsg = prevMsgs[i];
-        if (prevMsg && msg.role === 'user' && prevMsg.role === 'user') {
-          const prevContent = JSON.stringify(prevMsg.content);
-          const newContent = JSON.stringify(msg.content);
-          if (prevContent !== newContent) return timestamp;
-        }
-        return prevTs[i];
-      });
       const updated = [...prevSessions];
-      updated[updated.length - 1] = { userId, messages: newMessages, response: newResponse, msgTimestamps };
+      updated[updated.length - 1] = { userId, messages: newMessages, response: newResponse };
       return updated;
     } else {
-      // session 变迁，新开一段
-      const msgTimestamps = newMessages.map(() => timestamp);
-      return [...prevSessions, { userId, messages: newMessages, response: newResponse, msgTimestamps }];
+      return [...prevSessions, { userId, messages: newMessages, response: newResponse }];
     }
   }
 
@@ -255,7 +338,31 @@ class App extends React.Component {
   };
 
   handleLangChange = () => {
-    this.setState({ lang: getLang() });
+    const lang = getLang();
+    this.setState({ lang });
+    fetch('/api/preferences', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lang }),
+    }).catch(() => {});
+  };
+
+  handleCollapseToolResultsChange = (checked) => {
+    this.setState({ collapseToolResults: checked });
+    fetch('/api/preferences', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ collapseToolResults: checked }),
+    }).catch(() => {});
+  };
+
+  handleExpandThinkingChange = (checked) => {
+    this.setState({ expandThinking: checked });
+    fetch('/api/preferences', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ expandThinking: checked }),
+    }).catch(() => {});
   };
 
   handleTabChange = (key) => {
@@ -399,6 +506,11 @@ class App extends React.Component {
               onImportLocalLogs={this.handleImportLocalLogs}
               isLocalLog={!!this._isLocalLog}
               localLogFile={this._localLogFile}
+              projectName={this.state.projectName}
+              collapseToolResults={this.state.collapseToolResults}
+              onCollapseToolResultsChange={this.handleCollapseToolResultsChange}
+              expandThinking={this.state.expandThinking}
+              onExpandThinkingChange={this.handleExpandThinkingChange}
             />
           </Layout.Header>
 
@@ -435,7 +547,7 @@ class App extends React.Component {
                 </div>
               </div>
             ) : (
-              <ChatView requests={filteredRequests} mainAgentSessions={mainAgentSessions} userProfile={this.state.userProfile} />
+              <ChatView requests={filteredRequests} mainAgentSessions={mainAgentSessions} userProfile={this.state.userProfile} collapseToolResults={this.state.collapseToolResults} expandThinking={this.state.expandThinking} />
             )}
           </Layout.Content>
         </Layout>

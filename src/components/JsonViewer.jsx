@@ -9,6 +9,10 @@ const customStyles = {
 };
 
 class JsonViewer extends React.Component {
+  shouldComponentUpdate(nextProps) {
+    return nextProps.data !== this.props.data || nextProps.defaultExpand !== this.props.defaultExpand;
+  }
+
   render() {
     const { data, defaultExpand } = this.props;
     if (data === null || data === undefined) return null;

@@ -3,6 +3,7 @@ import { Collapse, Typography } from 'antd';
 import { renderMarkdown } from '../utils/markdown';
 import { escapeHtml, truncateText, getSvgAvatar } from '../utils/helpers';
 import { renderAssistantText } from '../utils/systemTags';
+import { t } from '../i18n';
 import DiffView from './DiffView';
 import ToolResultView from './ToolResultView';
 import styles from './ChatMessage.module.css';
@@ -260,7 +261,7 @@ class ChatMessage extends React.Component {
     return (
       <div className={styles.toolResult}>
         <Text type="secondary" className={styles.toolResultLabel}>{tr.label}</Text>
-        <ToolResultView toolName={tr.toolName} toolInput={tr.toolInput} resultText={tr.resultText} />
+        <ToolResultView toolName={tr.toolName} toolInput={tr.toolInput} resultText={tr.resultText} defaultCollapsed={this.props.collapseToolResults} />
       </div>
     );
   }
@@ -277,13 +278,14 @@ class ChatMessage extends React.Component {
     thinkingBlocks.forEach((tb, i) => {
       innerContent.push(
         <Collapse
-          key={`think-${i}`}
+          key={`think-${i}-${this.props.expandThinking ? 'e' : 'c'}`}
           ghost
           size="small"
+          defaultActiveKey={this.props.expandThinking ? ['1'] : []}
           items={[{
             key: '1',
-            label: <Text type="secondary" className={styles.thinkingLabel}>思考过程</Text>,
-            children: <pre className={styles.systemTagPre}>{tb.thinking || ''}</pre>,
+            label: <Text type="secondary" className={styles.thinkingLabel}>{t('ui.thinking')}</Text>,
+            children: <div className="chat-md" dangerouslySetInnerHTML={{ __html: renderMarkdown(tb.thinking || '') }} />,
           }]}
           className={styles.collapseMargin}
         />
