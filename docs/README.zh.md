@@ -40,6 +40,7 @@ ccv --uninstall
 - Body Diff JSON 提示框支持关闭，关闭后服务端持久化偏好，永不再显示
 - 敏感请求头（`x-api-key`、`authorization`）在 JSONL 日志文件中自动脱敏，防止凭证泄露
 - 每个请求内联显示 Token 用量统计（输入/输出 Token、缓存创建/读取、命中率）
+- 兼容 Claude Code Router（CCR）及其他代理场景 — 通过 API 路径模式兜底匹配请求
 
 ### 对话模式
 

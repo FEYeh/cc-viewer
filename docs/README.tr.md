@@ -42,6 +42,7 @@ ccv --uninstall
 - Body Diff JSON araç ipucu kapatılabilir; kapatıldığında tercih sunucu tarafında kaydedilir ve bir daha gösterilmez
 - Hassas başlıklar (`x-api-key`, `authorization`) kimlik bilgisi sızıntısını önlemek için JSONL log dosyalarında otomatik olarak maskelenir
 - İstek başına satır içi Token kullanım istatistikleri (giriş/çıkış token'ları, önbellek oluşturma/okuma, isabet oranı)
+- Claude Code Router (CCR) ve diğer proxy yapılandırmalarıyla uyumlu — istekler yedek olarak API yol deseni ile eşleştirilir
 
 ### Chat Modu
 

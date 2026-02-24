@@ -156,6 +156,17 @@ function getBaseUrlHost() {
 }
 const CUSTOM_API_HOST = getBaseUrlHost();
 
+// 通过请求路径识别 Anthropic API 端点（兼容 CCR 等代理场景）
+function isAnthropicApiPath(urlStr) {
+  try {
+    const pathname = new URL(urlStr).pathname;
+    return /^\/v1\/messages(\/count_tokens|\/batches(\/.*)?)?$/.test(pathname)
+        || /^\/api\/eval\/sdk-/.test(pathname);
+  } catch {
+    return /\/v1\/messages/.test(urlStr);
+  }
+}
+
 // 不再需要折叠函数，保存完整 JSON 供前端渲染
 
 // 组装流式消息为完整的 message 对象
@@ -303,7 +314,7 @@ export function setupInterceptor() {
 
     try {
       const urlStr = typeof url === 'string' ? url : url?.url || String(url);
-      if (urlStr.includes('anthropic') || urlStr.includes('claude') || (CUSTOM_API_HOST && urlStr.includes(CUSTOM_API_HOST))) {
+      if (urlStr.includes('anthropic') || urlStr.includes('claude') || (CUSTOM_API_HOST && urlStr.includes(CUSTOM_API_HOST)) || isAnthropicApiPath(urlStr)) {
         const timestamp = new Date().toISOString();
         let body = null;
         if (options?.body) {

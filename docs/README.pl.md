@@ -42,6 +42,7 @@ ccv --uninstall
 - Podpowiedź Body Diff JSON można zamknąć; po zamknięciu preferencja jest zapisywana po stronie serwera i nigdy więcej nie jest wyświetlana
 - Wrażliwe nagłówki (`x-api-key`, `authorization`) są automatycznie maskowane w plikach logów JSONL, aby zapobiec wyciekowi poświadczeń
 - Statystyki zużycia Token inline dla każdego żądania (tokeny wejściowe/wyjściowe, tworzenie/odczyt cache, współczynnik trafień)
+- Kompatybilny z Claude Code Router (CCR) i innymi konfiguracjami proxy — żądania są dopasowywane przez wzorzec ścieżki API jako fallback
 
 ### Chat Mode
 

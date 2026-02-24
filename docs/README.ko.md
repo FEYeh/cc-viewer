@@ -42,6 +42,7 @@ ccv --uninstall
 - Body Diff JSON 툴팁은 닫기 가능하며, 닫으면 서버 측에 환경설정이 저장되어 다시 표시되지 않습니다
 - 민감한 헤더(`x-api-key`, `authorization`)가 JSONL 로그 파일에서 자동으로 마스킹되어 자격 증명 유출 방지
 - 요청별 인라인 Token 사용량 통계 (입력/출력 Token, 캐시 생성/읽기, 적중률)
+- Claude Code Router(CCR) 및 기타 프록시 환경 호환 — API 경로 패턴을 통한 폴백 매칭
 
 ### 대화 모드
 

@@ -251,7 +251,7 @@ class ChatView extends React.Component {
             </React.Fragment>
           );
           allItems.push(
-            <ChatMessage key="resp-asst" role="assistant" content={respContent} modelInfo={modelInfo} collapseToolResults={collapseToolResults} expandThinking={expandThinking} />
+            <ChatMessage key="resp-asst" role="assistant" content={respContent} modelInfo={modelInfo} collapseToolResults={collapseToolResults} expandThinking={expandThinking} toolResultMap={{}} />
           );
         }
       }
