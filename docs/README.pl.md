@@ -33,6 +33,7 @@ ccv --uninstall
 - Przechwytywanie w czasie rzeczywistym wszystkich zapytań API z Claude Code, w tym odpowiedzi strumieniowych
 - Lewy panel pokazuje metodę zapytania, URL, czas trwania i kod statusu
 - Automatycznie identyfikuje i oznacza zapytania Main Agent i Sub Agent (podtypy: Bash, Task, Plan, General)
+- Lista zapytań automatycznie przewija się do wybranego elementu (wyśrodkowany przy przełączaniu trybu, najbliższy przy ręcznym kliknięciu)
 - Prawy panel obsługuje przełączanie zakładek Request / Response
 - Request Body domyślnie rozwija `messages`, `system`, `tools` o jeden poziom
 - Response Body domyślnie w pełni rozwinięte
@@ -60,6 +61,8 @@ Kliknij przycisk "Chat mode" w prawym górnym rogu, aby przetworzyć pełną his
 - Tekst systemowy automatycznie filtrowany, pokazuje tylko rzeczywiste dane wejściowe użytkownika
 - Wyświetlanie podzielone na wiele sesji (automatycznie segmentowane po `/compact`, `/clear`, itp.)
 - Każda wiadomość pokazuje znacznik czasu z dokładnością do sekundy, wyznaczony na podstawie czasu żądania API
+- Każda wiadomość zawiera link „Pokaż żądanie" umożliwiający przejście do trybu raw przy odpowiednim żądaniu API
+- Dwukierunkowa synchronizacja trybów: przełączenie na tryb czatu przewija do konwersacji odpowiadającej wybranemu żądaniu; przełączenie z powrotem przewija do wybranego żądania
 - Panel ustawień: przełączanie domyślnego stanu zwinięcia wyników narzędzi i bloków myślenia
 - Ustawienia globalne: przełączanie filtrowania nieistotnych żądań (count_tokens, heartbeat)
 

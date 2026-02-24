@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.14 (2026-02-24)
+
+- Request list auto-scrolls to selected item on initialization and mode switch (centered); manual clicks use nearest scroll
+- Chat mode: "View Request" button on each message to jump back to raw mode at the corresponding request
+- Bidirectional mode sync: switching from raw to chat scrolls to the conversation matching the selected request; switching back scrolls to the selected request
+- Toast notification when a non-MainAgent request cannot be mapped to a conversation
+
 ## 0.0.1 (2026-02-17)
 
 - 初始版本发布

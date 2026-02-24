@@ -33,6 +33,7 @@ ccv --uninstall
 - 即時擷取 Claude Code 發出的所有 API 請求，包括串流回應
 - 左側請求列表展示請求方法、URL、耗時、狀態碼
 - 自動識別並標記 Main Agent 和 Sub Agent 請求（子類型：Bash、Task、Plan、General）
+- 請求列表自動捲動至選中項目（模式切換時居中顯示，手動點擊時就近捲動）
 - 右側詳情面板支援 Request / Response 兩個 Tab 切換查看
 - Request Body 中 `messages`、`system`、`tools` 預設展開一層子屬性
 - Response Body 預設全部展開
@@ -60,6 +61,8 @@ ccv --uninstall
 - 自動過濾系統文字，只展示使用者的真實輸入
 - 支援多 session 分段展示（`/compact`、`/clear` 等操作後自動分段）
 - 每條訊息顯示精確到秒的時間戳，基於 API 請求時間推算
+- 每條訊息附帶「查看請求」連結，可跳轉回原文模式對應的 API 請求
+- 雙向模式同步：切換至對話模式時自動捲動至選中請求對應的對話；切換回原文模式時自動捲動至選中的請求
 - 設定面板：可切換工具結果和思考區塊的預設摺疊狀態
 - 全域設定：可切換是否過濾無關請求（count_tokens、心跳請求）
 

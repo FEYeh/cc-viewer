@@ -38,13 +38,26 @@ class ChatMessage extends React.Component {
     } catch { return null; }
   }
 
+  renderViewRequestBtn() {
+    const { requestIndex, onViewRequest } = this.props;
+    if (requestIndex == null || !onViewRequest) return null;
+    return (
+      <span className={styles.viewRequestBtn} onClick={(e) => { e.stopPropagation(); onViewRequest(requestIndex); }}>
+        {t('ui.viewRequest')}
+      </span>
+    );
+  }
+
   renderLabel(name, extra) {
     const { timestamp } = this.props;
     const timeStr = this.formatTime(timestamp);
     return (
       <div className={styles.labelRow}>
         <Text type="secondary" className={styles.labelText}>{name}{extra || ''}</Text>
-        {timeStr && <Text className={styles.timeText}>{timeStr}</Text>}
+        <span className={styles.labelRight}>
+          {this.renderViewRequestBtn()}
+          {timeStr && <Text className={styles.timeText}>{timeStr}</Text>}
+        </span>
       </div>
     );
   }
@@ -238,6 +251,7 @@ class ChatMessage extends React.Component {
           <div className={styles.contentColLimited}>
             <div className={styles.labelRow}>
               {timeStr && <Text className={styles.timeTextNoMargin}>{timeStr}</Text>}
+              {this.renderViewRequestBtn()}
               <Text type="secondary" className={styles.labelTextRight}>{userName} — /compact</Text>
             </div>
             <div className={styles.bubbleUser}>
@@ -263,6 +277,7 @@ class ChatMessage extends React.Component {
         <div className={styles.contentColLimited}>
           <div className={styles.labelRow}>
             {timeStr && <Text className={styles.timeTextNoMargin}>{timeStr}</Text>}
+            {this.renderViewRequestBtn()}
             <Text type="secondary" className={styles.labelTextRight}>{userName}</Text>
           </div>
           <div className={styles.bubbleUser}>

@@ -33,6 +33,7 @@ ccv --uninstall
 - Realtidsopfangning af alle API-forespørgsler fra Claude Code, inklusive streaming-svar
 - Venstre panel viser forespørgselsmetode, URL, varighed og statuskode
 - Identificerer og mærker automatisk Main Agent- og Sub Agent-forespørgsler (undertyper: Bash, Task, Plan, General)
+- Forespørgselslisten ruller automatisk til det valgte element (centreret ved modusskift, nærmeste ved manuelt klik)
 - Højre panel understøtter Request / Response fane-skift
 - Request Body udvider `messages`, `system`, `tools` ét niveau som standard
 - Response Body fuldt udvidet som standard
@@ -60,6 +61,8 @@ Klik på "Chat mode"-knappen øverst til højre for at parse Main Agent's fulde 
 - Systemtekst automatisk filtreret, viser kun reel brugerinput
 - Visning opdelt i flere sessioner (automatisk opdelt efter `/compact`, `/clear`, osv.)
 - Hver meddelelse viser et tidsstempel nøjagtigt til sekundet, afledt fra API-anmodningstiming
+- Hver meddelelse har et "Vis forespørgsel"-link til at springe tilbage til raw-tilstand ved den tilsvarende API-anmodning
+- Tovejs-modussynkronisering: skift til chat-tilstand ruller til samtalen der matcher den valgte forespørgsel; skift tilbage ruller til den valgte forespørgsel
 - Indstillingspanel: skift standardsammenklappet tilstand for værktøjsresultater og tænkeblokke
 - Globale indstillinger: slå filtrering af irrelevante forespørgsler til/fra (count_tokens, heartbeat)
 

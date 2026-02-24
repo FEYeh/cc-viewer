@@ -381,10 +381,56 @@ class App extends React.Component {
     this.setState({ selectedIndex: index });
   };
 
+  handleViewRequest = (index) => {
+    this.setState({ viewMode: 'raw', selectedIndex: index, scrollCenter: true });
+  };
+
   handleToggleViewMode = () => {
-    this.setState(prev => ({
-      viewMode: prev.viewMode === 'raw' ? 'chat' : 'raw',
-    }));
+    this.setState(prev => {
+      const newMode = prev.viewMode === 'raw' ? 'chat' : 'raw';
+      if (newMode === 'raw') {
+        // 从对话模式切回 raw 模式
+        if (prev.selectedIndex === null) {
+          const filtered = prev.showAll ? prev.requests : prev.requests.filter(r =>
+            !r.isHeartbeat && !r.isCountTokens && !/\/api\/eval\/sdk-/.test(r.url || '') && !/\/messages\/count_tokens/.test(r.url || '')
+          );
+          return {
+            viewMode: newMode,
+            selectedIndex: filtered.length > 0 ? filtered.length - 1 : null,
+            scrollCenter: true,
+          };
+        }
+        return { viewMode: newMode, scrollCenter: true };
+      }
+      // raw → chat：根据选中的请求定位到对话
+      const filtered = prev.showAll ? prev.requests : prev.requests.filter(r =>
+        !r.isHeartbeat && !r.isCountTokens && !/\/api\/eval\/sdk-/.test(r.url || '') && !/\/messages\/count_tokens/.test(r.url || '')
+      );
+      const selectedReq = prev.selectedIndex != null ? filtered[prev.selectedIndex] : null;
+      if (selectedReq) {
+        // 找到选中请求对应的 mainAgent timestamp
+        let targetTs = null;
+        if (selectedReq.mainAgent && selectedReq.timestamp) {
+          targetTs = selectedReq.timestamp;
+        } else {
+          // 非 mainAgent 请求，向前找最近的 mainAgent
+          const idx = prev.requests.indexOf(selectedReq);
+          if (idx >= 0) {
+            for (let i = idx - 1; i >= 0; i--) {
+              if (prev.requests[i].mainAgent && prev.requests[i].timestamp) {
+                targetTs = prev.requests[i].timestamp;
+                break;
+              }
+            }
+          }
+          if (!targetTs) {
+            message.info(t('ui.cannotMap'));
+          }
+        }
+        return { viewMode: newMode, chatScrollToTs: targetTs };
+      }
+      return { viewMode: newMode, chatScrollToTs: null };
+    });
   };
 
   handleLangChange = () => {
@@ -611,7 +657,9 @@ class App extends React.Component {
                     <RequestList
                       requests={filteredRequests}
                       selectedIndex={selectedIndex}
+                      scrollCenter={this.state.scrollCenter}
                       onSelect={this.handleSelectRequest}
+                      onScrollDone={() => this.setState({ scrollCenter: false })}
                     />
                   </div>
                 </div>
@@ -629,7 +677,7 @@ class App extends React.Component {
                 </div>
               </div>
             ) : (
-              <ChatView requests={filteredRequests} mainAgentSessions={mainAgentSessions} userProfile={this.state.userProfile} collapseToolResults={this.state.collapseToolResults} expandThinking={this.state.expandThinking} />
+              <ChatView requests={filteredRequests} mainAgentSessions={mainAgentSessions} userProfile={this.state.userProfile} collapseToolResults={this.state.collapseToolResults} expandThinking={this.state.expandThinking} onViewRequest={this.handleViewRequest} scrollToTimestamp={this.state.chatScrollToTs} onScrollTsDone={() => this.setState({ chatScrollToTs: null })} />
             )}
           </Layout.Content>
         </Layout>

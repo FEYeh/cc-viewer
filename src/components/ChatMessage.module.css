@@ -64,6 +64,14 @@
   margin-bottom: 2px;
 }
 
+.labelRight {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
 .labelText {
   font-size: 11px;
 }
@@ -72,7 +80,6 @@
   font-size: 10px;
   color: #6b7280;
   flex-shrink: 0;
-  margin-left: 8px;
 }
 
 .timeTextNoMargin {
@@ -249,6 +256,20 @@
   white-space: pre-wrap;
   word-break: break-all;
   margin: 0;
+}
+
+/* === View request button === */
+
+.viewRequestBtn {
+  font-size: 10px;
+  color: #555;
+  cursor: pointer;
+  margin-left: 6px;
+  flex-shrink: 0;
+}
+
+.viewRequestBtn:hover {
+  color: #93c5fd;
 }
 
 /* === User-selection question === */

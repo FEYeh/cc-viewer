@@ -6,6 +6,28 @@ import { classifyRequest, formatRequestTag } from '../utils/requestType';
 import styles from './RequestList.module.css';
 
 class RequestList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.activeItemRef = React.createRef();
+  }
+
+  componentDidMount() {
+    this.scrollToSelected(true);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.selectedIndex !== this.props.selectedIndex || prevProps.requests !== this.props.requests) {
+      this.scrollToSelected(this.props.scrollCenter);
+    }
+  }
+
+  scrollToSelected(center) {
+    if (this.activeItemRef.current) {
+      this.activeItemRef.current.scrollIntoView({ block: center ? 'center' : 'nearest', behavior: 'instant' });
+      if (center && this.props.onScrollDone) this.props.onScrollDone();
+    }
+  }
+
   render() {
     const { requests, selectedIndex, onSelect } = this.props;
 
@@ -46,6 +68,7 @@ class RequestList extends React.Component {
 
             return (
               <List.Item
+                ref={isActive ? this.activeItemRef : undefined}
                 onClick={() => onSelect(index)}
                 className={`${styles.listItem} ${isActive ? styles.listItemActive : ''}`}
               >

@@ -25,6 +25,8 @@ class ChatView extends React.Component {
     };
     this._queueTimer = null;
     this._prevItemsLen = 0;
+    this._scrollTargetIdx = null;
+    this._scrollTargetRef = React.createRef();
   }
 
   componentDidMount() {
@@ -82,12 +84,18 @@ class ChatView extends React.Component {
   }
 
   scrollToBottom() {
+    if (this._scrollTargetRef.current) {
+      this._scrollTargetRef.current.scrollIntoView({ block: 'center', behavior: 'instant' });
+      this._scrollTargetRef = React.createRef();
+      if (this.props.onScrollTsDone) this.props.onScrollTsDone();
+      return;
+    }
     const el = this.containerRef.current;
     if (el) el.scrollTop = el.scrollHeight;
   }
 
-  renderSessionMessages(messages, keyPrefix, modelInfo) {
-    const { userProfile, collapseToolResults, expandThinking } = this.props;
+  renderSessionMessages(messages, keyPrefix, modelInfo, tsToIndex) {
+    const { userProfile, collapseToolResults, expandThinking, onViewRequest } = this.props;
     const toolUseMap = {};
     for (const msg of messages) {
       if (msg.role === 'assistant' && Array.isArray(msg.content)) {
@@ -136,6 +144,8 @@ class ChatView extends React.Component {
       const msg = messages[mi];
       const content = msg.content;
       const ts = msg._timestamp || null;
+      const reqIdx = ts ? tsToIndex[ts] : undefined;
+      const viewReqProps = reqIdx != null && onViewRequest ? { requestIndex: reqIdx, onViewRequest } : {};
 
       if (msg.role === 'user') {
         if (Array.isArray(content)) {
@@ -162,7 +172,7 @@ class ChatView extends React.Component {
 
             if (questions) {
               renderedMessages.push(
-                <ChatMessage key={`${keyPrefix}-selection-${mi}`} role="user-selection" questions={questions} answers={answers} timestamp={ts} userProfile={userProfile} />
+                <ChatMessage key={`${keyPrefix}-selection-${mi}`} role="user-selection" questions={questions} answers={answers} timestamp={ts} userProfile={userProfile} {...viewReqProps} />
               );
             }
           } else {
@@ -175,7 +185,7 @@ class ChatView extends React.Component {
               const nameMatch = sb.text.match(/^#\s+(.+)$/m);
               const skillName = nameMatch ? nameMatch[1] : 'Skill';
               renderedMessages.push(
-                <ChatMessage key={`${keyPrefix}-skill-${mi}`} role="skill-loaded" text={sb.text} skillName={skillName} timestamp={ts} />
+                <ChatMessage key={`${keyPrefix}-skill-${mi}`} role="skill-loaded" text={sb.text} skillName={skillName} timestamp={ts} {...viewReqProps} />
               );
             }
             // 过滤掉已作为 skill 渲染的文本块
@@ -185,24 +195,24 @@ class ChatView extends React.Component {
             for (let ti = 0; ti < textBlocks.length; ti++) {
               const isPlan = /^Implement the following plan:/i.test((textBlocks[ti].text || '').trim());
               renderedMessages.push(
-                <ChatMessage key={`${keyPrefix}-user-${mi}-${ti}`} role={isPlan ? 'plan-prompt' : 'user'} text={textBlocks[ti].text} timestamp={ts} userProfile={userProfile} modelInfo={modelInfo} />
+                <ChatMessage key={`${keyPrefix}-user-${mi}-${ti}`} role={isPlan ? 'plan-prompt' : 'user'} text={textBlocks[ti].text} timestamp={ts} userProfile={userProfile} modelInfo={modelInfo} {...viewReqProps} />
               );
             }
           }
         } else if (typeof content === 'string' && !isSystemText(content)) {
           const isPlan = /^Implement the following plan:/i.test(content.trim());
           renderedMessages.push(
-            <ChatMessage key={`${keyPrefix}-user-${mi}`} role={isPlan ? 'plan-prompt' : 'user'} text={content} timestamp={ts} userProfile={userProfile} modelInfo={modelInfo} />
+            <ChatMessage key={`${keyPrefix}-user-${mi}`} role={isPlan ? 'plan-prompt' : 'user'} text={content} timestamp={ts} userProfile={userProfile} modelInfo={modelInfo} {...viewReqProps} />
           );
         }
       } else if (msg.role === 'assistant') {
         if (Array.isArray(content)) {
           renderedMessages.push(
-            <ChatMessage key={`${keyPrefix}-asst-${mi}`} role="assistant" content={content} toolResultMap={toolResultMap} timestamp={ts} modelInfo={modelInfo} collapseToolResults={collapseToolResults} expandThinking={expandThinking} />
+            <ChatMessage key={`${keyPrefix}-asst-${mi}`} role="assistant" content={content} toolResultMap={toolResultMap} timestamp={ts} modelInfo={modelInfo} collapseToolResults={collapseToolResults} expandThinking={expandThinking} {...viewReqProps} />
           );
         } else if (typeof content === 'string') {
           renderedMessages.push(
-            <ChatMessage key={`${keyPrefix}-asst-${mi}`} role="assistant" content={[{ type: 'text', text: content }]} toolResultMap={toolResultMap} timestamp={ts} modelInfo={modelInfo} collapseToolResults={collapseToolResults} expandThinking={expandThinking} />
+            <ChatMessage key={`${keyPrefix}-asst-${mi}`} role="assistant" content={[{ type: 'text', text: content }]} toolResultMap={toolResultMap} timestamp={ts} modelInfo={modelInfo} collapseToolResults={collapseToolResults} expandThinking={expandThinking} {...viewReqProps} />
           );
         }
       }
@@ -212,8 +222,18 @@ class ChatView extends React.Component {
   }
 
   buildAllItems() {
-    const { mainAgentSessions, requests, collapseToolResults, expandThinking } = this.props;
+    const { mainAgentSessions, requests, collapseToolResults, expandThinking, onViewRequest } = this.props;
     if (!mainAgentSessions || mainAgentSessions.length === 0) return [];
+
+    // 构建 timestamp → filteredRequests index 映射
+    const tsToIndex = {};
+    if (requests) {
+      for (let i = 0; i < requests.length; i++) {
+        if (requests[i].mainAgent && requests[i].timestamp) {
+          tsToIndex[requests[i].timestamp] = i;
+        }
+      }
+    }
 
     // 从最新的 mainAgent 请求中提取模型名
     let modelName = null;
@@ -228,6 +248,8 @@ class ChatView extends React.Component {
     const modelInfo = getModelInfo(modelName);
 
     const allItems = [];
+    // 记录每个 timestamp 对应的最后一个 item index，用于滚动定位
+    const tsItemMap = {};
 
     mainAgentSessions.forEach((session, si) => {
       if (si > 0) {
@@ -238,7 +260,11 @@ class ChatView extends React.Component {
         );
       }
 
-      allItems.push(...this.renderSessionMessages(session.messages, `s${si}`, modelInfo));
+      const msgs = this.renderSessionMessages(session.messages, `s${si}`, modelInfo, tsToIndex);
+      for (const m of msgs) {
+        if (m.props.timestamp) tsItemMap[m.props.timestamp] = allItems.length;
+        allItems.push(m);
+      }
 
       if (si === mainAgentSessions.length - 1 && session.response?.body?.content) {
         const respContent = session.response.body.content;
@@ -256,6 +282,11 @@ class ChatView extends React.Component {
         }
       }
     });
+
+    // 记录滚动目标 item index
+    const { scrollToTimestamp } = this.props;
+    this._scrollTargetIdx = scrollToTimestamp && tsItemMap[scrollToTimestamp] != null
+      ? tsItemMap[scrollToTimestamp] : null;
 
     return allItems;
   }
@@ -280,12 +311,19 @@ class ChatView extends React.Component {
       );
     }
 
+    const targetIdx = this._scrollTargetIdx;
+    const visible = allItems.slice(0, visibleCount);
+
     return (
       <div
         ref={this.containerRef}
         className={styles.container}
       >
-        {allItems.slice(0, visibleCount)}
+        {visible.map((item, i) =>
+          i === targetIdx
+            ? <div key={item.key + '-anchor'} ref={this._scrollTargetRef}>{item}</div>
+            : item
+        )}
       </div>
     );
   }

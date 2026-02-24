@@ -33,6 +33,7 @@ ccv --uninstall
 - Echtzeit-Erfassung aller API-Anfragen von Claude Code, einschließlich Streaming-Antworten
 - Linkes Panel zeigt Anfragemethode, URL, Dauer und Statuscode
 - Automatische Erkennung und Kennzeichnung von Main Agent- und Sub Agent-Anfragen (Untertypen: Bash, Task, Plan, General)
+- Anfrageliste scrollt automatisch zum ausgewählten Element (zentriert bei Moduswechsel, nächstgelegen bei manuellem Klick)
 - Rechtes Panel unterstützt Umschaltung zwischen Request / Response Tabs
 - Request Body klappt `messages`, `system`, `tools` standardmäßig eine Ebene auf
 - Response Body standardmäßig vollständig aufgeklappt
@@ -60,6 +61,8 @@ Klicken Sie auf die Schaltfläche „Chat mode" oben rechts, um den vollständig
 - Systemtext automatisch gefiltert, nur echte Benutzereingaben werden angezeigt
 - Mehrsitzungs-Segmentanzeige (automatische Segmentierung nach `/compact`, `/clear`, usw.)
 - Jede Nachricht zeigt einen sekundengenauen Zeitstempel, abgeleitet aus dem API-Anfrage-Timing
+- Jede Nachricht enthält einen „Anfrage anzeigen"-Link, um zum Raw-Modus bei der entsprechenden API-Anfrage zurückzuspringen
+- Bidirektionale Modus-Synchronisation: Beim Wechsel zum Chat-Modus wird zur Konversation der ausgewählten Anfrage gescrollt; beim Zurückwechseln wird zur ausgewählten Anfrage gescrollt
 - Einstellungspanel: Standard-Einklappstatus für Tool-Ergebnisse und Thinking-Blöcke umschalten
 - Globale Einstellungen: Filterung irrelevanter Anfragen (count_tokens, Heartbeat) ein-/ausschalten
 

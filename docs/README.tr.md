@@ -33,6 +33,7 @@ ccv --uninstall
 - Claude Code'dan gelen tüm API isteklerinin gerçek zamanlı yakalanması, streaming yanıtlar dahil
 - Sol panel istek yöntemini, URL'yi, süreyi ve durum kodunu gösterir
 - Main Agent ve Sub Agent isteklerini otomatik olarak tanımlar ve etiketler (alt türler: Bash, Task, Plan, General)
+- İstek listesi seçilen öğeye otomatik olarak kaydırılır (mod değişikliğinde ortalanır, manuel tıklamada en yakına kaydırılır)
 - Sağ panel Request / Response sekme geçişini destekler
 - Request Body varsayılan olarak `messages`, `system`, `tools` öğelerini bir seviye genişletir
 - Response Body varsayılan olarak tamamen genişletilir
@@ -60,6 +61,8 @@ Main Agent'ın tam konuşma geçmişini sohbet arayüzüne dönüştürmek için
 - Sistem metni otomatik filtrelenir, yalnızca gerçek kullanıcı girişi gösterilir
 - Çoklu session segmentli görüntüleme (`/compact`, `/clear` vb. sonrasında otomatik segmentleme)
 - Her mesaj saniye hassasiyetinde zaman damgası gösterir, API istek zamanlamasından türetilmiş
+- Her mesajda ilgili API isteğine raw modunda geri dönmek için bir "İsteği Görüntüle" bağlantısı bulunur
+- Çift yönlü mod senkronizasyonu: sohbet moduna geçildiğinde seçili isteğe karşılık gelen konuşmaya kaydırılır; geri geçildiğinde seçili isteğe kaydırılır
 - Ayarlar paneli: araç sonuçları ve düşünme blokları için varsayılan daraltma durumunu değiştirme
 - Genel ayarlar: ilgisiz isteklerin (count_tokens, heartbeat) filtrelenmesini aç/kapat
 
