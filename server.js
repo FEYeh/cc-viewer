@@ -118,6 +118,13 @@ function watchLogFile(logFile) {
 
       // 检测日志文件是否已轮转到新文件
       if (LOG_FILE !== logFile && !watchedFiles.has(LOG_FILE)) {
+        // 轮转发生，发送 full_reload 让客户端重新加载新文件
+        const newEntries = readLogFile();
+        clients.forEach(client => {
+          try {
+            client.write(`event: full_reload\ndata: ${JSON.stringify(newEntries)}\n\n`);
+          } catch {}
+        });
         watchLogFile(LOG_FILE);
       }
     } catch (err) {

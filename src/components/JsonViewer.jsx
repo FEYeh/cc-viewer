@@ -10,18 +10,20 @@ const customStyles = {
 
 class JsonViewer extends React.Component {
   shouldComponentUpdate(nextProps) {
-    return nextProps.data !== this.props.data || nextProps.defaultExpand !== this.props.defaultExpand;
+    return nextProps.data !== this.props.data || nextProps.defaultExpand !== this.props.defaultExpand || nextProps.expandNode !== this.props.expandNode;
   }
 
   render() {
-    const { data, defaultExpand } = this.props;
+    const { data, defaultExpand, expandNode } = this.props;
     if (data === null || data === undefined) return null;
 
-    const shouldExpandNode = defaultExpand === 'all'
-      ? () => true
-      : defaultExpand === 'root'
-        ? (level) => level < 2
-        : (level) => level < 1;
+    const shouldExpandNode = typeof expandNode === 'function'
+      ? expandNode
+      : defaultExpand === 'all'
+        ? () => true
+        : defaultExpand === 'root'
+          ? (level) => level < 2
+          : (level) => level < 1;
 
     return (
       <div className={styles.container}>

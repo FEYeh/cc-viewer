@@ -4,6 +4,7 @@ import { CopyOutlined, FileTextOutlined, CodeOutlined, RightOutlined, DownOutlin
 import JsonViewer from './JsonViewer';
 import { t } from '../i18n';
 import { formatTokenCount, stripPrivateKeys } from '../utils/helpers';
+import { classifyRequest } from '../utils/requestType';
 import styles from './DetailPanel.module.css';
 
 const { Text, Paragraph } = Typography;
@@ -87,6 +88,60 @@ class DetailPanel extends React.Component {
     );
   }
 
+  getRequestExpandNode(data, type) {
+    if (type !== 'request' || !data || typeof data !== 'object') return undefined;
+    const { request, requests, selectedIndex } = this.props;
+    if (!request) return undefined;
+    const nextReq = requests && selectedIndex != null ? requests[selectedIndex + 1] : null;
+    const { type: reqType } = classifyRequest(request, nextReq);
+
+    if (reqType === 'Preflight') {
+      // Collect all object/array refs under messages and system[2] that should be expanded
+      const expandRefs = new Set();
+      const collectAll = (obj) => {
+        if (obj && typeof obj === 'object') {
+          expandRefs.add(obj);
+          if (Array.isArray(obj)) obj.forEach(collectAll);
+          else Object.values(obj).forEach(collectAll);
+        }
+      };
+      if (Array.isArray(data.messages)) collectAll(data.messages);
+      if (Array.isArray(data.system) && data.system.length >= 3) collectAll(data.system[2]);
+      return (level, value, field) => {
+        if (level < 2) return true;
+        if (expandRefs.has(value)) return true;
+        // expand system itself at root level so the 3rd item is visible
+        if (level === 1 && field === 'system') return true;
+        return false;
+      };
+    }
+
+    if (reqType === 'MainAgent' && Array.isArray(data.messages) && data.messages.length === 1) {
+      const msg = data.messages[0];
+      const contentArr = msg && Array.isArray(msg.content) ? msg.content : null;
+      const lastContent = contentArr && contentArr.length > 0 ? contentArr[contentArr.length - 1] : null;
+      const expandRefs = new Set();
+      const collectAll = (obj) => {
+        if (obj && typeof obj === 'object') {
+          expandRefs.add(obj);
+          if (Array.isArray(obj)) obj.forEach(collectAll);
+          else Object.values(obj).forEach(collectAll);
+        }
+      };
+      if (lastContent) collectAll(lastContent);
+      expandRefs.add(data.messages);
+      if (msg && typeof msg === 'object') expandRefs.add(msg);
+      if (contentArr) expandRefs.add(contentArr);
+      return (level, value, field) => {
+        if (level < 2) return true;
+        if (expandRefs.has(value)) return true;
+        return false;
+      };
+    }
+
+    return undefined;
+  }
+
   renderBody(data, type) {
     const { bodyViewMode } = this.state;
     if (data == null) return <Text type="secondary">{t('ui.noBody')}</Text>;
@@ -101,6 +156,7 @@ class DetailPanel extends React.Component {
 
     const clean = typeof data === 'object' ? stripPrivateKeys(data) : data;
     const isJsonMode = bodyViewMode[type] === 'json';
+    const expandNode = this.getRequestExpandNode(clean, type);
 
     return (
       <div>
@@ -108,6 +164,7 @@ class DetailPanel extends React.Component {
           <JsonViewer
             data={clean}
             defaultExpand={type === 'response' ? 'all' : 'root'}
+            expandNode={expandNode}
           />
         ) : (
           <pre className={styles.rawTextPre}>

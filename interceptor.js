@@ -1,6 +1,6 @@
 // LLM Request Interceptor
 // 拦截并记录所有Claude API请求
-import { appendFileSync, mkdirSync, readdirSync, readFileSync, statSync, renameSync, unlinkSync, existsSync } from 'node:fs';
+import { appendFileSync, mkdirSync, readdirSync, readFileSync, writeFileSync, statSync, renameSync, unlinkSync, existsSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, basename } from 'node:path';
@@ -133,13 +133,77 @@ export { LOG_FILE, _initPromise, _resumeState, _choicePromise, resolveResumeChoi
 
 const MAX_LOG_SIZE = 200 * 1024 * 1024; // 200MB
 
+function isPreflightEntry(entry) {
+  if (entry.mainAgent || entry.isHeartbeat || entry.isCountTokens) return false;
+  const body = entry.body || {};
+  if (Array.isArray(body.tools) && body.tools.length > 0) return false;
+  const msgs = body.messages || [];
+  if (msgs.length !== 1 || msgs[0].role !== 'user') return false;
+  const sysText = typeof body.system === 'string' ? body.system :
+    Array.isArray(body.system) ? body.system.map(s => s?.text || '').join('') : '';
+  return sysText.includes('Claude Code');
+}
+
+function migrateConversationContext(oldFile, newFile) {
+  try {
+    const content = readFileSync(oldFile, 'utf-8');
+    if (!content.trim()) return;
+
+    const parts = content.split('\n---\n').filter(p => p.trim());
+    if (parts.length === 0) return;
+
+    // 从后向前扫描，找到最近一条 messages.length === 1 的 mainAgent 条目
+    let originIndex = -1;
+    for (let i = parts.length - 1; i >= 0; i--) {
+      if (!parts[i].includes('"mainAgent": true')) continue;
+      try {
+        const entry = JSON.parse(parts[i]);
+        if (entry.mainAgent) {
+          const msgs = entry.body?.messages;
+          if (Array.isArray(msgs) && msgs.length === 1) {
+            originIndex = i;
+            break;
+          }
+        }
+      } catch {}
+    }
+
+    if (originIndex < 0) return; // 找不到起点，不迁移
+
+    // 检查前一条是否为 Preflight
+    let migrationStart = originIndex;
+    if (originIndex > 0) {
+      try {
+        const prev = JSON.parse(parts[originIndex - 1]);
+        if (isPreflightEntry(prev)) {
+          migrationStart = originIndex - 1;
+        }
+      } catch {}
+    }
+
+    // 迁移条目写入新文件
+    const migratedParts = parts.slice(migrationStart);
+    writeFileSync(newFile, migratedParts.join('\n---\n') + '\n---\n');
+
+    // 旧文件只保留迁移前的条目
+    const remainingParts = parts.slice(0, migrationStart);
+    if (remainingParts.length > 0) {
+      writeFileSync(oldFile, remainingParts.join('\n---\n') + '\n---\n');
+    } else {
+      writeFileSync(oldFile, '');
+    }
+  } catch {}
+}
+
 function checkAndRotateLogFile() {
   try {
     if (!existsSync(LOG_FILE)) return;
     const size = statSync(LOG_FILE).size;
     if (size >= MAX_LOG_SIZE) {
+      const oldFile = LOG_FILE;
       const { filePath } = generateNewLogFilePath();
       LOG_FILE = filePath;
+      migrateConversationContext(oldFile, filePath);
     }
   } catch {}
 }
