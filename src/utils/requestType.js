@@ -121,7 +121,7 @@ export function classifyRequest(req, nextReq) {
     return { type: 'MainAgent', subType: null };
   }
 
-  if (isCountRequest(req)) {
+  if (req.isCountTokens || isCountRequest(req)) {
     return { type: 'Count', subType: null };
   }
 

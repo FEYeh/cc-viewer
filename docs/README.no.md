@@ -60,6 +60,7 @@ Klikk på "Chat-modus"-knappen øverst til høyre for å analysere Main Agent si
 - Flersesjonsegmentert visning (automatisk segmentert etter `/compact`, `/clear`, osv.)
 - Hver melding viser et tidsstempel nøyaktig til sekundet, utledet fra API-forespørselstiming
 - Innstillingspanel: veksle standard sammenfoldet tilstand for verktøyresultater og tenkningsblokker
+- Globale innstillinger: slå filtrering av irrelevante forespørsler av/på (count_tokens, heartbeat)
 
 ### Oversettelse
 

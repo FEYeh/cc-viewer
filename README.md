@@ -60,6 +60,7 @@ Click the "Chat mode" button in the top right to parse Main Agent's full convers
 - Multi-session segmented display (auto-segmented after `/compact`, `/clear`, etc.)
 - Each message shows a timestamp accurate to the second, derived from API request timing
 - Settings panel: toggle default collapse state for tool results and thinking blocks
+- Global settings: toggle filtering of irrelevant requests (count_tokens, heartbeat) from the request list
 
 ### Translation
 

@@ -60,6 +60,7 @@ Cliquez sur le bouton « Chat mode » en haut à droite pour analyser l'historiq
 - Affichage segmenté multi-session (segmentation automatique après `/compact`, `/clear`, etc.)
 - Chaque message affiche un horodatage précis à la seconde, dérivé du timing de la requête API
 - Panneau de paramètres : basculer l'état de repli par défaut pour les résultats d'outils et les blocs de réflexion
+- Paramètres globaux : activer/désactiver le filtrage des requêtes non pertinentes (count_tokens, heartbeat)
 
 ### Traduction
 

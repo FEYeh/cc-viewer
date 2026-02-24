@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readFileSync, writeFileSync, unlinkSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
@@ -12,7 +12,7 @@ const INJECT_START = '// >>> Start CC Viewer Web Service >>>';
 const INJECT_END = '// <<< Start CC Viewer Web Service <<<';
 const INJECT_IMPORT = "import '../../cc-viewer/interceptor.js';";
 const INJECT_BLOCK = `${INJECT_START}\n${INJECT_IMPORT}\n${INJECT_END}`;
-const SHOW_ALL_FILE = '/tmp/cc-viewer-show-all';
+
 
 const SHELL_HOOK_START = '# >>> CC-Viewer Auto-Inject >>>';
 const SHELL_HOOK_END = '# <<< CC-Viewer Auto-Inject <<<';
@@ -121,20 +121,11 @@ if (isUninstall) {
     console.log(t('cli.uninstall.hookFail', { error: shellResult.error }));
   }
 
-  try { unlinkSync(SHOW_ALL_FILE); } catch {}
-
   console.log(t('cli.uninstall.done'));
   process.exit(0);
 }
 
 // 正常安装流程
-const showAll = process.argv.includes('--all');
-if (showAll) {
-  try { writeFileSync(SHOW_ALL_FILE, '1'); } catch {}
-} else {
-  try { unlinkSync(SHOW_ALL_FILE); } catch {}
-}
-
 try {
   const cliResult = injectCliJs();
   const shellResult = installShellHook();

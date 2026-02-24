@@ -12,6 +12,8 @@ const __dirname = dirname(__filename);
 // 缓存从请求 headers 中提取的 API Key 或 Authorization header
 export let _cachedApiKey = null;
 export let _cachedAuthHeader = null;
+// 缓存从请求 body 中提取的模型名，供翻译接口使用
+export let _cachedModel = null;
 
 // 生成新的日志文件路径
 function generateNewLogFilePath() {
@@ -301,7 +303,7 @@ export function setupInterceptor() {
 
     try {
       const urlStr = typeof url === 'string' ? url : url?.url || String(url);
-      if ((urlStr.includes('anthropic') || urlStr.includes('claude') || (CUSTOM_API_HOST && urlStr.includes(CUSTOM_API_HOST))) && !urlStr.includes('/messages/count_tokens')) {
+      if (urlStr.includes('anthropic') || urlStr.includes('claude') || (CUSTOM_API_HOST && urlStr.includes(CUSTOM_API_HOST))) {
         const timestamp = new Date().toISOString();
         let body = null;
         if (options?.body) {
@@ -312,13 +314,14 @@ export function setupInterceptor() {
           }
         }
 
-        // 转换 headers 为普通对象
+        // 转换 headers 为普通对象（支持 Request 对象、options.headers、Headers 实例）
         let headers = {};
-        if (options?.headers) {
-          if (options.headers instanceof Headers) {
-            headers = Object.fromEntries(options.headers.entries());
-          } else if (typeof options.headers === 'object') {
-            headers = { ...options.headers };
+        const rawHeaders = options?.headers || (url instanceof Request ? url.headers : null);
+        if (rawHeaders) {
+          if (rawHeaders instanceof Headers) {
+            headers = Object.fromEntries(rawHeaders.entries());
+          } else if (typeof rawHeaders === 'object') {
+            headers = { ...rawHeaders };
           }
         }
 
@@ -328,6 +331,11 @@ export function setupInterceptor() {
         }
         if (headers['authorization'] && !_cachedAuthHeader) {
           _cachedAuthHeader = headers['authorization'];
+        }
+
+        // 缓存请求中的模型名，供翻译接口使用
+        if (body?.model && typeof body.model === 'string') {
+          _cachedModel = body.model;
         }
 
         // 脱敏敏感 headers，避免写入日志泄漏凭证
@@ -359,6 +367,7 @@ export function setupInterceptor() {
           duration: 0,
           isStream: body?.stream === true,
           isHeartbeat: /\/api\/eval\/sdk-/.test(urlStr),
+          isCountTokens: /\/messages\/count_tokens/.test(urlStr),
           mainAgent: (() => {
             if (!body?.system || !Array.isArray(body?.tools) || body.tools.length <= 10) return false;
             if (!['Task', 'Edit', 'Bash'].every(n => body.tools.some(t => t.name === n))) return false;

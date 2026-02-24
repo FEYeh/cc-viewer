@@ -60,6 +60,7 @@ Kliknij przycisk "Chat mode" w prawym górnym rogu, aby przetworzyć pełną his
 - Wyświetlanie podzielone na wiele sesji (automatycznie segmentowane po `/compact`, `/clear`, itp.)
 - Każda wiadomość pokazuje znacznik czasu z dokładnością do sekundy, wyznaczony na podstawie czasu żądania API
 - Panel ustawień: przełączanie domyślnego stanu zwinięcia wyników narzędzi i bloków myślenia
+- Ustawienia globalne: przełączanie filtrowania nieistotnych żądań (count_tokens, heartbeat)
 
 ### Tłumaczenie
 

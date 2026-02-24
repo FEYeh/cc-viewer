@@ -60,6 +60,7 @@ Clique no botão "Modo Chat" no canto superior direito para analisar o históric
 - Exibição segmentada por múltiplas sessões (segmentação automática após `/compact`, `/clear`, etc.)
 - Cada mensagem exibe um timestamp com precisão de segundos, derivado do timing da requisição API
 - Painel de configurações: alternar o estado de recolhimento padrão para resultados de ferramentas e blocos de pensamento
+- Configurações globais: alternar filtragem de solicitações irrelevantes (count_tokens, heartbeat)
 
 ### Tradução
 

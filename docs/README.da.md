@@ -60,6 +60,7 @@ Klik på "Chat mode"-knappen øverst til højre for at parse Main Agent's fulde 
 - Visning opdelt i flere sessioner (automatisk opdelt efter `/compact`, `/clear`, osv.)
 - Hver meddelelse viser et tidsstempel nøjagtigt til sekundet, afledt fra API-anmodningstiming
 - Indstillingspanel: skift standardsammenklappet tilstand for værktøjsresultater og tænkeblokke
+- Globale indstillinger: slå filtrering af irrelevante forespørgsler til/fra (count_tokens, heartbeat)
 
 ### Oversættelse
 

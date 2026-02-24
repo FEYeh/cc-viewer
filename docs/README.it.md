@@ -60,6 +60,7 @@ Fare clic sul pulsante "Chat mode" in alto a destra per analizzare la cronologia
 - Visualizzazione segmentata multi-sessione (segmentazione automatica dopo `/compact`, `/clear`, ecc.)
 - Ogni messaggio mostra un timestamp preciso al secondo, derivato dal timing della richiesta API
 - Pannello impostazioni: attiva/disattiva lo stato di compressione predefinito per i risultati degli strumenti e i blocchi di pensiero
+- Impostazioni globali: attiva/disattiva il filtraggio delle richieste irrilevanti (count_tokens, heartbeat)
 
 ### Traduzione
 

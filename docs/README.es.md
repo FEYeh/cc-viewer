@@ -60,6 +60,7 @@ Haga clic en el botón "Chat mode" en la esquina superior derecha para analizar 
 - Visualización segmentada multi-sesión (segmentación automática después de `/compact`, `/clear`, etc.)
 - Cada mensaje muestra una marca de tiempo con precisión de segundos, derivada del timing de la solicitud API
 - Panel de configuración: alternar el estado de colapso predeterminado para resultados de herramientas y bloques de pensamiento
+- Configuración global: alternar el filtrado de solicitudes irrelevantes (count_tokens, heartbeat)
 
 ### Traducción
 

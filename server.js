@@ -4,12 +4,12 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, extname, basename } from 'node:path';
 import { homedir, userInfo, platform } from 'node:os';
 import { execSync } from 'node:child_process';
-import { LOG_FILE, _initPromise, _resumeState, resolveResumeChoice, _projectName, _cachedApiKey, _cachedAuthHeader } from './interceptor.js';
+import { LOG_FILE, _initPromise, _resumeState, resolveResumeChoice, _projectName, _cachedApiKey, _cachedAuthHeader, _cachedModel } from './interceptor.js';
 import { t, detectLanguage } from './i18n.js';
 
 const LOG_DIR = join(homedir(), '.claude', 'cc-viewer');
 const PREFS_FILE = join(LOG_DIR, 'preferences.json');
-const SHOW_ALL_FILE = '/tmp/cc-viewer-show-all';
+
 
 // macOS user profile (avatar + display name), cached once
 let _userProfile = null;
@@ -273,8 +273,9 @@ function handleRequest(req, res) {
         }
 
         // 获取 API Key 或 Authorization header
-        const apiKey = process.env.ANTHROPIC_API_KEY || _cachedApiKey;
-        const authHeader = _cachedAuthHeader; // OAuth Bearer token
+        // 优先级: 环境变量 > 拦截缓存
+        const apiKey = process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN || _cachedApiKey;
+        const authHeader = _cachedAuthHeader;
         if (!apiKey && !authHeader) {
           res.writeHead(501, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ error: 'No API key available' }));
@@ -298,10 +299,16 @@ function handleRequest(req, res) {
           method: 'POST',
           headers: reqHeaders,
           body: JSON.stringify({
-            model: 'claude-haiku-4-20250514',
-            max_tokens: 4096,
-            system: `You are a translator. Translate the following text from ${from} to ${targetLang}. Output only the translated text, nothing else.`,
+            model: _cachedModel || 'claude-haiku-4-5-20251001',
+            max_tokens: 32000,
+            tools:[],
+            system: [{
+              type:"text",
+              text:`You are a translator. Translate the following text from ${from} to ${targetLang}. Output only the translated text, nothing else.`
+            }],
             messages: [{ role: 'user', content: inputText }],
+            stream: false,
+            temperature: 1,
           }),
         });
 
@@ -360,14 +367,6 @@ function handleRequest(req, res) {
     const entries = readLogFile();
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(entries));
-    return;
-  }
-
-  // 查询是否显示全部请求（包括心跳）
-  if (url === '/api/show-all' && method === 'GET') {
-    const showAll = existsSync(SHOW_ALL_FILE);
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ showAll }));
     return;
   }
 

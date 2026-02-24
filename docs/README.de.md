@@ -60,6 +60,7 @@ Klicken Sie auf die Schaltfläche „Chat mode" oben rechts, um den vollständig
 - Mehrsitzungs-Segmentanzeige (automatische Segmentierung nach `/compact`, `/clear`, usw.)
 - Jede Nachricht zeigt einen sekundengenauen Zeitstempel, abgeleitet aus dem API-Anfrage-Timing
 - Einstellungspanel: Standard-Einklappstatus für Tool-Ergebnisse und Thinking-Blöcke umschalten
+- Globale Einstellungen: Filterung irrelevanter Anfragen (count_tokens, Heartbeat) ein-/ausschalten
 
 ### Übersetzung
 

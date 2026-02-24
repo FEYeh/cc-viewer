@@ -31,7 +31,7 @@ const { Text } = Typography;
 class AppHeader extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { countdownText: '', promptModalVisible: false, promptData: [], settingsDrawerVisible: false };
+    this.state = { countdownText: '', promptModalVisible: false, promptData: [], settingsDrawerVisible: false, globalSettingsVisible: false };
     this._rafId = null;
     this._expiredTimer = null;
     this.updateCountdown = this.updateCountdown.bind(this);
@@ -327,7 +327,7 @@ class AppHeader extends React.Component {
   }
 
   render() {
-    const { requestCount, viewMode, cacheType, onToggleViewMode, onImportLocalLogs, onLangChange, isLocalLog, localLogFile, projectName, collapseToolResults, onCollapseToolResultsChange, expandThinking, onExpandThinkingChange } = this.props;
+    const { requestCount, viewMode, cacheType, onToggleViewMode, onImportLocalLogs, onLangChange, isLocalLog, localLogFile, projectName, collapseToolResults, onCollapseToolResultsChange, expandThinking, onExpandThinkingChange, filterIrrelevant, onFilterIrrelevantChange } = this.props;
     const { countdownText } = this.state;
 
     const menuItems = [
@@ -353,6 +353,13 @@ class AppHeader extends React.Component {
         icon: <ExportOutlined />,
         label: t('ui.exportPrompts'),
         onClick: this.handleShowPrompts,
+      },
+      { type: 'divider' },
+      {
+        key: 'global-settings',
+        icon: <SettingOutlined />,
+        label: t('ui.globalSettings'),
+        onClick: () => this.setState({ globalSettingsVisible: true }),
       },
     ];
 
@@ -468,6 +475,21 @@ class AppHeader extends React.Component {
             />
           </div>
         </Drawer>
+        <Modal
+          title={t('ui.globalSettings')}
+          open={this.state.globalSettingsVisible}
+          onCancel={() => this.setState({ globalSettingsVisible: false })}
+          footer={null}
+          width={400}
+        >
+          <div className={styles.settingsItem}>
+            <span className={styles.settingsLabel}>{t('ui.filterIrrelevant')}</span>
+            <Switch
+              checked={!!filterIrrelevant}
+              onChange={(checked) => onFilterIrrelevantChange && onFilterIrrelevantChange(checked)}
+            />
+          </div>
+        </Modal>
       </div>
     );
   }

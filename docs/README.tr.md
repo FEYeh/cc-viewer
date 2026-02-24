@@ -60,6 +60,7 @@ Main Agent'ın tam konuşma geçmişini sohbet arayüzüne dönüştürmek için
 - Çoklu session segmentli görüntüleme (`/compact`, `/clear` vb. sonrasında otomatik segmentleme)
 - Her mesaj saniye hassasiyetinde zaman damgası gösterir, API istek zamanlamasından türetilmiş
 - Ayarlar paneli: araç sonuçları ve düşünme blokları için varsayılan daraltma durumunu değiştirme
+- Genel ayarlar: ilgisiz isteklerin (count_tokens, heartbeat) filtrelenmesini aç/kapat
 
 ### Çeviri
 

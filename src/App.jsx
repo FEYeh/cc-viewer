@@ -49,25 +49,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    // 查询是否显示全部请求
-    fetch('/api/show-all')
-      .then(res => res.json())
-      .then(data => this.setState({ showAll: !!data.showAll }))
-      .catch(() => {});
-
-    // 获取系统用户头像和名字
-    fetch('/api/user-profile')
-      .then(res => res.json())
-      .then(data => this.setState({ userProfile: data }))
-      .catch(() => {});
-
-    // 获取当前监控的项目名称
-    fetch('/api/project-name')
-      .then(res => res.json())
-      .then(data => this.setState({ projectName: data.projectName || '' }))
-      .catch(() => {});
-
-    // 获取用户偏好设置
+    // 获取用户偏好设置（包含 filterIrrelevant）
     fetch('/api/preferences')
       .then(res => res.json())
       .then(data => {
@@ -81,7 +63,22 @@ class App extends React.Component {
         if (data.expandThinking !== undefined) {
           this.setState({ expandThinking: !!data.expandThinking });
         }
+        // filterIrrelevant 默认 true，showAll = !filterIrrelevant
+        const filterIrrelevant = data.filterIrrelevant !== undefined ? !!data.filterIrrelevant : true;
+        this.setState({ showAll: !filterIrrelevant });
       })
+      .catch(() => {});
+
+    // 获取系统用户头像和名字
+    fetch('/api/user-profile')
+      .then(res => res.json())
+      .then(data => this.setState({ userProfile: data }))
+      .catch(() => {});
+
+    // 获取当前监控的项目名称
+    fetch('/api/project-name')
+      .then(res => res.json())
+      .then(data => this.setState({ projectName: data.projectName || '' }))
       .catch(() => {});
 
     // 检查是否是通过 ?logfile= 打开的历史日志
@@ -138,7 +135,7 @@ class App extends React.Component {
             this.assignMessageTimestamps(entries);
             const mainAgentSessions = this.buildSessionsFromEntries(entries);
             const filtered = entries.filter(r =>
-              !r.isHeartbeat && !/\/api\/eval\/sdk-/.test(r.url || '') && !/\/messages\/count_tokens/.test(r.url || '')
+              !r.isHeartbeat && !r.isCountTokens && !/\/api\/eval\/sdk-/.test(r.url || '') && !/\/messages\/count_tokens/.test(r.url || '')
             );
             if (entries.length > 0) {
               this.animateLoadingCount(entries.length, () => {
@@ -186,7 +183,7 @@ class App extends React.Component {
             this.assignMessageTimestamps(entries);
             const mainAgentSessions = this.buildSessionsFromEntries(entries);
             const filtered = entries.filter(r =>
-              !r.isHeartbeat && !/\/api\/eval\/sdk-/.test(r.url || '') && !/\/messages\/count_tokens/.test(r.url || '')
+              !r.isHeartbeat && !r.isCountTokens && !/\/api\/eval\/sdk-/.test(r.url || '') && !/\/messages\/count_tokens/.test(r.url || '')
             );
             this.setState({
               requests: entries,
@@ -283,7 +280,7 @@ class App extends React.Component {
             this.setState(s => {
               if (s.selectedIndex === null && s.requests.length > 0) {
                 const filtered = s.showAll ? s.requests : s.requests.filter(r =>
-                  !r.isHeartbeat && !/\/api\/eval\/sdk-/.test(r.url || '') && !/\/messages\/count_tokens/.test(r.url || '')
+                  !r.isHeartbeat && !r.isCountTokens && !/\/api\/eval\/sdk-/.test(r.url || '') && !/\/messages\/count_tokens/.test(r.url || '')
                 );
                 return filtered.length > 0 ? { selectedIndex: filtered.length - 1 } : null;
               }
@@ -418,6 +415,24 @@ class App extends React.Component {
     }).catch(() => {});
   };
 
+  handleFilterIrrelevantChange = (checked) => {
+    this.setState(prev => {
+      const newShowAll = !checked;
+      const newFiltered = newShowAll ? prev.requests : prev.requests.filter(r =>
+        !r.isHeartbeat && !r.isCountTokens && !/\/api\/eval\/sdk-/.test(r.url || '') && !/\/messages\/count_tokens/.test(r.url || '')
+      );
+      return {
+        showAll: newShowAll,
+        selectedIndex: newFiltered.length > 0 ? newFiltered.length - 1 : null,
+      };
+    });
+    fetch('/api/preferences', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filterIrrelevant: checked }),
+    }).catch(() => {});
+  };
+
   handleTabChange = (key) => {
     this.setState({ currentTab: key });
   };
@@ -495,7 +510,7 @@ class App extends React.Component {
               }
             }
             const filtered = entries.filter(r =>
-              !r.isHeartbeat && !/\/api\/eval\/sdk-/.test(r.url || '') && !/\/messages\/count_tokens/.test(r.url || '')
+              !r.isHeartbeat && !r.isCountTokens && !/\/api\/eval\/sdk-/.test(r.url || '') && !/\/messages\/count_tokens/.test(r.url || '')
             );
             this._isLocalLog = true;
             this._localLogFile = file.name;
@@ -536,7 +551,7 @@ class App extends React.Component {
 
     // 过滤心跳请求（eval/sdk-* 和 count_tokens），除非 showAll
     const filteredRequests = showAll ? requests : requests.filter(r =>
-      !r.isHeartbeat && !/\/api\/eval\/sdk-/.test(r.url || '') && !/\/messages\/count_tokens/.test(r.url || '')
+      !r.isHeartbeat && !r.isCountTokens && !/\/api\/eval\/sdk-/.test(r.url || '') && !/\/messages\/count_tokens/.test(r.url || '')
     );
 
     const selectedRequest = selectedIndex !== null ? filteredRequests[selectedIndex] : null;
@@ -576,6 +591,8 @@ class App extends React.Component {
               onCollapseToolResultsChange={this.handleCollapseToolResultsChange}
               expandThinking={this.state.expandThinking}
               onExpandThinkingChange={this.handleExpandThinkingChange}
+              filterIrrelevant={!this.state.showAll}
+              onFilterIrrelevantChange={this.handleFilterIrrelevantChange}
             />
           </Layout.Header>
 
