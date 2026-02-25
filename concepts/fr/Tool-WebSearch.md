@@ -1,0 +1,32 @@
+# WebSearch
+
+## Définition
+
+Exécute des requêtes sur les moteurs de recherche et renvoie des résultats de recherche pour obtenir des informations à jour.
+
+## Paramètres
+
+| Paramètre | Type | Requis | Description |
+|-----------|------|--------|-------------|
+| `query` | string | Oui | Requête de recherche (minimum 2 caractères) |
+| `allowed_domains` | string[] | Non | N'inclure que les résultats de ces domaines |
+| `blocked_domains` | string[] | Non | Exclure les résultats de ces domaines |
+
+## Cas d'utilisation
+
+**Adapté pour :**
+- Obtenir des informations à jour au-delà de la date de coupure des connaissances du modèle
+- Rechercher des événements actuels et des données récentes
+- Rechercher la documentation technique la plus récente
+
+## Notes
+
+- Les résultats de recherche sont renvoyés au format d'hyperliens markdown
+- Après utilisation, une section « Sources: » doit être incluse à la fin de la réponse, listant les URLs pertinentes
+- Supporte le filtrage de domaines (inclusion/exclusion)
+- L'année en cours doit être utilisée dans les requêtes de recherche
+- Disponible uniquement aux États-Unis
+
+## Signification dans cc-viewer
+
+Les appels WebSearch apparaissent dans le journal des requêtes comme des paires de content blocks `tool_use` / `tool_result`. Le `tool_result` contient la liste des résultats de recherche.
