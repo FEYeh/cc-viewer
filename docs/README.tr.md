@@ -40,6 +40,8 @@ ccv --uninstall
 - JSON görünümü ile düz metin görünümü arasında geçiş
 - Tek tıkla JSON içeriği kopyalama
 - MainAgent istekleri Body Diff JSON'u destekler, önceki MainAgent isteğiyle farkları katlanmış olarak gösterir (yalnızca değişen/eklenen alanlar)
+- Diff bölümü JSON/Metin görünümü geçişini ve tek tıkla kopyalamayı destekler
+- "Diff'i Genişlet" ayarı: etkinleştirildiğinde MainAgent istekleri diff bölümünü otomatik olarak genişletir
 - Body Diff JSON araç ipucu kapatılabilir; kapatıldığında tercih sunucu tarafında kaydedilir ve bir daha gösterilmez
 - Hassas başlıklar (`x-api-key`, `authorization`) kimlik bilgisi sızıntısını önlemek için JSONL log dosyalarında otomatik olarak maskelenir
 - İstek başına satır içi Token kullanım istatistikleri (giriş/çıkış token'ları, önbellek oluşturma/okuma, isabet oranı)
@@ -79,6 +81,7 @@ Başlık alanındaki üzerine gelme paneli:
 
 - Modele göre gruplandırılmış Token sayıları (input/output)
 - Cache creation/read sayıları ve cache isabet oranı
+- Nedene göre gruplandırılmış cache yeniden oluşturma istatistikleri (TTL, system/tools/model değişikliği, mesaj kısaltma/değiştirme, key değişikliği) — sayı ve cache_creation token'ları ile birlikte
 - Main Agent cache süre dolumu geri sayımı
 
 ### Log Yönetimi

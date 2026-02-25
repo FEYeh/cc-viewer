@@ -17,7 +17,7 @@ cc-viewer 通过对比前后两个 MainAgent 请求的 body，精确判断缓存
 | `tools_change` | 工具定义变更 | `JSON.stringify(prev.tools) !== JSON.stringify(curr.tools)` |
 | `model_change` | 模型切换 | `prev.model !== curr.model` |
 | `msg_truncated` | 消息栈被截断 | 当前请求的 messages 数量少于上一个请求，通常因上下文窗口溢出触发截断 |
-| `msg_modified` | 历史消息被修改 | 前缀消息内容不一致（正常追加时前缀应完全相同） |
+| `msg_modified` | 历史消息修改 | 前缀消息内容不一致（正常追加时前缀应完全相同） |
 | `key_change` | 未知键变更 | 以上条件均不匹配时的 fallback |
 
 ## 判断优先级

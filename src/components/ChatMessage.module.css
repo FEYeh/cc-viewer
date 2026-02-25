@@ -115,7 +115,7 @@
 
 .bubbleHighlightFading {
   box-shadow: 0 0 10px rgba(22, 104, 220, 0);
-  transition: box-shadow 2s ease-out;
+  transition: box-shadow 5s ease-out;
 }
 
 .borderSvg {
@@ -129,7 +129,7 @@
 
 .borderSvgFading {
   opacity: 0;
-  transition: opacity 2s ease-out;
+  transition: opacity 5s ease-out;
 }
 
 .borderRect {

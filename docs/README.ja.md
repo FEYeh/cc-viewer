@@ -40,6 +40,8 @@ ccv --uninstall
 - JSON ビューとプレーンテキストビューの切り替え対応
 - JSON コンテンツのワンクリックコピー
 - MainAgent リクエストで Body Diff JSON をサポート、前回の MainAgent リクエストとの差分を折りたたみ表示（変更/追加フィールドのみ）
+- Diff セクションは JSON/テキストビューの切り替えおよびワンクリックコピーに対応
+- 「Diff を展開」設定：有効にすると、MainAgent リクエストで Diff セクションが自動展開されます
 - Body Diff JSON ツールチップは閉じることができ、閉じるとサーバー側に設定が保存され、再表示されません
 - 機密ヘッダー（`x-api-key`、`authorization`）は JSONL ログファイルで自動的にマスクされ、認証情報の漏洩を防止
 - リクエストごとにインラインで Token 使用量統計を表示（入力/出力 Token、キャッシュ作成/読み取り、ヒット率）
@@ -79,6 +81,7 @@ ccv --uninstall
 
 - モデル別 input/output token 数量のグループ統計
 - Cache creation/read 数量およびキャッシュヒット率の表示
+- キャッシュリビルド統計を理由別にグループ表示（TTL 期限切れ、system/tools/model 変更、メッセージ切り詰め/変更、キー変更）、回数および cache_creation トークン数を含む
 - Main Agent キャッシュ有効期限カウントダウン
 
 ### ログ管理

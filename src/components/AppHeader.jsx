@@ -1,7 +1,7 @@
 import React from 'react';
 import { Space, Tag, Button, Badge, Typography, Dropdown, Popover, Modal, Collapse, Drawer, Switch } from 'antd';
 import { MessageOutlined, FileTextOutlined, ImportOutlined, DownOutlined, DashboardOutlined, SaveOutlined, ExportOutlined, DownloadOutlined, SettingOutlined } from '@ant-design/icons';
-import { isSystemText, formatTokenCount, computeTokenStats } from '../utils/helpers';
+import { isSystemText, formatTokenCount, computeTokenStats, computeCacheRebuildStats } from '../utils/helpers';
 import { t, getLang, setLang } from '../i18n';
 import styles from './AppHeader.module.css';
 
@@ -294,6 +294,53 @@ class AppHeader extends React.Component {
             </div>
           );
         })}
+        {this.renderCacheRebuildStats()}
+      </div>
+    );
+  }
+
+  renderCacheRebuildStats() {
+    const { requests = [] } = this.props;
+    const stats = computeCacheRebuildStats(requests);
+    const reasonKeys = ['ttl', 'system_change', 'tools_change', 'model_change', 'msg_truncated', 'msg_modified', 'key_change'];
+    const i18nMap = {
+      ttl: 'ttl', system_change: 'systemChange', tools_change: 'toolsChange',
+      model_change: 'modelChange', msg_truncated: 'msgTruncated', msg_modified: 'msgModified', key_change: 'keyChange',
+    };
+    const activeReasons = reasonKeys.filter(k => stats[k].count > 0);
+    if (activeReasons.length === 0) return null;
+
+    const totalCount = activeReasons.reduce((sum, k) => sum + stats[k].count, 0);
+    const totalCache = activeReasons.reduce((sum, k) => sum + stats[k].cacheCreate, 0);
+
+    return (
+      <div className={styles.rebuildCard}>
+        <div className={styles.modelName}>{t('ui.cacheRebuildStats')}</div>
+        <table className={styles.statsTable}>
+          <thead>
+            <tr>
+              <td className={styles.th} style={{ textAlign: 'left' }}>{t('ui.cacheRebuild.reason')}</td>
+              <td className={styles.th}>{t('ui.cacheRebuild.count')}</td>
+              <td className={styles.th}>{t('ui.cacheRebuild.cacheCreate')}</td>
+            </tr>
+          </thead>
+          <tbody>
+            {activeReasons.map(k => (
+              <tr key={k} className={styles.rowBorder}>
+                <td className={styles.label}>{t(`ui.cacheRebuild.${i18nMap[k]}`)}</td>
+                <td className={styles.td}>{stats[k].count}</td>
+                <td className={styles.td}>{formatTokenCount(stats[k].cacheCreate)}</td>
+              </tr>
+            ))}
+            {activeReasons.length > 1 && (
+              <tr className={styles.rebuildTotalRow}>
+                <td className={styles.label}>Total</td>
+                <td className={styles.td}>{totalCount}</td>
+                <td className={styles.td}>{formatTokenCount(totalCache)}</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
     );
   }
@@ -327,7 +374,7 @@ class AppHeader extends React.Component {
   }
 
   render() {
-    const { requestCount, viewMode, cacheType, onToggleViewMode, onImportLocalLogs, onLangChange, isLocalLog, localLogFile, projectName, collapseToolResults, onCollapseToolResultsChange, expandThinking, onExpandThinkingChange, filterIrrelevant, onFilterIrrelevantChange } = this.props;
+    const { requestCount, viewMode, cacheType, onToggleViewMode, onImportLocalLogs, onLangChange, isLocalLog, localLogFile, projectName, collapseToolResults, onCollapseToolResultsChange, expandThinking, onExpandThinkingChange, expandDiff, onExpandDiffChange, filterIrrelevant, onFilterIrrelevantChange } = this.props;
     const { countdownText } = this.state;
 
     const menuItems = [
@@ -487,6 +534,13 @@ class AppHeader extends React.Component {
             <Switch
               checked={!!filterIrrelevant}
               onChange={(checked) => onFilterIrrelevantChange && onFilterIrrelevantChange(checked)}
+            />
+          </div>
+          <div className={styles.settingsItem}>
+            <span className={styles.settingsLabel}>{t('ui.expandDiff')}</span>
+            <Switch
+              checked={!!expandDiff}
+              onChange={(checked) => onExpandDiffChange && onExpandDiffChange(checked)}
             />
           </div>
         </Modal>

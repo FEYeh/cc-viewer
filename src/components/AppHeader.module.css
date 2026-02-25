@@ -158,6 +158,21 @@
   border-bottom: 1px solid #2a2a2a;
 }
 
+.rebuildCard {
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-top: 10px;
+}
+
+.rebuildTotalRow {
+  border-top: 1px solid #444;
+}
+
+.rebuildTotalRow td {
+  font-weight: 600;
+}
+
 /* Prompt modal */
 .promptExportBar {
   margin-bottom: 12px;

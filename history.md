@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.17 (2026-02-25)
+
+- Added cache rebuild statistics card in Dashboard, grouped by reason (TTL, system/tools/model change, message truncation/modification, key change) with count and cache_creation tokens
+- Added "Expand Diff" setting toggle; MainAgent requests auto-expand diff section when enabled
+- Diff section now supports JSON/Text view switching and copy button
+- ChatView smart auto-scroll: only scrolls to bottom when user is already near the bottom
+- Extended highlight fade-out animation from 2s to 5s for better visibility
+
 ## 1.0.16 (2026-02-24)
 
 - Added "View in chat" button on Request/Response detail tabs to jump to the corresponding conversation message

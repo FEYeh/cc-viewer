@@ -40,6 +40,8 @@ ccv --uninstall
 - Veksle mellom JSON-visning og ren tekstvisning
 - Kopier JSON-innhold med ett klikk
 - MainAgent-forespørsler støtter Body Diff JSON, viser sammenfoldet forskjeller med forrige MainAgent-forespørsel (kun endrede/nye felter)
+- Diff-seksjonen støtter veksling mellom JSON/Tekst-visning og ett-klikks kopiering
+- «Utvid Diff»-innstilling: når aktivert, utvides diff-seksjonen automatisk for MainAgent-forespørsler
 - Body Diff JSON-tooltip kan lukkes; når det er lukket, lagres preferansen på serveren og vises aldri igjen
 - Sensitive headere (`x-api-key`, `authorization`) maskeres automatisk i JSONL-loggfiler for å forhindre lekkasje av legitimasjon
 - Innebygd token-forbruksstatistikk per forespørsel (input/output-tokens, cache-opprettelse/-lesing, treffrate)
@@ -79,6 +81,7 @@ Svevepanel i topptekstområdet:
 
 - Token-antall gruppert etter modell (input/output)
 - Cache creation/read-antall og cache-treffrate
+- Cache-gjenoppbyggingsstatistikk gruppert etter årsak (TTL, system/verktøy/modellendring, meldingstrunkering/-endring, nøkkelendring) med antall og cache_creation-tokens
 - Main Agent cache-utløpsnedtelling
 
 ### Loggadministrasjon

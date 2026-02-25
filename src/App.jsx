@@ -40,6 +40,7 @@ class App extends React.Component {
       resumeFileName: '',
       collapseToolResults: true,
       expandThinking: true,
+      expandDiff: false,
       fileLoading: false,
       fileLoadingCount: 0,
     };
@@ -62,6 +63,9 @@ class App extends React.Component {
         }
         if (data.expandThinking !== undefined) {
           this.setState({ expandThinking: !!data.expandThinking });
+        }
+        if (data.expandDiff !== undefined) {
+          this.setState({ expandDiff: !!data.expandDiff });
         }
         // filterIrrelevant 默认 true，showAll = !filterIrrelevant
         const filterIrrelevant = data.filterIrrelevant !== undefined ? !!data.filterIrrelevant : true;
@@ -489,6 +493,15 @@ class App extends React.Component {
     }).catch(() => {});
   };
 
+  handleExpandDiffChange = (checked) => {
+    this.setState({ expandDiff: checked });
+    fetch('/api/preferences', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ expandDiff: checked }),
+    }).catch(() => {});
+  };
+
   handleFilterIrrelevantChange = (checked) => {
     this.setState(prev => {
       const newShowAll = !checked;
@@ -665,6 +678,8 @@ class App extends React.Component {
               onCollapseToolResultsChange={this.handleCollapseToolResultsChange}
               expandThinking={this.state.expandThinking}
               onExpandThinkingChange={this.handleExpandThinkingChange}
+              expandDiff={this.state.expandDiff}
+              onExpandDiffChange={this.handleExpandDiffChange}
               filterIrrelevant={!this.state.showAll}
               onFilterIrrelevantChange={this.handleFilterIrrelevantChange}
             />
@@ -702,6 +717,7 @@ class App extends React.Component {
                     currentTab={currentTab}
                     onTabChange={this.handleTabChange}
                     onViewInChat={this.handleViewInChat}
+                    expandDiff={this.state.expandDiff}
                   />
                 </div>
               </div>

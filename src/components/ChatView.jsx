@@ -88,6 +88,12 @@ class ChatView extends React.Component {
     }, randomInterval());
   }
 
+  _isNearBottom() {
+    const el = this.containerRef.current;
+    if (!el) return true;
+    return el.scrollHeight - el.scrollTop - el.clientHeight <= 5;
+  }
+
   scrollToBottom() {
     if (this._scrollTargetRef.current) {
       const targetEl = this._scrollTargetRef.current;
@@ -108,8 +114,11 @@ class ChatView extends React.Component {
       if (this.props.onScrollTsDone) this.props.onScrollTsDone();
       return;
     }
-    const el = this.containerRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
+    // Only auto-scroll to bottom if user is already near the bottom
+    if (this._isNearBottom()) {
+      const el = this.containerRef.current;
+      if (el) el.scrollTop = el.scrollHeight;
+    }
   }
 
   _bindScrollFade() {

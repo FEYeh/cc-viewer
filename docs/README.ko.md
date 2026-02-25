@@ -40,6 +40,8 @@ ccv --uninstall
 - JSON 뷰와 일반 텍스트 뷰 전환 지원
 - JSON 내용 원클릭 복사
 - MainAgent 요청에 Body Diff JSON 지원, 이전 MainAgent 요청과의 차이를 접어서 표시 (변경/추가된 필드만 표시)
+- Diff 섹션에서 JSON/Text 뷰 전환 및 원클릭 복사 지원
+- "Expand Diff" 설정: 활성화 시 MainAgent 요청의 Diff 섹션이 자동으로 펼쳐짐
 - Body Diff JSON 툴팁은 닫기 가능하며, 닫으면 서버 측에 환경설정이 저장되어 다시 표시되지 않습니다
 - 민감한 헤더(`x-api-key`, `authorization`)가 JSONL 로그 파일에서 자동으로 마스킹되어 자격 증명 유출 방지
 - 요청별 인라인 Token 사용량 통계 (입력/출력 Token, 캐시 생성/읽기, 적중률)
@@ -79,6 +81,7 @@ ccv --uninstall
 
 - 모델별 input/output token 수량 그룹 통계
 - Cache creation/read 수량 및 캐시 적중률 표시
+- 캐시 재구축 원인별 통계 (TTL, system/tools/model 변경, 메시지 잘림/수정, key 변경) — 횟수 및 cache_creation 토큰 표시
 - Main Agent 캐시 만료 카운트다운
 
 ### 로그 관리

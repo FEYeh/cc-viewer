@@ -40,6 +40,8 @@ ccv --uninstall
 - Toggle between JSON view and plain text view
 - One-click JSON content copy
 - MainAgent requests support Body Diff JSON, showing a collapsible diff with the previous MainAgent request (only changed/added fields)
+- Diff section supports JSON/Text view switching and one-click copy
+- "Expand Diff" setting: when enabled, MainAgent requests auto-expand the diff section
 - Body Diff JSON tooltip is dismissible; once closed, the preference is persisted server-side and never shown again
 - Sensitive headers (`x-api-key`, `authorization`) are automatically masked in JSONL log files to prevent credential leakage
 - Inline token usage stats per request (input/output tokens, cache creation/read, hit rate)
@@ -79,6 +81,7 @@ Hover panel in the header area:
 
 - Token counts grouped by model (input/output)
 - Cache creation/read counts and cache hit rate
+- Cache rebuild statistics: grouped by reason (TTL, system/tools/model change, message truncation/modification, key change) with count and cache_creation tokens
 - Main Agent cache expiration countdown
 
 ### Log Management

@@ -13,7 +13,7 @@ class DetailPanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      bodyViewMode: { request: 'json', response: 'json' },
+      bodyViewMode: { request: 'json', response: 'json', diff: 'json' },
       diffExpanded: false,
       requestHeadersExpanded: false,
       responseHeadersExpanded: false,
@@ -38,13 +38,15 @@ class DetailPanel extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.request !== this.props.request) {
-      this.setState({ diffExpanded: false, requestHeadersExpanded: false, responseHeadersExpanded: false });
+      const isMainAgent = !!nextProps.request?.mainAgent;
+      this.setState({ diffExpanded: isMainAgent && !!nextProps.expandDiff, requestHeadersExpanded: false, responseHeadersExpanded: false });
     }
     return (
       nextProps.request !== this.props.request ||
       nextProps.currentTab !== this.props.currentTab ||
       nextProps.onTabChange !== this.props.onTabChange ||
       nextProps.selectedIndex !== this.props.selectedIndex ||
+      nextProps.expandDiff !== this.props.expandDiff ||
       nextState.bodyViewMode !== this.state.bodyViewMode ||
       nextState.diffExpanded !== this.state.diffExpanded ||
       nextState.requestHeadersExpanded !== this.state.requestHeadersExpanded ||
@@ -65,7 +67,12 @@ class DetailPanel extends React.Component {
   copyBody(type) {
     const { request } = this.props;
     if (!request) return;
-    const data = type === 'request' ? request.body : request.response?.body;
+    let data;
+    if (type === 'diff') {
+      data = this._lastDiffResult;
+    } else {
+      data = type === 'request' ? request.body : request.response?.body;
+    }
     if (data == null) return;
     const clean = typeof data === 'object' ? stripPrivateKeys(data) : data;
     const text = typeof clean === 'string' ? clean : JSON.stringify(clean, null, 2);
@@ -258,6 +265,7 @@ class DetailPanel extends React.Component {
         } else {
           const diffResult = this.computeDiff(prevRequest.body, request.body);
           if (diffResult) {
+            this._lastDiffResult = diffResult;
             diffBlock = (
               <div className={styles.diffSection}>
               <Tooltip
@@ -276,7 +284,34 @@ class DetailPanel extends React.Component {
                 </Text>
               </Tooltip>
               {this.state.diffExpanded && (
-                  <JsonViewer data={diffResult} defaultExpand="all" />
+                <>
+                  <div className={styles.bodyHeader}>
+                    <span />
+                    <Space size="small">
+                      <Button
+                        size="small"
+                        icon={this.state.bodyViewMode.diff === 'json' ? <FileTextOutlined /> : <CodeOutlined />}
+                        onClick={() => this.toggleBodyViewMode('diff')}
+                      >
+                        {this.state.bodyViewMode.diff === 'json' ? 'Text' : 'JSON'}
+                      </Button>
+                      <Button
+                        size="small"
+                        icon={<CopyOutlined />}
+                        onClick={() => this.copyBody('diff')}
+                      >
+                        {t('ui.copy')}
+                      </Button>
+                    </Space>
+                  </div>
+                  {this.state.bodyViewMode.diff === 'json' ? (
+                    <JsonViewer data={diffResult} defaultExpand="all" />
+                  ) : (
+                    <pre className={styles.rawTextPre}>
+                      {JSON.stringify(diffResult, null, 2)}
+                    </pre>
+                  )}
+                </>
                 )}
               </div>
             );

@@ -40,6 +40,8 @@ ccv --uninstall
 - Przełączanie między widokiem JSON a widokiem zwykłego tekstu
 - Kopiowanie zawartości JSON jednym kliknięciem
 - Żądania MainAgent obsługują Body Diff JSON, wyświetlając zwinięte różnice z poprzednim żądaniem MainAgent (tylko zmienione/dodane pola)
+- Sekcja Diff obsługuje przełączanie widoku JSON/Text oraz kopiowanie jednym kliknięciem
+- Ustawienie „Expand Diff": po włączeniu żądania MainAgent automatycznie rozwijają sekcję diff
 - Podpowiedź Body Diff JSON można zamknąć; po zamknięciu preferencja jest zapisywana po stronie serwera i nigdy więcej nie jest wyświetlana
 - Wrażliwe nagłówki (`x-api-key`, `authorization`) są automatycznie maskowane w plikach logów JSONL, aby zapobiec wyciekowi poświadczeń
 - Statystyki zużycia Token inline dla każdego żądania (tokeny wejściowe/wyjściowe, tworzenie/odczyt cache, współczynnik trafień)
@@ -79,6 +81,7 @@ Panel po najechaniu w obszarze nagłówka:
 
 - Liczba Token pogrupowana według modelu (wejście/wyjście)
 - Liczba tworzenia/odczytów Cache i współczynnik trafień Cache
+- Statystyki przebudowy cache pogrupowane według przyczyny (TTL, zmiana system/tools/model, obcięcie/modyfikacja wiadomości, zmiana klucza) z liczbą wystąpień i tokenami cache_creation
 - Odliczanie wygaśnięcia Cache Main Agent
 
 ### Zarządzanie logami

@@ -40,6 +40,8 @@ ccv --uninstall
 - 支援 JSON 檢視與純文字檢視切換
 - 支援一鍵複製 JSON 內容
 - MainAgent 請求支援 Body Diff JSON，摺疊展示與上一次 MainAgent 請求的差異（僅顯示變更/新增欄位）
+- Diff 區塊支援 JSON/Text 檢視切換及一鍵複製
+- 「展開 Diff」設定：啟用後 MainAgent 請求自動展開 Diff 區塊
 - Body Diff JSON 提示框支援關閉，關閉後伺服器端持久化偏好，永不再顯示
 - 敏感請求標頭（`x-api-key`、`authorization`）在 JSONL 日誌檔案中自動脫敏，防止憑證洩露
 - 每個請求內嵌顯示 Token 用量統計（輸入/輸出 Token、快取建立/讀取、命中率）
@@ -79,6 +81,7 @@ Header 區域的「Token 消耗統計」懸浮面板：
 
 - 按模型分組統計 input/output token 數量
 - 顯示 cache creation/read 數量及快取命中率
+- 快取重建統計：依原因分組（TTL、system/tools/model 變更、訊息截斷/修改、key 變更），顯示次數與 cache_creation tokens
 - Main Agent 快取失效倒數計時
 
 ### 日誌管理

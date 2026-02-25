@@ -221,6 +221,31 @@ export function computeTokenStats(requests) {
   return byModel;
 }
 
+export function computeCacheRebuildStats(requests) {
+  const stats = {
+    ttl: { count: 0, cacheCreate: 0 },
+    system_change: { count: 0, cacheCreate: 0 },
+    tools_change: { count: 0, cacheCreate: 0 },
+    model_change: { count: 0, cacheCreate: 0 },
+    msg_truncated: { count: 0, cacheCreate: 0 },
+    msg_modified: { count: 0, cacheCreate: 0 },
+    key_change: { count: 0, cacheCreate: 0 },
+  };
+  for (let i = 0; i < requests.length; i++) {
+    const result = analyzeCacheLoss(requests, i);
+    if (!result) continue;
+    const cacheCreate = requests[i].response?.body?.usage?.cache_creation_input_tokens || 0;
+    const reasons = result.reasons || [result.reason];
+    for (const r of reasons) {
+      if (stats[r]) {
+        stats[r].count++;
+        stats[r].cacheCreate += cacheCreate;
+      }
+    }
+  }
+  return stats;
+}
+
 export function getModelShort(model) {
   if (!model) return null;
   return model
