@@ -11,7 +11,7 @@ setupInterceptor();
 function getOriginalBaseUrl() {
   // 1. Check env var (before it was overwritten by parent process if applicable, 
   // but here we assume this process is the parent or has the original env)
-  if (process.env.ANTHROPIC_BASE_URL && !process.env.ANTHROPIC_BASE_URL.includes('localhost')) {
+  if (process.env.ANTHROPIC_BASE_URL) {
     return process.env.ANTHROPIC_BASE_URL;
   }
 

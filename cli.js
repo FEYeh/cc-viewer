@@ -35,7 +35,7 @@ function buildShellHook(isNative) {
   if (isNative) {
     return `${SHELL_HOOK_START}
 claude() {
-  ccv run -- command claude "$@"
+  ccv run -- claude "$@"
 }
 ${SHELL_HOOK_END}`;
   }
@@ -58,7 +58,7 @@ function installShellHook(isNative) {
 
     if (content.includes(SHELL_HOOK_START)) {
       // Check if existing hook matches desired mode
-      const isNativeHook = content.includes('ccv run -- command claude');
+      const isNativeHook = content.includes('ccv run -- claude');
       if (!!isNative === !!isNativeHook) {
         return { path: configPath, status: 'exists' };
       }
