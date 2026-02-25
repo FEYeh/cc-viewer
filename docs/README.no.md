@@ -60,6 +60,7 @@ Klikk på "Chat-modus"-knappen øverst til høyre for å analysere Main Agent si
 - Brukervalg-meldinger (AskUserQuestion) vises i spørsmål-og-svar-format
 - Systemtagger (`<system-reminder>`, `<project-reminder>`, osv.) automatisk skjult
 - Skill-lastemeldinger oppdages automatisk og foldes sammen med Skill-navn; klikk for å utvide full dokumentasjon (Markdown-gjengivelse)
+- Skills reminder oppdages automatisk og foldes sammen
 - Systemtekst automatisk filtrert, viser kun reell brukerinndata
 - Flersesjonsegmentert visning (automatisk segmentert etter `/compact`, `/clear`, osv.)
 - Hver melding viser et tidsstempel nøyaktig til sekundet, utledet fra API-forespørselstiming
@@ -83,6 +84,7 @@ Svevepanel i topptekstområdet:
 - Cache creation/read-antall og cache-treffrate
 - Cache-gjenoppbyggingsstatistikk gruppert etter årsak (TTL, system/verktøy/modellendring, meldingstrunkering/-endring, nøkkelendring) med antall og cache_creation-tokens
 - Verktøybruksstatistikk: antall kall per verktøy, sortert etter hyppighet
+- Skill-bruksstatistikk: anropsfrekvens per Skill, sortert etter hyppighet
 - Konsepthjelp (?)-ikoner: klikk for å se innebygd dokumentasjon for MainAgent, CacheRebuild og hvert verktøy
 - Main Agent cache-utløpsnedtelling
 
@@ -93,7 +95,8 @@ Via CC-Viewer-rullegardinmenyen øverst til venstre:
 - Importer lokale logger: bla gjennom historiske loggfiler, gruppert etter prosjekt, åpnes i nytt vindu
 - Last inn lokal JSONL-fil: velg og last inn en lokal `.jsonl`-fil direkte (opptil 500MB)
 - Last ned gjeldende logg: last ned den gjeldende overvåkings-JSONL-loggfilen
-- Eksporter brukerforespørsler: trekk ut og vis alle brukerinndata, med XML-tagger (system-reminder osv.) sammenleggbare; skråstrekkommandoer (`/model`, `/context` osv.) vist som selvstendige oppføringer; kommandorelaterte tagger automatisk skjult fra prompt-innhold
+- Slå sammen logger: kombiner flere JSONL-loggfiler til én økt for samlet analyse
+- Se bruker-Prompts: trekk ut og vis alle brukerinndata med tre visningsmodi — Originalmodus (rå innhold), Kontekstmodus (systemtagger kan foldes), Tekstmodus (kun ren tekst); slash-kommandoer (`/model`, `/context` osv.) vises som selvstendige oppføringer; kommandorelaterte tagger skjules automatisk fra Prompt-innholdet
 - Eksporter forespørsler til TXT: eksporter brukerforespørsler (kun tekst, uten system-tagger) til en lokal `.txt`-fil
 
 ### Flerspråklig støtte

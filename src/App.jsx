@@ -1,5 +1,5 @@
 import React from 'react';
-import { ConfigProvider, Layout, theme, Modal, Collapse, List, Tag, Spin, Button, message } from 'antd';
+import { ConfigProvider, Layout, theme, Modal, Collapse, List, Tag, Spin, Button, Checkbox, message } from 'antd';
 import { FolderOutlined, FileTextOutlined, UploadOutlined } from '@ant-design/icons';
 import AppHeader from './components/AppHeader';
 import RequestList from './components/RequestList';
@@ -43,6 +43,7 @@ class App extends React.Component {
       expandDiff: false,
       fileLoading: false,
       fileLoadingCount: 0,
+      selectedLogs: {},   // { [project]: Set<file> }
     };
     this.eventSource = null;
     this._autoSelectTimer = null;
@@ -547,7 +548,68 @@ class App extends React.Component {
   };
 
   handleCloseImportModal = () => {
-    this.setState({ importModalVisible: false });
+    this.setState({ importModalVisible: false, selectedLogs: {} });
+  };
+
+  handleToggleLogSelect = (project, file, checked) => {
+    this.setState(prev => {
+      const selectedLogs = { ...prev.selectedLogs };
+      const set = new Set(selectedLogs[project] || []);
+      if (checked) set.add(file);
+      else set.delete(file);
+      if (set.size === 0) delete selectedLogs[project];
+      else selectedLogs[project] = set;
+      return { selectedLogs };
+    });
+  };
+
+  handleMergeLogs = (project) => {
+    const { selectedLogs, localLogs } = this.state;
+    const selected = selectedLogs[project];
+    if (!selected || selected.size < 2) return;
+
+    const logs = localLogs[project];
+    // 找到选中项在原始列表中的索引
+    const indices = [];
+    logs.forEach((log, i) => {
+      if (selected.has(log.file)) indices.push(i);
+    });
+    indices.sort((a, b) => a - b);
+
+    // 校验连续性
+    for (let i = 1; i < indices.length; i++) {
+      if (indices[i] - indices[i - 1] !== 1) {
+        message.warning(t('ui.mergeNotConsecutive'));
+        return;
+      }
+    }
+
+    // 校验大小 ≤ 500MB
+    const totalSize = indices.reduce((sum, i) => sum + logs[i].size, 0);
+    if (totalSize > 500 * 1024 * 1024) {
+      message.warning(t('ui.mergeTooLarge'));
+      return;
+    }
+
+    // 按时间正序排列文件（原始列表是降序，所以反转选中的）
+    const files = indices.map(i => logs[i].file).reverse();
+
+    fetch('/api/merge-logs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ files }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.ok) {
+          message.success(t('ui.mergeSuccess'));
+          this.setState({ selectedLogs: {} });
+          this.handleImportLocalLogs();
+        } else {
+          message.error(data.error || 'Merge failed');
+        }
+      })
+      .catch(() => message.error('Merge failed'));
   };
 
   handleOpenLogFile = (file) => {
@@ -784,6 +846,15 @@ class App extends React.Component {
                     <FolderOutlined className={styles.folderIcon} />
                     {project}
                     <Tag className={styles.logTag}>{t('ui.logCount', { count: logs.length })}</Tag>
+                    {this.state.selectedLogs[project]?.size > 0 && (
+                      <Button
+                        size="small"
+                        type="link"
+                        onClick={(e) => { e.stopPropagation(); this.handleMergeLogs(project); }}
+                      >
+                        {t('ui.mergeLogs')}
+                      </Button>
+                    )}
                   </span>
                 ),
                 children: (
@@ -797,6 +868,15 @@ class App extends React.Component {
                       >
                         <div className={styles.logItemRow}>
                           <span>
+                            <Checkbox
+                              className={styles.logCheckbox}
+                              checked={this.state.selectedLogs[project]?.has(log.file) || false}
+                              onClick={(e) => e.stopPropagation()}
+                              onChange={(e) => {
+                                e.stopPropagation();
+                                this.handleToggleLogSelect(project, log.file, e.target.checked);
+                              }}
+                            />
                             <FileTextOutlined className={styles.logFileIcon} />
                             {this.formatTimestamp(log.timestamp)}
                           </span>

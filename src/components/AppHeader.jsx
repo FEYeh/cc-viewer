@@ -1,7 +1,7 @@
 import React from 'react';
-import { Space, Tag, Button, Badge, Typography, Dropdown, Popover, Modal, Collapse, Drawer, Switch } from 'antd';
+import { Space, Tag, Button, Badge, Typography, Dropdown, Popover, Modal, Collapse, Drawer, Switch, Tabs } from 'antd';
 import { MessageOutlined, FileTextOutlined, ImportOutlined, DownOutlined, DashboardOutlined, SaveOutlined, ExportOutlined, DownloadOutlined, SettingOutlined } from '@ant-design/icons';
-import { isSystemText, formatTokenCount, computeTokenStats, computeCacheRebuildStats, computeToolUsageStats } from '../utils/helpers';
+import { isSystemText, formatTokenCount, computeTokenStats, computeCacheRebuildStats, computeToolUsageStats, computeSkillUsageStats } from '../utils/helpers';
 import { t, getLang, setLang } from '../i18n';
 import ConceptHelp from './ConceptHelp';
 import styles from './AppHeader.module.css';
@@ -32,7 +32,7 @@ const { Text } = Typography;
 class AppHeader extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { countdownText: '', promptModalVisible: false, promptData: [], settingsDrawerVisible: false, globalSettingsVisible: false };
+    this.state = { countdownText: '', promptModalVisible: false, promptData: [], promptViewMode: 'original', settingsDrawerVisible: false, globalSettingsVisible: false };
     this._rafId = null;
     this._expiredTimer = null;
     this.updateCountdown = this.updateCountdown.bind(this);
@@ -219,19 +219,20 @@ class AppHeader extends React.Component {
   handleExportPromptsTxt = () => {
     const prompts = this.state.promptData;
     if (!prompts || prompts.length === 0) return;
-    const lines = [];
+    const blocks = [];
     for (const p of prompts) {
+      const lines = [];
       const ts = p.timestamp ? new Date(p.timestamp).toLocaleString() : '';
-      if (ts) lines.push(`${ts}:`);
+      if (ts) lines.push(`${ts}:\n`);
       // 只输出纯文本 segments，跳过 system 标签
       const textParts = (p.segments || [])
         .filter(seg => seg.type === 'text')
         .map(seg => seg.content);
       if (textParts.length > 0) lines.push(textParts.join('\n'));
-      lines.push('');
+      blocks.push(lines.join('\n'));
     }
-    if (lines.length === 0) return;
-    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+    if (blocks.length === 0) return;
+    const blob = new Blob([blocks.join('\n\n\n\n')], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -245,6 +246,7 @@ class AppHeader extends React.Component {
     const byModel = computeTokenStats(requests);
     const models = Object.keys(byModel);
     const toolStats = computeToolUsageStats(requests);
+    const skillStats = computeSkillUsageStats(requests);
 
     if (models.length === 0 && toolStats.length === 0) {
       return (
@@ -330,10 +332,41 @@ class AppHeader extends React.Component {
       </div>
     ) : null;
 
+    const skillColumn = skillStats.length > 0 ? (
+      <div className={styles.toolStatsColumn}>
+        <div className={styles.modelCard}>
+          <div className={styles.modelName}>{t('ui.skillUsageStats')}</div>
+          <table className={styles.statsTable}>
+            <thead>
+              <tr>
+                <td className={styles.th} style={{ textAlign: 'left' }}>Skill</td>
+                <td className={styles.th}>{t('ui.cacheRebuild.count')}</td>
+              </tr>
+            </thead>
+            <tbody>
+              {skillStats.map(([name, count]) => (
+                <tr key={name} className={styles.rowBorder}>
+                  <td className={styles.label}>{name}</td>
+                  <td className={styles.td}>{count}</td>
+                </tr>
+              ))}
+              {skillStats.length > 1 && (
+                <tr className={styles.rebuildTotalRow}>
+                  <td className={styles.label}>Total</td>
+                  <td className={styles.td}>{skillStats.reduce((s, e) => s + e[1], 0)}</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    ) : null;
+
     return (
       <div className={styles.tokenStatsContainer}>
         {tokenColumn}
         {toolColumn}
+        {skillColumn}
       </div>
     );
   }
@@ -410,6 +443,30 @@ class AppHeader extends React.Component {
         })}
       </div>
     );
+  }
+
+  renderOriginalPrompt(p) {
+    const textSegments = p.segments.filter(seg => seg.type === 'text');
+    if (textSegments.length === 0) return null;
+    return (
+      <div className={styles.textPromptCard}>
+        {textSegments.map((seg, j) => (
+          <pre key={j} className={styles.preText}>{seg.content}</pre>
+        ))}
+      </div>
+    );
+  }
+
+  buildTextModeContent() {
+    const { promptData } = this.state;
+    const blocks = [];
+    for (const p of promptData) {
+      const textParts = (p.segments || [])
+        .filter(seg => seg.type === 'text')
+        .map(seg => seg.content);
+      if (textParts.length > 0) blocks.push(textParts.join('\n'));
+    }
+    return blocks.join('\n\n\n');
   }
 
   render() {
@@ -522,22 +579,42 @@ class AppHeader extends React.Component {
               {t('ui.exportPromptsTxt')}
             </Button>
           </div>
-          <div className={styles.promptScrollArea}>
-            {this.state.promptData.length === 0 && (
-              <div className={styles.promptEmpty}>{t('ui.noPrompt')}</div>
-            )}
-            {this.state.promptData.map((p, i) => {
-              const ts = p.timestamp ? new Date(p.timestamp).toLocaleString() : t('ui.unknownTime');
-              return (
-                <div key={i}>
-                  <div className={styles.promptTimestamp}>
-                    {ts}:
+          <Tabs
+            activeKey={this.state.promptViewMode}
+            onChange={(key) => this.setState({ promptViewMode: key })}
+            size="small"
+            items={[
+              { key: 'original', label: t('ui.promptModeOriginal') },
+              { key: 'context', label: t('ui.promptModeContext') },
+              { key: 'text', label: t('ui.promptModeText') },
+            ]}
+          />
+          {this.state.promptViewMode === 'text' ? (
+            <textarea
+              readOnly
+              className={styles.promptTextarea}
+              value={this.buildTextModeContent()}
+            />
+          ) : (
+            <div className={styles.promptScrollArea}>
+              {this.state.promptData.length === 0 && (
+                <div className={styles.promptEmpty}>{t('ui.noPrompt')}</div>
+              )}
+              {this.state.promptData.map((p, i) => {
+                const ts = p.timestamp ? new Date(p.timestamp).toLocaleString() : t('ui.unknownTime');
+                return (
+                  <div key={i}>
+                    <div className={styles.promptTimestamp}>
+                      {ts}:
+                    </div>
+                    {this.state.promptViewMode === 'original'
+                      ? this.renderOriginalPrompt(p)
+                      : this.renderTextPrompt(p)}
                   </div>
-                  {this.renderTextPrompt(p)}
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </Modal>
         <Drawer
           title={t('ui.settings')}

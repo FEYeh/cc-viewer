@@ -460,7 +460,7 @@
     "uk": "Очікування запитів..."
   },
   "ui.importLocalLogs": {
-    "zh": "导入本地日志",
+    "zh": "打开本地日志",
     "en": "Import local logs",
     "zh-TW": "匯入本地日誌",
     "ko": "로컬 로그 가져오기",
@@ -540,7 +540,7 @@
     "uk": "Завантажити поточний лог"
   },
   "ui.exportPrompts": {
-    "zh": "导出用户 Prompt",
+    "zh": "查看用户 Prompt",
     "en": "Export user prompts",
     "zh-TW": "匯出用戶 Prompt",
     "ko": "사용자 Prompt 내보내기",
@@ -878,6 +878,18 @@
     "th": "ยังไม่มี Prompt ผู้ใช้",
     "tr": "Henüz kullanıcı Prompt'u yok",
     "uk": "Немає Prompt користувача"
+  },
+  "ui.promptModeOriginal": {
+    "zh": "原文模式",
+    "en": "Original"
+  },
+  "ui.promptModeContext": {
+    "zh": "上下文模式",
+    "en": "Context"
+  },
+  "ui.promptModeText": {
+    "zh": "Text模式",
+    "en": "Text"
   },
   "ui.unknownTime": {
     "zh": "未知时间",
@@ -1959,6 +1971,26 @@
     "tr": "Bilinmeyen anahtar değişikliği",
     "uk": "Невідома зміна ключа"
   },
+  "ui.skillUsageStats": {
+    "zh": "Skill 使用统计",
+    "en": "Skill Usage Stats",
+    "zh-TW": "Skill 使用統計",
+    "ko": "Skill 사용 통계",
+    "ja": "Skill 使用統計",
+    "de": "Skill-Nutzungsstatistik",
+    "es": "Estadísticas de uso de Skills",
+    "fr": "Statistiques d'utilisation des Skills",
+    "it": "Statistiche utilizzo Skill",
+    "da": "Skill-brugsstatistik",
+    "pl": "Statystyki użycia Skill",
+    "ru": "Статистика использования Skill",
+    "ar": "إحصائيات استخدام Skill",
+    "no": "Skill-bruksstatistikk",
+    "pt-BR": "Estatísticas de uso de Skills",
+    "th": "สถิติการใช้ Skill",
+    "tr": "Skill Kullanım İstatistikleri",
+    "uk": "Статистика використання Skill"
+  },
   "ui.toolUsageStats": {
     "zh": "工具使用统计",
     "en": "Tool Usage Stats",
@@ -1978,5 +2010,85 @@
     "th": "สถิติการใช้เครื่องมือ",
     "tr": "Araç Kullanım İstatistikleri",
     "uk": "Статистика використання інструментів"
+  },
+  "ui.mergeLogs": {
+    "zh": "合并日志",
+    "en": "Merge Logs",
+    "zh-TW": "合併日誌",
+    "ko": "로그 병합",
+    "ja": "ログを結合",
+    "de": "Logs zusammenführen",
+    "es": "Fusionar logs",
+    "fr": "Fusionner les logs",
+    "it": "Unisci log",
+    "da": "Flet logs",
+    "pl": "Scal logi",
+    "ru": "Объединить логи",
+    "ar": "دمج السجلات",
+    "no": "Slå sammen logger",
+    "pt-BR": "Mesclar logs",
+    "th": "รวมบันทึก",
+    "tr": "Logları birleştir",
+    "uk": "Об'єднати логи"
+  },
+  "ui.mergeNotConsecutive": {
+    "zh": "请选择连续的日志文件",
+    "en": "Please select consecutive log files",
+    "zh-TW": "請選擇連續的日誌檔案",
+    "ko": "연속된 로그 파일을 선택하세요",
+    "ja": "連続したログファイルを選択してください",
+    "de": "Bitte wählen Sie aufeinanderfolgende Log-Dateien",
+    "es": "Seleccione archivos de log consecutivos",
+    "fr": "Veuillez sélectionner des fichiers de log consécutifs",
+    "it": "Seleziona file di log consecutivi",
+    "da": "Vælg venligst sammenhængende logfiler",
+    "pl": "Wybierz kolejne pliki logów",
+    "ru": "Выберите последовательные файлы логов",
+    "ar": "يرجى اختيار ملفات سجلات متتالية",
+    "no": "Velg sammenhengende loggfiler",
+    "pt-BR": "Selecione arquivos de log consecutivos",
+    "th": "กรุณาเลือกไฟล์บันทึกที่ต่อเนื่องกัน",
+    "tr": "Lütfen ardışık log dosyalarını seçin",
+    "uk": "Виберіть послідовні файли логів"
+  },
+  "ui.mergeTooLarge": {
+    "zh": "选中的日志文件总大小超过 500MB",
+    "en": "Selected log files exceed 500MB",
+    "zh-TW": "選中的日誌檔案總大小超過 500MB",
+    "ko": "선택한 로그 파일의 총 크기가 500MB를 초과합니다",
+    "ja": "選択したログファイルの合計サイズが 500MB を超えています",
+    "de": "Ausgewählte Log-Dateien überschreiten 500MB",
+    "es": "Los archivos de log seleccionados superan los 500MB",
+    "fr": "Les fichiers de log sélectionnés dépassent 500 Mo",
+    "it": "I file di log selezionati superano i 500MB",
+    "da": "Valgte logfiler overstiger 500MB",
+    "pl": "Wybrane pliki logów przekraczają 500MB",
+    "ru": "Выбранные файлы логов превышают 500МБ",
+    "ar": "ملفات السجلات المحددة تتجاوز 500 ميجابايت",
+    "no": "Valgte loggfiler overstiger 500MB",
+    "pt-BR": "Arquivos de log selecionados excedem 500MB",
+    "th": "ไฟล์บันทึกที่เลือกมีขนาดรวมเกิน 500MB",
+    "tr": "Seçilen log dosyaları 500MB'ı aşıyor",
+    "uk": "Вибрані файли логів перевищують 500МБ"
+  },
+  "ui.mergeSuccess": {
+    "zh": "日志合并成功",
+    "en": "Logs merged successfully",
+    "zh-TW": "日誌合併成功",
+    "ko": "로그 병합 성공",
+    "ja": "ログの結合に成功しました",
+    "de": "Logs erfolgreich zusammengeführt",
+    "es": "Logs fusionados correctamente",
+    "fr": "Logs fusionnés avec succès",
+    "it": "Log uniti con successo",
+    "da": "Logs flettet",
+    "pl": "Logi scalone pomyślnie",
+    "ru": "Логи успешно объединены",
+    "ar": "تم دمج السجلات بنجاح",
+    "no": "Logger slått sammen",
+    "pt-BR": "Logs mesclados com sucesso",
+    "th": "รวมบันทึกสำเร็จ",
+    "tr": "Loglar başarıyla birleştirildi",
+    "uk": "Логи успішно об'єднано"
   }
 }

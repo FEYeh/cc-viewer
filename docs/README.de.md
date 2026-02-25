@@ -60,6 +60,7 @@ Klicken Sie auf die Schaltfläche „Chat mode" oben rechts, um den vollständig
 - Benutzerauswahl-Nachrichten (AskUserQuestion) im Frage-Antwort-Format angezeigt
 - System-Tags (`<system-reminder>`, `<project-reminder>`, usw.) automatisch eingeklappt
 - Skill-Lademeldungen automatisch erkannt und eingeklappt, Skill-Name angezeigt; Klick zum Aufklappen der vollständigen Dokumentation (Markdown-Rendering)
+- Skills-Reminder automatisch erkannt und eingeklappt
 - Systemtext automatisch gefiltert, nur echte Benutzereingaben werden angezeigt
 - Mehrsitzungs-Segmentanzeige (automatische Segmentierung nach `/compact`, `/clear`, usw.)
 - Jede Nachricht zeigt einen sekundengenauen Zeitstempel, abgeleitet aus dem API-Anfrage-Timing
@@ -83,6 +84,7 @@ Hover-Panel im Kopfbereich:
 - Cache-Erstellungs-/Lesezähler und Cache-Trefferquote
 - Cache-Rebuild-Statistiken nach Grund gruppiert (TTL, System-/Tools-/Modelländerung, Nachrichtenkürzung/-änderung, Schlüsseländerung) mit Anzahl und cache_creation-Token
 - Tool-Nutzungsstatistiken: Aufrufanzahl pro Tool, nach Häufigkeit sortiert
+- Skill-Nutzungsstatistik: Aufrufhäufigkeit pro Skill, sortiert nach Häufigkeit
 - Konzepthilfe (?)-Icons: Klicken zum Anzeigen der integrierten Dokumentation für MainAgent, CacheRebuild und jedes Tool
 - Main Agent Cache-Ablauf-Countdown
 
@@ -93,7 +95,8 @@ Hover-Panel im Kopfbereich:
 - Lokale Logs importieren: historische Log-Dateien durchsuchen, nach Projekt gruppiert, öffnet in neuem Fenster
 - Lokale JSONL-Datei laden: eine lokale `.jsonl`-Datei direkt auswählen und laden (bis zu 500MB)
 - Aktuelles Log herunterladen: aktuelle Überwachungs-JSONL-Log-Datei herunterladen
-- Benutzer-Prompts exportieren: alle Benutzereingaben extrahieren und anzeigen, XML-Tags (system-reminder usw.) einklappbar; Slash-Befehle (`/model`, `/context` usw.) als eigenständige Einträge angezeigt; befehlsbezogene Tags automatisch aus dem Prompt-Inhalt ausgeblendet
+- Logs zusammenführen: Mehrere JSONL-Logdateien zu einer Sitzung zusammenführen für einheitliche Analyse
+- Benutzer-Prompts anzeigen: Alle Benutzereingaben extrahieren und in drei Ansichtsmodi anzeigen — Originalmodus (Rohinhalt), Kontextmodus (Systemtags einklappbar), Textmodus (reiner Text); Slash-Befehle (`/model`, `/context` usw.) als eigenständige Einträge; befehlsbezogene Tags automatisch aus dem Prompt-Inhalt ausgeblendet
 - Prompts als TXT exportieren: Benutzer-Prompts (nur Text, ohne System-Tags) in eine lokale `.txt`-Datei exportieren
 
 ### Mehrsprachige Unterstützung

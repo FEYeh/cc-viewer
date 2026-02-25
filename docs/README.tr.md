@@ -60,6 +60,7 @@ Main Agent'ın tam konuşma geçmişini sohbet arayüzüne dönüştürmek için
 - Kullanıcı seçim mesajları (AskUserQuestion) soru-cevap formatında gösterilir
 - Sistem etiketleri (`<system-reminder>`, `<project-reminder>`, vb.) otomatik daraltılır
 - Skill yükleme mesajları otomatik algılanır ve daraltılır, Skill adı gösterilir; tam belgeleri genişletmek için tıklayın (Markdown oluşturma)
+- Skills reminder otomatik algılanır ve daraltılır
 - Sistem metni otomatik filtrelenir, yalnızca gerçek kullanıcı girişi gösterilir
 - Çoklu session segmentli görüntüleme (`/compact`, `/clear` vb. sonrasında otomatik segmentleme)
 - Her mesaj saniye hassasiyetinde zaman damgası gösterir, API istek zamanlamasından türetilmiş
@@ -83,6 +84,7 @@ Başlık alanındaki üzerine gelme paneli:
 - Cache creation/read sayıları ve cache isabet oranı
 - Nedene göre gruplandırılmış cache yeniden oluşturma istatistikleri (TTL, system/tools/model değişikliği, mesaj kısaltma/değiştirme, key değişikliği) — sayı ve cache_creation token'ları ile birlikte
 - Araç kullanım istatistikleri: araç başına çağrı sayısı, sıklığa göre sıralanmış
+- Skill kullanım istatistikleri: Skill başına çağrı sıklığı, sıklığa göre sıralanmış
 - Kavram yardımı (?) simgeleri: MainAgent, CacheRebuild ve her araç için yerleşik belgeleri görüntülemek üzere tıklayın
 - Main Agent cache süre dolumu geri sayımı
 
@@ -93,7 +95,8 @@ Sol üstteki CC-Viewer açılır menüsü aracılığıyla:
 - Yerel logları içe aktar: proje bazında gruplandırılmış geçmiş log dosyalarına göz at, yeni pencerede aç
 - Yerel JSONL dosyası yükle: doğrudan yerel bir `.jsonl` dosyası seçip yükle (500MB'a kadar)
 - Mevcut logu indir: mevcut izleme JSONL log dosyasını indir
-- Kullanıcı promptlarını dışa aktar: tüm kullanıcı girişlerini çıkar ve görüntüle, XML etiketleri (system-reminder vb.) daraltılabilir; eğik çizgi komutları (`/model`, `/context` vb.) bağımsız girişler olarak gösterilir; komutla ilgili etiketler prompt içeriğinden otomatik olarak gizlenir
+- Logları birleştir: birden fazla JSONL log dosyasını birleşik analiz için tek bir oturumda birleştirin
+- Kullanıcı Prompt'larını görüntüle: tüm kullanıcı girdilerini üç görüntüleme moduyla çıkarın ve görüntüleyin — Orijinal mod (ham içerik), Bağlam modu (sistem etiketleri daraltılabilir), Metin modu (yalnızca düz metin); eğik çizgi komutları (`/model`, `/context` vb.) bağımsız girişler olarak gösterilir; komutla ilgili etiketler Prompt içeriğinden otomatik olarak gizlenir
 - Promptları TXT olarak dışa aktar: kullanıcı promptlarını (yalnızca metin, sistem etiketleri hariç) yerel bir `.txt` dosyasına aktar
 
 ### Çoklu Dil Desteği

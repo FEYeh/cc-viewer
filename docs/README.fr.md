@@ -60,6 +60,7 @@ Cliquez sur le bouton « Chat mode » en haut à droite pour analyser l'historiq
 - Messages de sélection utilisateur (AskUserQuestion) affichés au format question-réponse
 - Balises système (`<system-reminder>`, `<project-reminder>`, etc.) auto-repliées
 - Messages de chargement de Skill détectés automatiquement et repliés, affichant le nom du Skill ; cliquer pour déplier la documentation complète (rendu Markdown)
+- Skills reminder détecté automatiquement et replié
 - Texte système auto-filtré, affichant uniquement les saisies réelles de l'utilisateur
 - Affichage segmenté multi-session (segmentation automatique après `/compact`, `/clear`, etc.)
 - Chaque message affiche un horodatage précis à la seconde, dérivé du timing de la requête API
@@ -83,6 +84,7 @@ Panneau au survol dans la zone d'en-tête :
 - Compteurs de création/lecture de Cache et taux de succès du Cache
 - Statistiques de reconstruction du Cache regroupées par raison (TTL, changement de system/tools/modèle, troncature/modification de messages, changement de clé) avec le nombre d'occurrences et les tokens cache_creation
 - Statistiques d'utilisation des outils : nombre d'appels par outil, triés par fréquence
+- Statistiques d'utilisation des Skills : fréquence d'appel par Skill, triées par fréquence
 - Icônes d'aide conceptuelle (?) : cliquez pour consulter la documentation intégrée de MainAgent, CacheRebuild et chaque outil
 - Compte à rebours d'expiration du Cache du Main Agent
 
@@ -93,7 +95,8 @@ Via le menu déroulant CC-Viewer en haut à gauche :
 - Importer des logs locaux : parcourir les fichiers de log historiques, regroupés par projet, s'ouvre dans une nouvelle fenêtre
 - Charger un fichier JSONL local : sélectionner et charger directement un fichier `.jsonl` local (jusqu'à 200 Mo)
 - Télécharger le log actuel : télécharger le fichier de log JSONL de surveillance actuel
-- Exporter les prompts utilisateur : extraire et afficher toutes les saisies utilisateur, avec balises XML (system-reminder, etc.) repliables ; commandes slash (`/model`, `/context`, etc.) affichées comme entrées indépendantes ; balises liées aux commandes automatiquement masquées du contenu du prompt
+- Fusionner les logs : combiner plusieurs fichiers de log JSONL en une seule session pour une analyse unifiée
+- Voir les Prompts utilisateur : extraire et afficher toutes les entrées utilisateur avec trois modes d'affichage — mode Original (contenu brut), mode Contexte (balises système repliables), mode Texte (texte brut uniquement) ; les commandes slash (`/model`, `/context`, etc.) sont affichées comme entrées indépendantes ; les balises liées aux commandes sont automatiquement masquées du contenu du Prompt
 - Exporter les prompts en TXT : exporter les prompts utilisateur (texte uniquement, sans balises système) dans un fichier `.txt` local
 
 ### Support multilingue

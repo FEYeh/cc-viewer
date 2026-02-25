@@ -60,6 +60,7 @@ Kliknij przycisk "Chat mode" w prawym górnym rogu, aby przetworzyć pełną his
 - Wiadomości wyboru użytkownika (AskUserQuestion) wyświetlane w formacie pytanie-odpowiedź
 - Tagi systemowe (`<system-reminder>`, `<project-reminder>`, itp.) automatycznie zwinięte
 - Wiadomości o załadowaniu Skill automatycznie wykrywane i zwijane, wyświetlając nazwę Skill; kliknij, aby rozwinąć pełną dokumentację (renderowanie Markdown)
+- Skills reminder wykrywane automatycznie i zwijane
 - Tekst systemowy automatycznie filtrowany, pokazuje tylko rzeczywiste dane wejściowe użytkownika
 - Wyświetlanie podzielone na wiele sesji (automatycznie segmentowane po `/compact`, `/clear`, itp.)
 - Każda wiadomość pokazuje znacznik czasu z dokładnością do sekundy, wyznaczony na podstawie czasu żądania API
@@ -83,6 +84,7 @@ Panel po najechaniu w obszarze nagłówka:
 - Liczba tworzenia/odczytów Cache i współczynnik trafień Cache
 - Statystyki przebudowy cache pogrupowane według przyczyny (TTL, zmiana system/tools/model, obcięcie/modyfikacja wiadomości, zmiana klucza) z liczbą wystąpień i tokenami cache_creation
 - Statystyki użycia narzędzi: liczba wywołań na narzędzie, posortowane według częstotliwości
+- Statystyki użycia Skill: częstotliwość wywołań na Skill, posortowane według częstotliwości
 - Ikony pomocy koncepcyjnej (?): kliknij, aby wyświetlić wbudowaną dokumentację MainAgent, CacheRebuild i każdego narzędzia
 - Odliczanie wygaśnięcia Cache Main Agent
 
@@ -93,7 +95,8 @@ Przez menu rozwijane CC-Viewer w lewym górnym rogu:
 - Importuj lokalne logi: przeglądaj historyczne pliki logów, pogrupowane według projektu, otwiera w nowym oknie
 - Wczytaj lokalny plik JSONL: bezpośrednio wybierz i wczytaj lokalny plik `.jsonl` (do 500MB)
 - Pobierz bieżący log: pobierz bieżący plik logu monitorowania JSONL
-- Eksportuj prompty użytkownika: wyodrębnij i wyświetl wszystkie dane wejściowe użytkownika, z tagami XML (system-reminder itp.) zwijanymi; komendy slash (`/model`, `/context` itp.) wyświetlane jako osobne wpisy; tagi związane z komendami automatycznie ukrywane z treści promptu
+- Scalanie logów: łączenie wielu plików logów JSONL w jedną sesję do ujednoliconej analizy
+- Przeglądaj Prompty użytkownika: wyodrębnij i wyświetl wszystkie dane wejściowe użytkownika w trzech trybach widoku — tryb Oryginał (surowa treść), tryb Kontekst (tagi systemowe zwijalne), tryb Tekst (tylko czysty tekst); komendy slash (`/model`, `/context` itp.) wyświetlane jako osobne wpisy; tagi związane z komendami automatycznie ukrywane z treści Promptu
 - Eksportuj prompty do TXT: eksportuj prompty użytkownika (tylko tekst, bez tagów systemowych) do lokalnego pliku `.txt`
 
 ### Obsługa wielu języków

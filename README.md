@@ -60,6 +60,7 @@ Click the "Chat mode" button in the top right to parse Main Agent's full convers
 - User selection messages (AskUserQuestion) shown in Q&A format
 - System tags (`<system-reminder>`, `<project-reminder>`, etc.) auto-collapsed
 - Skill loaded messages auto-detected and collapsed, showing skill name; click to expand full documentation with Markdown rendering
+- Skills reminder auto-detected and collapsed
 - System text auto-filtered, showing only real user input
 - Multi-session segmented display (auto-segmented after `/compact`, `/clear`, etc.)
 - Each message shows a timestamp accurate to the second, derived from API request timing
@@ -83,6 +84,7 @@ Hover panel in the header area:
 - Cache creation/read counts and cache hit rate
 - Cache rebuild statistics: grouped by reason (TTL, system/tools/model change, message truncation/modification, key change) with count and cache_creation tokens
 - Tool usage statistics: call counts per tool, sorted by frequency
+- Skill usage statistics: call counts per skill, sorted by frequency
 - Concept help (?) icons: click to view built-in documentation for MainAgent, CacheRebuild, and each tool
 - Main Agent cache expiration countdown
 
@@ -93,7 +95,8 @@ Via the CC-Viewer dropdown menu in the top left:
 - Import local logs: browse historical log files, grouped by project, opens in new window
 - Load local JSONL file: directly select and load a local `.jsonl` file (up to 500MB)
 - Download current log: download the current monitoring JSONL log file
-- Export user prompts: extract and display all user inputs, with XML tags (system-reminder, etc.) collapsible; slash commands (`/model`, `/context`, etc.) shown as standalone entries; command-related tags auto-hidden from prompt content
+- Merge logs: combine multiple JSONL log files into a single session for unified analysis
+- Export user prompts: extract and display all user inputs with three view modes — Original (raw content), Context (with system tags collapsible), and Text (plain text only); slash commands (`/model`, `/context`, etc.) shown as standalone entries; command-related tags auto-hidden from prompt content
 - Export prompts to TXT: export user prompts (text only, excluding system tags) to a local `.txt` file
 
 ### Multi-language Support

@@ -3,7 +3,7 @@ import { Tabs, Typography, Button, Tag, Empty, Space, Tooltip, Select, message }
 import { CopyOutlined, FileTextOutlined, CodeOutlined, RightOutlined, DownOutlined, CloseOutlined } from '@ant-design/icons';
 import JsonViewer from './JsonViewer';
 import { t } from '../i18n';
-import { formatTokenCount, stripPrivateKeys, hasClaudeMdReminder, isClaudeMdReminder } from '../utils/helpers';
+import { formatTokenCount, stripPrivateKeys, hasClaudeMdReminder, isClaudeMdReminder, hasSkillsReminder, isSkillsReminder } from '../utils/helpers';
 import { classifyRequest } from '../utils/requestType';
 import styles from './DetailPanel.module.css';
 
@@ -132,6 +132,36 @@ class DetailPanel extends React.Component {
       }
     }
 
+    // Build skills expand set if active
+    let skillsExpandSet = null;
+    if (this.state.reminderFilters === 'skills' && Array.isArray(data.messages)) {
+      skillsExpandSet = new Set();
+      skillsExpandSet.add(data.messages);
+      for (const msg of data.messages) {
+        if (!msg || typeof msg !== 'object') continue;
+        const content = msg.content;
+        if (typeof content === 'string') {
+          if (isSkillsReminder(content)) {
+            skillsExpandSet.add(msg);
+          }
+        } else if (Array.isArray(content)) {
+          let hasMatch = false;
+          for (const block of content) {
+            if (block && block.type === 'text' && isSkillsReminder(block.text)) {
+              skillsExpandSet.add(block);
+              hasMatch = true;
+            }
+          }
+          if (hasMatch) {
+            skillsExpandSet.add(msg);
+            skillsExpandSet.add(content);
+          }
+        }
+      }
+    }
+
+    const filterExpandSet = claudeMdExpandSet || skillsExpandSet;
+
     if (reqType === 'Preflight') {
       // Collect all object/array refs under messages and system[2] that should be expanded
       const expandRefs = new Set();
@@ -147,7 +177,7 @@ class DetailPanel extends React.Component {
       return (level, value, field) => {
         if (level < 2) return true;
         if (expandRefs.has(value)) return true;
-        if (claudeMdExpandSet && claudeMdExpandSet.has(value)) return true;
+        if (filterExpandSet && filterExpandSet.has(value)) return true;
         // expand system itself at root level so the 3rd item is visible
         if (level === 1 && field === 'system') return true;
         return false;
@@ -173,15 +203,15 @@ class DetailPanel extends React.Component {
       return (level, value, field) => {
         if (level < 2) return true;
         if (expandRefs.has(value)) return true;
-        if (claudeMdExpandSet && claudeMdExpandSet.has(value)) return true;
+        if (filterExpandSet && filterExpandSet.has(value)) return true;
         return false;
       };
     }
 
-    if (claudeMdExpandSet) {
+    if (filterExpandSet) {
       return (level, value, field) => {
         if (level < 2) return true;
-        if (claudeMdExpandSet.has(value)) return true;
+        if (filterExpandSet.has(value)) return true;
         return false;
       };
     }
@@ -363,6 +393,7 @@ class DetailPanel extends React.Component {
     }
 
     const hasClaudeMd = hasClaudeMdReminder(request.body);
+    const hasSkills = hasSkillsReminder(request.body);
 
     const tabItems = [
       {
@@ -382,7 +413,7 @@ class DetailPanel extends React.Component {
               <div className={styles.bodyHeader}>
                 <Text strong className={styles.bodyLabel}>Body</Text>
                 <Space size="small">
-                  {hasClaudeMd && (
+                  {(hasClaudeMd || hasSkills) && (
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                       <span style={{ color: '#888', fontSize: 12, fontFamily: 'monospace' }}>system-reminder:</span>
                       <Select
@@ -392,8 +423,8 @@ class DetailPanel extends React.Component {
                         value={this.state.reminderFilters || undefined}
                         onChange={val => this.setState({ reminderFilters: val || null })}
                         options={[
-                          { label: 'CLAUDE.md', value: 'claudeMd' },
-                          { label: 'Skills', value: 'skills', disabled: true },
+                          { label: 'CLAUDE.md', value: 'claudeMd', disabled: !hasClaudeMd },
+                          { label: 'Skills', value: 'skills', disabled: !hasSkills },
                         ]}
                         popupMatchSelectWidth={false}
                         allowClear

@@ -1,5 +1,5 @@
 import { createServer } from 'node:http';
-import { readFileSync, writeFileSync, existsSync, watchFile, unwatchFile, statSync, readdirSync, renameSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, watchFile, unwatchFile, statSync, readdirSync, renameSync, unlinkSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, extname, basename } from 'node:path';
 import { homedir, userInfo, platform } from 'node:os';
@@ -452,6 +452,57 @@ function handleRequest(req, res) {
       res.writeHead(500, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: err.message }));
     }
+    return;
+  }
+
+  // 合并日志文件
+  if (url === '/api/merge-logs' && method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const { files } = JSON.parse(body);
+        if (!Array.isArray(files) || files.length < 2) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'At least 2 files required' }));
+          return;
+        }
+        // 校验所有文件属于同一 project
+        const projects = new Set(files.map(f => f.split('/')[0]));
+        if (projects.size !== 1) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'All files must belong to the same project' }));
+          return;
+        }
+        // 校验文件存在且无路径穿越
+        for (const f of files) {
+          if (f.includes('..')) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Invalid file path' }));
+            return;
+          }
+          if (!existsSync(join(LOG_DIR, f))) {
+            res.writeHead(404, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: `File not found: ${f}` }));
+            return;
+          }
+        }
+        // files 已按时间正序传入，合并内容写入第一个文件
+        const targetFile = files[0];
+        const targetPath = join(LOG_DIR, targetFile);
+        const contents = files.map(f => readFileSync(join(LOG_DIR, f), 'utf-8').trimEnd());
+        writeFileSync(targetPath, contents.join('\n---\n') + '\n');
+        // 删除其余文件
+        for (let i = 1; i < files.length; i++) {
+          unlinkSync(join(LOG_DIR, files[i]));
+        }
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true, merged: targetFile }));
+      } catch (err) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+    });
     return;
   }
 

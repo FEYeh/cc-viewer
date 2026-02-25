@@ -60,6 +60,7 @@ Fare clic sul pulsante "Chat mode" in alto a destra per analizzare la cronologia
 - Messaggi di selezione dell'utente (AskUserQuestion) mostrati in formato domanda e risposta
 - Tag di sistema (`<system-reminder>`, `<project-reminder>`, ecc.) auto-compressi
 - Messaggi di caricamento Skill rilevati automaticamente e compressi, mostrando il nome dello Skill; clic per espandere la documentazione completa (rendering Markdown)
+- Skills reminder rilevato automaticamente e compresso
 - Testo di sistema auto-filtrato, mostrando solo l'input reale dell'utente
 - Visualizzazione segmentata multi-sessione (segmentazione automatica dopo `/compact`, `/clear`, ecc.)
 - Ogni messaggio mostra un timestamp preciso al secondo, derivato dal timing della richiesta API
@@ -83,6 +84,7 @@ Pannello al passaggio del mouse nell'area dell'intestazione:
 - Contatori di creazione/lettura Cache e tasso di successo della Cache
 - Statistiche di ricostruzione della Cache raggruppate per motivo (TTL, cambio system/tools/model, troncamento/modifica messaggi, cambio chiave) con conteggio e token cache_creation
 - Statistiche di utilizzo degli strumenti: conteggio chiamate per strumento, ordinato per frequenza
+- Statistiche utilizzo Skill: frequenza di chiamata per Skill, ordinate per frequenza
 - Icone di aiuto concettuale (?): clicca per visualizzare la documentazione integrata di MainAgent, CacheRebuild e ogni strumento
 - Conto alla rovescia della scadenza della Cache del Main Agent
 
@@ -93,7 +95,8 @@ Tramite il menu a tendina CC-Viewer in alto a sinistra:
 - Importa log locali: sfoglia i file di log storici, raggruppati per progetto, si apre in una nuova finestra
 - Carica file JSONL locale: seleziona e carica direttamente un file `.jsonl` locale (fino a 500MB)
 - Scarica log corrente: scarica il file di log JSONL di monitoraggio corrente
-- Esporta prompt utente: estrai e visualizza tutti gli input dell'utente, con tag XML (system-reminder, ecc.) comprimibili; comandi slash (`/model`, `/context`, ecc.) mostrati come voci indipendenti; tag relativi ai comandi nascosti automaticamente dal contenuto del prompt
+- Unisci log: combina più file di log JSONL in un'unica sessione per un'analisi unificata
+- Visualizza Prompt utente: estrai e visualizza tutti gli input utente con tre modalità di visualizzazione — modalità Originale (contenuto grezzo), modalità Contesto (tag di sistema comprimibili), modalità Testo (solo testo semplice); i comandi slash (`/model`, `/context`, ecc.) vengono mostrati come voci indipendenti; i tag relativi ai comandi vengono automaticamente nascosti dal contenuto del Prompt
 - Esporta prompt in TXT: esporta i prompt utente (solo testo, esclusi tag di sistema) in un file `.txt` locale
 
 ### Supporto multilingue

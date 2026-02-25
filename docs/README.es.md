@@ -60,6 +60,7 @@ Haga clic en el botón "Chat mode" en la esquina superior derecha para analizar 
 - Mensajes de selección del usuario (AskUserQuestion) mostrados en formato de pregunta y respuesta
 - Etiquetas del sistema (`<system-reminder>`, `<project-reminder>`, etc.) auto-colapsadas
 - Mensajes de carga de Skill detectados automáticamente y colapsados, mostrando el nombre del Skill; clic para expandir la documentación completa (renderizado Markdown)
+- Skills reminder detectado automáticamente y colapsado
 - Texto del sistema auto-filtrado, mostrando solo la entrada real del usuario
 - Visualización segmentada multi-sesión (segmentación automática después de `/compact`, `/clear`, etc.)
 - Cada mensaje muestra una marca de tiempo con precisión de segundos, derivada del timing de la solicitud API
@@ -83,6 +84,7 @@ Panel flotante en el área del encabezado:
 - Conteos de creación/lectura de Cache y tasa de aciertos de Cache
 - Estadísticas de reconstrucción de Cache agrupadas por razón (TTL, cambio de system/tools/modelo, truncamiento/modificación de mensajes, cambio de clave) con conteo y tokens de cache_creation
 - Estadísticas de uso de herramientas: conteo de llamadas por herramienta, ordenadas por frecuencia
+- Estadísticas de uso de Skills: frecuencia de llamadas por Skill, ordenadas por frecuencia
 - Iconos de ayuda conceptual (?): haz clic para ver la documentación integrada de MainAgent, CacheRebuild y cada herramienta
 - Cuenta regresiva de expiración del Cache del Main Agent
 
@@ -93,7 +95,8 @@ A través del menú desplegable de CC-Viewer en la esquina superior izquierda:
 - Importar logs locales: explorar archivos de log históricos, agrupados por proyecto, se abre en nueva ventana
 - Cargar archivo JSONL local: seleccionar y cargar directamente un archivo `.jsonl` local (hasta 500MB)
 - Descargar log actual: descargar el archivo de log JSONL de monitoreo actual
-- Exportar prompts del usuario: extraer y mostrar todas las entradas del usuario, con etiquetas XML (system-reminder, etc.) colapsables; comandos slash (`/model`, `/context`, etc.) mostrados como entradas independientes; etiquetas relacionadas con comandos ocultas automáticamente del contenido del prompt
+- Combinar logs: combinar múltiples archivos de log JSONL en una sola sesión para análisis unificado
+- Ver Prompts del usuario: extraer y mostrar todas las entradas del usuario con tres modos de vista — modo Original (contenido sin procesar), modo Contexto (etiquetas del sistema colapsables), modo Texto (solo texto plano); los comandos slash (`/model`, `/context`, etc.) se muestran como entradas independientes; las etiquetas relacionadas con comandos se ocultan automáticamente del contenido del Prompt
 - Exportar prompts a TXT: exportar los prompts del usuario (solo texto, excluyendo etiquetas del sistema) a un archivo `.txt` local
 
 ### Soporte multilingüe

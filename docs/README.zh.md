@@ -58,6 +58,7 @@ ccv --uninstall
 - 用户选择型消息（AskUserQuestion）以问答形式展示
 - 系统标签（`<system-reminder>`、`<project-reminder>` 等）自动折叠
 - Skill 加载消息自动识别并折叠显示 Skill 名称，点击展开查看完整文档（Markdown 渲染）
+- Skills reminder 自动识别并折叠
 - 自动过滤系统文本，只展示用户的真实输入
 - 支持多 session 分段展示（`/compact`、`/clear` 等操作后自动分段）
 - 每条消息显示精确到秒的时间戳，基于 API 请求时间推算
@@ -81,6 +82,7 @@ Header 区域的「Token 消耗统计」悬浮面板：
 - 显示 cache creation/read 数量及缓存命中率
 - 缓存重建统计：按原因分组（TTL、system/tools/model 变更、消息截断/修改、key 变更）显示次数和 cache_creation tokens
 - 工具使用统计：按调用次数排序展示各工具的调用频率
+- Skill 使用统计：按调用次数排序展示各 Skill 的调用频率
 - 概念帮助 (?) 图标：点击可查看 MainAgent、CacheRebuild 及各工具的内置文档
 - Main Agent 缓存失效倒计时
 
@@ -91,7 +93,8 @@ Header 区域的「Token 消耗统计」悬浮面板：
 - 导入本地日志：浏览历史日志文件，按项目分组，在新窗口打开
 - 加载本地 JSONL 文件：直接选择本地 `.jsonl` 文件加载查看（支持最大 500MB）
 - 当前日志另存为：下载当前监控的 JSONL 日志文件
-- 导出用户 Prompt：提取并展示所有用户输入，XML 标签（system-reminder 等）可折叠查看；斜杠命令（`/model`、`/context` 等）作为独立条目展示；命令相关标签自动从 Prompt 内容中隐藏
+- 合并日志：将多个 JSONL 日志文件合并为一个会话，统一分析
+- 查看用户 Prompt：提取并展示所有用户输入，支持三种查看模式 — 原文模式（原始内容）、上下文模式（系统标签可折叠）、Text 模式（纯文本）；斜杠命令（`/model`、`/context` 等）作为独立条目展示；命令相关标签自动从 Prompt 内容中隐藏
 - 导出 Prompt 为 TXT：将用户 Prompt（纯文本，不含系统标签）导出为本地 `.txt` 文件
 
 ### 多语言支持

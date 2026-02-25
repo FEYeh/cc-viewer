@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.0 (2026-02-25)
+
+- Added log merge feature: combine multiple JSONL log files into a single session for unified analysis
+- Added Skill usage statistics in Dashboard, showing call counts per skill alongside tool stats
+- Added Skills reminder detection and filtering in system-reminder handling
+- Export user prompts now supports three view modes: Original (raw), Context (with system tags), and Text (plain text)
+- Renamed "Import local logs" to "Open local logs" and "Export user prompts" to "View user prompts" for clarity
+
 ## 1.1.1 (2026-02-25)
 
 - Auto-open browser on startup for Claude Code versions before v2.0.69 (older versions may clear console output)

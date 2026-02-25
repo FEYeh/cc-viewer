@@ -261,9 +261,35 @@ export function computeToolUsageStats(requests) {
     .sort((a, b) => b[1] - a[1]);
 }
 
+export function computeSkillUsageStats(requests) {
+  const skillCounts = {};
+  for (const req of requests) {
+    const messages = req.body?.messages;
+    if (!Array.isArray(messages)) continue;
+    for (const msg of messages) {
+      if (msg.role !== 'user') continue;
+      const content = msg.content;
+      if (!Array.isArray(content)) continue;
+      for (const block of content) {
+        if (block.type !== 'text' || !isSkillText(block.text)) continue;
+        const nameMatch = block.text.match(/^#\s+(.+)$/m);
+        const skillName = nameMatch ? nameMatch[1] : 'Skill';
+        skillCounts[skillName] = (skillCounts[skillName] || 0) + 1;
+      }
+    }
+  }
+  return Object.entries(skillCounts)
+    .sort((a, b) => b[1] - a[1]);
+}
+
 export function isClaudeMdReminder(text) {
   if (typeof text !== 'string') return false;
   return text.includes('<system-reminder>') && text.includes('# claudeMd');
+}
+
+export function isSkillsReminder(text) {
+  if (typeof text !== 'string') return false;
+  return text.includes('<system-reminder>') && text.includes('skills are available');
 }
 
 export function hasClaudeMdReminder(body) {
@@ -276,6 +302,24 @@ export function hasClaudeMdReminder(body) {
     } else if (Array.isArray(content)) {
       for (const block of content) {
         if (block.type === 'text' && isClaudeMdReminder(block.text)) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+export function hasSkillsReminder(body) {
+  const messages = body?.messages;
+  if (!Array.isArray(messages)) return false;
+  for (const msg of messages) {
+    const content = msg?.content;
+    if (typeof content === 'string') {
+      if (isSkillsReminder(content)) return true;
+    } else if (Array.isArray(content)) {
+      for (const block of content) {
+        if (block.type === 'text' && isSkillsReminder(block.text)) {
           return true;
         }
       }

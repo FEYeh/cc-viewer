@@ -72,6 +72,10 @@
   padding: 40px;
 }
 
+.logCheckbox {
+  margin-right: 8px;
+}
+
 .logListItem {
   cursor: pointer;
   padding: 8px 12px;
