@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, extname, basename } from 'node:path';
 import { homedir, userInfo, platform } from 'node:os';
 import { execSync } from 'node:child_process';
-import { LOG_FILE, _initPromise, _resumeState, resolveResumeChoice, _projectName, _cachedApiKey, _cachedAuthHeader, _cachedModel } from './interceptor.js';
+import { LOG_FILE, _initPromise, _resumeState, resolveResumeChoice, _projectName, _cachedApiKey, _cachedAuthHeader, _cachedHaikuModel } from './interceptor.js';
 import { t, detectLanguage } from './i18n.js';
 
 const LOG_DIR = join(homedir(), '.claude', 'cc-viewer');
@@ -279,13 +279,17 @@ function handleRequest(req, res) {
           return;
         }
 
-        // 获取 API Key 或 Authorization header
-        // 优先级: 环境变量 > 拦截缓存
-        const apiKey = process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN || _cachedApiKey;
-        const authHeader = _cachedAuthHeader;
-        if (!apiKey && !authHeader) {
+        // 获取 API Key（仅 x-api-key 认证，不复用 session token 避免上下文污染）
+        // 优先级: 环境变量 > 拦截缓存 > 从 authHeader 中提取 sk- 开头的 key
+        let apiKey = process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN || _cachedApiKey;
+        if (!apiKey && _cachedAuthHeader) {
+          // Bearer sk-xxx 格式：提取实际的 API key
+          const m = _cachedAuthHeader.match(/^Bearer\s+(sk-\S+)$/i);
+          if (m) apiKey = m[1];
+        }
+        if (!apiKey) {
           res.writeHead(501, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'No API key available' }));
+          res.end(JSON.stringify({ error: 'No API key available. Set ANTHROPIC_API_KEY or use x-api-key authentication.' }));
           return;
         }
 
@@ -295,18 +299,15 @@ function handleRequest(req, res) {
         const reqHeaders = {
           'Content-Type': 'application/json',
           'anthropic-version': '2023-06-01',
+          'x-api-key': apiKey,
+          'x-cc-viewer-internal': '1',
         };
-        if (apiKey) {
-          reqHeaders['x-api-key'] = apiKey;
-        } else {
-          reqHeaders['authorization'] = authHeader;
-        }
 
         const apiRes = await fetch(`${baseUrl}/v1/messages`, {
           method: 'POST',
           headers: reqHeaders,
           body: JSON.stringify({
-            model: _cachedModel || 'claude-haiku-4-5-20251001',
+            model: _cachedHaikuModel || 'claude-haiku-4-5-20251001',
             max_tokens: 32000,
             tools:[],
             system: [{
@@ -535,7 +536,7 @@ function handleRequest(req, res) {
     const lang = conceptParams.get('lang') || 'zh';
     const doc = conceptParams.get('doc') || '';
     // 安全校验：只允许字母、数字、连字符
-    if (!/^[a-zA-Z0-9-]+$/.test(doc) || !/^[a-z]{2}$/.test(lang)) {
+    if (!/^[a-zA-Z0-9-]+$/.test(doc) || !/^[a-z]{2}(-[a-zA-Z]{2,})?$/.test(lang)) {
       res.writeHead(400, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: 'Invalid parameters' }));
       return;

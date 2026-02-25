@@ -71,10 +71,12 @@ Klik på "Chat mode"-knappen øverst til højre for at parse Main Agent's fulde 
 
 ### Oversættelse
 
-- Thinking-blokke og Assistant-meddelelser understøtter oversættelse med ét klik
-- Baseret på Claude Haiku API, understøtter både API Key (`x-api-key`) og OAuth Bearer Token godkendelse
+- Thinking-blokke og Assistant-beskeder understøtter oversættelse med ét klik
+- Baseret på Claude Haiku API, bruger kun `x-api-key`-godkendelse (OAuth-sessionstokens udelukkes for at forhindre kontekstforurening)
+- Fanger automatisk haiku-modelnavnet fra mainAgent-anmodninger; standard er `claude-haiku-4-5-20251001`
 - Oversættelsesresultater caches automatisk; klik igen for at skifte tilbage til originalteksten
-- Indlæsnings-spinner-animation vises under oversættelse
+- Indlæsningsanimation under oversættelse
+- (?)-ikonet ved siden af `authorization`-headeren i anmodningsdetaljer linker til konceptdokumentet om kontekstforurening
 
 ### Token Stats
 

@@ -72,9 +72,11 @@ Kliknij przycisk "Chat mode" w prawym górnym rogu, aby przetworzyć pełną his
 ### Tłumaczenie
 
 - Bloki thinking i wiadomości Assistant obsługują tłumaczenie jednym kliknięciem
-- Oparte na API Claude Haiku, obsługuje uwierzytelnianie zarówno przez API Key (`x-api-key`), jak i OAuth Bearer Token
+- Oparte na Claude Haiku API, używa wyłącznie uwierzytelniania `x-api-key` (tokeny sesji OAuth są wykluczone, aby zapobiec zanieczyszczeniu kontekstu)
+- Automatycznie przechwytuje nazwę modelu haiku z żądań mainAgent; domyślnie `claude-haiku-4-5-20251001`
 - Wyniki tłumaczenia są automatycznie buforowane; kliknij ponownie, aby przełączyć na tekst oryginalny
-- Podczas tłumaczenia wyświetlana jest animacja ładowania
+- Animacja ładowania podczas tłumaczenia
+- Ikona (?) obok nagłówka `authorization` w szczegółach żądania prowadzi do dokumentu koncepcyjnego o zanieczyszczeniu kontekstu
 
 ### Token Stats
 

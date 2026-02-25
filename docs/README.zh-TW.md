@@ -72,9 +72,11 @@ ccv --uninstall
 ### 翻譯
 
 - thinking 區塊和 Assistant 訊息支援一鍵翻譯
-- 基於 Claude Haiku API，支援 API Key（`x-api-key`）和 OAuth Bearer Token 兩種認證方式
+- 基於 Claude Haiku API，僅使用 `x-api-key` 認證（排除 OAuth session token 以防止上下文污染）
+- 自動從 mainAgent 請求中擷取 haiku 模型名稱；預設使用 `claude-haiku-4-5-20251001`
 - 翻譯結果自動快取，再次點擊可切換回原文
 - 翻譯過程中顯示載入旋轉動畫
+- 請求詳情中 `authorization` header 旁的 (?) 圖示可查看上下文污染說明文件
 
 ### Token 消耗統計
 

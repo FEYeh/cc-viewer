@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.2.2 (2026-02-26)
+
+- Fix: translate API no longer reuses OAuth session token (`authorization` header), preventing context pollution with Claude Code's main conversation
+- Fix: translate API falls back to extracting `sk-` key from Bearer token when no `x-api-key` is available
+- Fix: translate requests now bypass fetch interceptor via `x-cc-viewer-internal` header, eliminating log noise
+- Fix: `_cachedModel` write guarded by `mainAgent` check, preventing SubAgent model overwrites
+- Added `_cachedHaikuModel` for translate API model selection (captures haiku model from mainAgent requests, defaults to `claude-haiku-4-5-20251001`)
+- Added `ccv --v` / `ccv --version` to display current version
+- Added (?) help icon on `authorization` header in request detail panel, linking to TranslateContextPollution concept doc
+- Fix: ConceptHelp (?) button click no longer triggers parent element expand/collapse (stopPropagation)
+- Added TranslateContextPollution concept doc explaining OAuth token context pollution
+- Included `concepts/` directory in npm package files
+
 ## 1.2.1 (2026-02-25)
 
 - Open local logs: current project now sorted to top of the list

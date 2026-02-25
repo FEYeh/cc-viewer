@@ -100,6 +100,13 @@ function removeCliJsInjection() {
 // === 主逻辑 ===
 
 const isUninstall = process.argv.includes('--uninstall');
+const isVersion = process.argv.includes('--v') || process.argv.includes('--version');
+
+if (isVersion) {
+  const pkg = JSON.parse(readFileSync(resolve(__dirname, 'package.json'), 'utf-8'));
+  console.log(`cc-viewer v${pkg.version}`);
+  process.exit(0);
+}
 
 if (isUninstall) {
   const cliResult = removeCliJsInjection();

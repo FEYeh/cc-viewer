@@ -91,6 +91,7 @@ class DetailPanel extends React.Component {
         {Object.entries(headers).map(([key, value]) => (
           <div key={key} className={styles.headerRow}>
             <Text code className={styles.headerKey}>{key}</Text>
+            {key === 'authorization' && <ConceptHelp doc="TranslateContextPollution" />}
             <Text type="secondary" className={styles.headerValue}>{String(value)}</Text>
           </div>
         ))}

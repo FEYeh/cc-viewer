@@ -72,9 +72,11 @@ Klicken Sie auf die Schaltfläche „Chat mode" oben rechts, um den vollständig
 ### Übersetzung
 
 - Thinking-Blöcke und Assistant-Nachrichten unterstützen Ein-Klick-Übersetzung
-- Basierend auf der Claude Haiku API, unterstützt sowohl API Key (`x-api-key`) als auch OAuth Bearer Token Authentifizierung
-- Übersetzungsergebnisse werden automatisch zwischengespeichert; erneut klicken, um zum Originaltext zurückzuwechseln
-- Lade-Spinner-Animation wird während der Übersetzung angezeigt
+- Basierend auf Claude Haiku API, verwendet ausschließlich `x-api-key`-Authentifizierung (OAuth-Session-Tokens werden zur Vermeidung von Kontextverschmutzung ausgeschlossen)
+- Erfasst automatisch den Haiku-Modellnamen aus mainAgent-Anfragen; Standard ist `claude-haiku-4-5-20251001`
+- Übersetzungsergebnisse werden automatisch zwischengespeichert; erneutes Klicken wechselt zum Originaltext
+- Ladeanimation während der Übersetzung
+- (?) Symbol neben dem `authorization`-Header in den Anfragedetails verlinkt auf das Konzeptdokument zur Kontextverschmutzung
 
 ### Token-Statistiken
 

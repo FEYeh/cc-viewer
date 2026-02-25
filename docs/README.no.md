@@ -71,10 +71,12 @@ Klikk på "Chat-modus"-knappen øverst til høyre for å analysere Main Agent si
 
 ### Oversettelse
 
-- Thinking-blokker og Assistant-meldinger støtter ett-klikks oversettelse
-- Basert på Claude Haiku API, støtter både API Key (`x-api-key`) og OAuth Bearer Token-autentisering
-- Oversettelsesresultater caches automatisk; klikk igjen for å bytte tilbake til originalteksten
-- Lastespinner-animasjon vises under oversettelse
+- Thinking-blokker og Assistant-meldinger støtter oversettelse med ett klikk
+- Basert på Claude Haiku API, bruker kun `x-api-key`-autentisering (OAuth-sesjonstokens ekskluderes for å forhindre kontekstforurensning)
+- Fanger automatisk haiku-modellnavnet fra mainAgent-forespørsler; standard er `claude-haiku-4-5-20251001`
+- Oversettelsesresultater bufres automatisk; klikk igjen for å bytte tilbake til originalteksten
+- Lasteanimasjon under oversettelse
+- (?)-ikonet ved siden av `authorization`-headeren i forespørselsdetaljer lenker til konseptdokumentet om kontekstforurensning
 
 ### Token-statistikk
 

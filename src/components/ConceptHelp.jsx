@@ -12,7 +12,7 @@ const KNOWN_DOCS = new Set([
   'Tool-EnterPlanMode', 'Tool-ExitPlanMode',
   'Tool-AskUserQuestion', 'Tool-Skill',
   'Tool-getDiagnostics', 'Tool-executeCode',
-  'MainAgent', 'Tools', 'CacheRebuild', 'BodyDiffJSON',
+  'MainAgent', 'Tools', 'CacheRebuild', 'BodyDiffJSON', 'TranslateContextPollution',
 ]);
 
 export default function ConceptHelp({ doc }) {
@@ -53,7 +53,7 @@ export default function ConceptHelp({ doc }) {
 
   return (
     <>
-      <span className={styles.helpBtn} onClick={loadDoc}>?</span>
+      <span className={styles.helpBtn} onClick={(e) => { e.stopPropagation(); loadDoc(); }}>?</span>
       <Modal
         title={title}
         open={open}
@@ -63,7 +63,7 @@ export default function ConceptHelp({ doc }) {
         styles={{
           header: { background: '#1a1a1a' },
           body: { background: '#111', padding: '16px 24px 24px' },
-          content: { background: '#111', padding: '12px 20px' },
+          content: { background: '#1a1a1a', padding: '12px 20px' },
         }}
       >
         {loading ? (

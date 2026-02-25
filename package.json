@@ -1,6 +1,6 @@
 {
   "name": "cc-viewer",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Claude Code Logger visualization management tool",
   "license": "MIT",
   "main": "server.js",
@@ -46,7 +46,8 @@
     "cli.js",
     "interceptor.js",
     "i18n.js",
-    "locales/"
+    "locales/",
+    "concepts/"
   ],
   "devDependencies": {
     "react": "^18.3.1",

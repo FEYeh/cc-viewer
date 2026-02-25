@@ -71,10 +71,12 @@ ccv --uninstall
 
 ### 번역
 
-- thinking 블록과 Assistant 메시지에서 원클릭 번역 지원
-- Claude Haiku API 기반, API Key(`x-api-key`) 및 OAuth Bearer Token 인증 모두 지원
-- 번역 결과가 자동 캐시되며, 다시 클릭하면 원문으로 전환
+- thinking 블록과 Assistant 메시지 원클릭 번역 지원
+- Claude Haiku API 기반, `x-api-key` 인증만 사용 (OAuth 세션 토큰은 컨텍스트 오염 방지를 위해 제외)
+- mainAgent 요청에서 haiku 모델명 자동 캡처; 기본값 `claude-haiku-4-5-20251001`
+- 번역 결과 자동 캐시, 다시 클릭하면 원문으로 전환
 - 번역 중 로딩 스피너 애니메이션 표시
+- 요청 상세의 `authorization` 헤더 옆 (?) 아이콘으로 컨텍스트 오염 설명 문서 확인 가능
 
 ### Token 소비 통계
 
