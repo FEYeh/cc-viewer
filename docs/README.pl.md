@@ -82,6 +82,8 @@ Panel po najechaniu w obszarze nagłówka:
 - Liczba Token pogrupowana według modelu (wejście/wyjście)
 - Liczba tworzenia/odczytów Cache i współczynnik trafień Cache
 - Statystyki przebudowy cache pogrupowane według przyczyny (TTL, zmiana system/tools/model, obcięcie/modyfikacja wiadomości, zmiana klucza) z liczbą wystąpień i tokenami cache_creation
+- Statystyki użycia narzędzi: liczba wywołań na narzędzie, posortowane według częstotliwości
+- Ikony pomocy koncepcyjnej (?): kliknij, aby wyświetlić wbudowaną dokumentację MainAgent, CacheRebuild i każdego narzędzia
 - Odliczanie wygaśnięcia Cache Main Agent
 
 ### Zarządzanie logami
@@ -89,7 +91,7 @@ Panel po najechaniu w obszarze nagłówka:
 Przez menu rozwijane CC-Viewer w lewym górnym rogu:
 
 - Importuj lokalne logi: przeglądaj historyczne pliki logów, pogrupowane według projektu, otwiera w nowym oknie
-- Wczytaj lokalny plik JSONL: bezpośrednio wybierz i wczytaj lokalny plik `.jsonl` (do 200MB)
+- Wczytaj lokalny plik JSONL: bezpośrednio wybierz i wczytaj lokalny plik `.jsonl` (do 500MB)
 - Pobierz bieżący log: pobierz bieżący plik logu monitorowania JSONL
 - Eksportuj prompty użytkownika: wyodrębnij i wyświetl wszystkie dane wejściowe użytkownika, z tagami XML (system-reminder itp.) zwijanymi; komendy slash (`/model`, `/context` itp.) wyświetlane jako osobne wpisy; tagi związane z komendami automatycznie ukrywane z treści promptu
 - Eksportuj prompty do TXT: eksportuj prompty użytkownika (tylko tekst, bez tagów systemowych) do lokalnego pliku `.txt`

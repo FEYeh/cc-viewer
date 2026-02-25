@@ -80,6 +80,8 @@ Header 区域的「Token 消耗统计」悬浮面板：
 - 按模型分组统计 input/output token 数量
 - 显示 cache creation/read 数量及缓存命中率
 - 缓存重建统计：按原因分组（TTL、system/tools/model 变更、消息截断/修改、key 变更）显示次数和 cache_creation tokens
+- 工具使用统计：按调用次数排序展示各工具的调用频率
+- 概念帮助 (?) 图标：点击可查看 MainAgent、CacheRebuild 及各工具的内置文档
 - Main Agent 缓存失效倒计时
 
 ### 日志管理
@@ -87,7 +89,7 @@ Header 区域的「Token 消耗统计」悬浮面板：
 通过左上角 CC-Viewer 下拉菜单：
 
 - 导入本地日志：浏览历史日志文件，按项目分组，在新窗口打开
-- 加载本地 JSONL 文件：直接选择本地 `.jsonl` 文件加载查看（支持最大 200MB）
+- 加载本地 JSONL 文件：直接选择本地 `.jsonl` 文件加载查看（支持最大 500MB）
 - 当前日志另存为：下载当前监控的 JSONL 日志文件
 - 导出用户 Prompt：提取并展示所有用户输入，XML 标签（system-reminder 等）可折叠查看；斜杠命令（`/model`、`/context` 等）作为独立条目展示；命令相关标签自动从 Prompt 内容中隐藏
 - 导出 Prompt 为 TXT：将用户 Prompt（纯文本，不含系统标签）导出为本地 `.txt` 文件

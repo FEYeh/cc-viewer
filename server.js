@@ -478,6 +478,32 @@ function handleRequest(req, res) {
     return;
   }
 
+  // GET /api/concept?lang=zh&doc=Tool-Bash
+  if (method === 'GET' && url.startsWith('/api/concept')) {
+    const conceptParams = new URL(url, 'http://localhost').searchParams;
+    const lang = conceptParams.get('lang') || 'zh';
+    const doc = conceptParams.get('doc') || '';
+    // 安全校验：只允许字母、数字、连字符
+    if (!/^[a-zA-Z0-9-]+$/.test(doc) || !/^[a-z]{2}$/.test(lang)) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Invalid parameters' }));
+      return;
+    }
+    let mdPath = join(__dirname, 'concepts', lang, `${doc}.md`);
+    if (!existsSync(mdPath) && lang !== 'zh') {
+      mdPath = join(__dirname, 'concepts', 'zh', `${doc}.md`);
+    }
+    if (existsSync(mdPath)) {
+      const content = readFileSync(mdPath, 'utf-8');
+      res.writeHead(200, { 'Content-Type': 'text/markdown; charset=utf-8' });
+      res.end(content);
+    } else {
+      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Not found' }));
+    }
+    return;
+  }
+
   // 静态文件服务
   if (method === 'GET') {
     let filePath = url === '/' ? '/index.html' : url;

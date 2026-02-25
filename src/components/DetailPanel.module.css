@@ -202,3 +202,22 @@
   color: #d1d5db;
   background: rgba(255, 255, 255, 0.06);
 }
+
+.reminderSelect {
+  min-width: 140px;
+  font-size: 12px;
+}
+
+.reminderSelect :global(.ant-select-selector) {
+  border-radius: 2px !important;
+  border-color: #424242 !important;
+  background: transparent !important;
+  min-height: 26px !important;
+  height: auto !important;
+  padding: 0 8px !important;
+  font-family: monospace;
+}
+
+.reminderSelect :global(.ant-select-selection-placeholder) {
+  font-size: 11px;
+}

@@ -26,8 +26,8 @@ export function analyzeCacheLoss(requests, index) {
   if (gap > 5 * 60 * 1000) return { reason: 'ttl' };
 
   // 精确判断 key_change 子类型
-  const prev = prevMainAgent.body;
-  const curr = req.body;
+  const prev = stripPrivateKeys(prevMainAgent.body);
+  const curr = stripPrivateKeys(req.body);
   if (!prev || !curr) return { reason: 'key_change' };
 
   const reasons = [];
@@ -244,6 +244,44 @@ export function computeCacheRebuildStats(requests) {
     }
   }
   return stats;
+}
+
+export function computeToolUsageStats(requests) {
+  const toolCounts = {};
+  for (const req of requests) {
+    const content = req.response?.body?.content;
+    if (!Array.isArray(content)) continue;
+    for (const block of content) {
+      if (block.type === 'tool_use' && block.name) {
+        toolCounts[block.name] = (toolCounts[block.name] || 0) + 1;
+      }
+    }
+  }
+  return Object.entries(toolCounts)
+    .sort((a, b) => b[1] - a[1]);
+}
+
+export function isClaudeMdReminder(text) {
+  if (typeof text !== 'string') return false;
+  return text.includes('<system-reminder>') && text.includes('# claudeMd');
+}
+
+export function hasClaudeMdReminder(body) {
+  const messages = body?.messages;
+  if (!Array.isArray(messages)) return false;
+  for (const msg of messages) {
+    const content = msg?.content;
+    if (typeof content === 'string') {
+      if (isClaudeMdReminder(content)) return true;
+    } else if (Array.isArray(content)) {
+      for (const block of content) {
+        if (block.type === 'text' && isClaudeMdReminder(block.text)) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
 }
 
 export function getModelShort(model) {

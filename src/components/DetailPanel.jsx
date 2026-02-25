@@ -1,9 +1,9 @@
 import React from 'react';
-import { Tabs, Typography, Button, Tag, Empty, Space, Tooltip, message } from 'antd';
+import { Tabs, Typography, Button, Tag, Empty, Space, Tooltip, Select, message } from 'antd';
 import { CopyOutlined, FileTextOutlined, CodeOutlined, RightOutlined, DownOutlined, CloseOutlined } from '@ant-design/icons';
 import JsonViewer from './JsonViewer';
 import { t } from '../i18n';
-import { formatTokenCount, stripPrivateKeys } from '../utils/helpers';
+import { formatTokenCount, stripPrivateKeys, hasClaudeMdReminder, isClaudeMdReminder } from '../utils/helpers';
 import { classifyRequest } from '../utils/requestType';
 import styles from './DetailPanel.module.css';
 
@@ -18,6 +18,7 @@ class DetailPanel extends React.Component {
       requestHeadersExpanded: false,
       responseHeadersExpanded: false,
       diffTooltipDismissed: false,
+      reminderFilters: null,
     };
   }
 
@@ -39,7 +40,7 @@ class DetailPanel extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.request !== this.props.request) {
       const isMainAgent = !!nextProps.request?.mainAgent;
-      this.setState({ diffExpanded: isMainAgent && !!nextProps.expandDiff, requestHeadersExpanded: false, responseHeadersExpanded: false });
+      this.setState({ diffExpanded: isMainAgent && !!nextProps.expandDiff, requestHeadersExpanded: false, responseHeadersExpanded: false, reminderFilters: null });
     }
     return (
       nextProps.request !== this.props.request ||
@@ -51,7 +52,8 @@ class DetailPanel extends React.Component {
       nextState.diffExpanded !== this.state.diffExpanded ||
       nextState.requestHeadersExpanded !== this.state.requestHeadersExpanded ||
       nextState.responseHeadersExpanded !== this.state.responseHeadersExpanded ||
-      nextState.diffTooltipDismissed !== this.state.diffTooltipDismissed
+      nextState.diffTooltipDismissed !== this.state.diffTooltipDismissed ||
+      nextState.reminderFilters !== this.state.reminderFilters
     );
   }
 
@@ -102,6 +104,34 @@ class DetailPanel extends React.Component {
     const nextReq = requests && selectedIndex != null ? requests[selectedIndex + 1] : null;
     const { type: reqType } = classifyRequest(request, nextReq);
 
+    // Build claudeMd expand set if active
+    let claudeMdExpandSet = null;
+    if (this.state.reminderFilters === 'claudeMd' && Array.isArray(data.messages)) {
+      claudeMdExpandSet = new Set();
+      claudeMdExpandSet.add(data.messages);
+      for (const msg of data.messages) {
+        if (!msg || typeof msg !== 'object') continue;
+        const content = msg.content;
+        if (typeof content === 'string') {
+          if (isClaudeMdReminder(content)) {
+            claudeMdExpandSet.add(msg);
+          }
+        } else if (Array.isArray(content)) {
+          let hasMatch = false;
+          for (const block of content) {
+            if (block && block.type === 'text' && isClaudeMdReminder(block.text)) {
+              claudeMdExpandSet.add(block);
+              hasMatch = true;
+            }
+          }
+          if (hasMatch) {
+            claudeMdExpandSet.add(msg);
+            claudeMdExpandSet.add(content);
+          }
+        }
+      }
+    }
+
     if (reqType === 'Preflight') {
       // Collect all object/array refs under messages and system[2] that should be expanded
       const expandRefs = new Set();
@@ -117,6 +147,7 @@ class DetailPanel extends React.Component {
       return (level, value, field) => {
         if (level < 2) return true;
         if (expandRefs.has(value)) return true;
+        if (claudeMdExpandSet && claudeMdExpandSet.has(value)) return true;
         // expand system itself at root level so the 3rd item is visible
         if (level === 1 && field === 'system') return true;
         return false;
@@ -142,6 +173,15 @@ class DetailPanel extends React.Component {
       return (level, value, field) => {
         if (level < 2) return true;
         if (expandRefs.has(value)) return true;
+        if (claudeMdExpandSet && claudeMdExpandSet.has(value)) return true;
+        return false;
+      };
+    }
+
+    if (claudeMdExpandSet) {
+      return (level, value, field) => {
+        if (level < 2) return true;
+        if (claudeMdExpandSet.has(value)) return true;
         return false;
       };
     }
@@ -197,6 +237,7 @@ class DetailPanel extends React.Component {
     const result = {};
     const allKeys = new Set([...Object.keys(prev), ...Object.keys(curr)]);
     for (const key of allKeys) {
+      if (key.startsWith('_')) continue;
       if (!(key in prev)) {
         result[key] = curr[key];
       } else if (!(key in curr)) {
@@ -278,16 +319,13 @@ class DetailPanel extends React.Component {
                 placement="top" color="#000"
                 overlayStyle={{ maxWidth: 340 }}
                 overlayInnerStyle={{ fontSize: 12, color: '#999' }}
-              >                <Text strong className={styles.diffToggle}
-                  onClick={() => this.setState(prev => ({ diffExpanded: !prev.diffExpanded }))}>
-                  Body Diff JSON {this.state.diffExpanded ? <DownOutlined className={styles.diffIcon} /> : <RightOutlined className={styles.diffIcon} />}
-                </Text>
-              </Tooltip>
-              {this.state.diffExpanded && (
-                <>
-                  <div className={styles.bodyHeader}>
-                    <span />
-                    <Space size="small">
+              >                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Text strong className={styles.diffToggle}
+                    onClick={() => this.setState(prev => ({ diffExpanded: !prev.diffExpanded }))}>
+                    Body Diff JSON {this.state.diffExpanded ? <DownOutlined className={styles.diffIcon} /> : <RightOutlined className={styles.diffIcon} />}
+                  </Text>
+                  {this.state.diffExpanded && (
+                    <Space size="small" style={{ marginLeft: 'auto' }}>
                       <Button
                         size="small"
                         icon={this.state.bodyViewMode.diff === 'json' ? <FileTextOutlined /> : <CodeOutlined />}
@@ -303,7 +341,11 @@ class DetailPanel extends React.Component {
                         {t('ui.copy')}
                       </Button>
                     </Space>
-                  </div>
+                  )}
+                </div>
+              </Tooltip>
+              {this.state.diffExpanded && (
+                <>
                   {this.state.bodyViewMode.diff === 'json' ? (
                     <JsonViewer data={diffResult} defaultExpand="all" />
                   ) : (
@@ -319,6 +361,8 @@ class DetailPanel extends React.Component {
         }
       }
     }
+
+    const hasClaudeMd = hasClaudeMdReminder(request.body);
 
     const tabItems = [
       {
@@ -338,6 +382,24 @@ class DetailPanel extends React.Component {
               <div className={styles.bodyHeader}>
                 <Text strong className={styles.bodyLabel}>Body</Text>
                 <Space size="small">
+                  {hasClaudeMd && (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                      <span style={{ color: '#888', fontSize: 12, fontFamily: 'monospace' }}>system-reminder:</span>
+                      <Select
+                        size="small"
+                        className={styles.reminderSelect}
+                        placeholder="filter"
+                        value={this.state.reminderFilters || undefined}
+                        onChange={val => this.setState({ reminderFilters: val || null })}
+                        options={[
+                          { label: 'CLAUDE.md', value: 'claudeMd' },
+                          { label: 'Skills', value: 'skills', disabled: true },
+                        ]}
+                        popupMatchSelectWidth={false}
+                        allowClear
+                      />
+                    </span>
+                  )}
                   <Button
                     size="small"
                     icon={this.state.bodyViewMode.request === 'json' ? <FileTextOutlined /> : <CodeOutlined />}

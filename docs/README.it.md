@@ -82,6 +82,8 @@ Pannello al passaggio del mouse nell'area dell'intestazione:
 - Conteggio Token raggruppato per modello (input/output)
 - Contatori di creazione/lettura Cache e tasso di successo della Cache
 - Statistiche di ricostruzione della Cache raggruppate per motivo (TTL, cambio system/tools/model, troncamento/modifica messaggi, cambio chiave) con conteggio e token cache_creation
+- Statistiche di utilizzo degli strumenti: conteggio chiamate per strumento, ordinato per frequenza
+- Icone di aiuto concettuale (?): clicca per visualizzare la documentazione integrata di MainAgent, CacheRebuild e ogni strumento
 - Conto alla rovescia della scadenza della Cache del Main Agent
 
 ### Gestione dei Log
@@ -89,7 +91,7 @@ Pannello al passaggio del mouse nell'area dell'intestazione:
 Tramite il menu a tendina CC-Viewer in alto a sinistra:
 
 - Importa log locali: sfoglia i file di log storici, raggruppati per progetto, si apre in una nuova finestra
-- Carica file JSONL locale: seleziona e carica direttamente un file `.jsonl` locale (fino a 200 MB)
+- Carica file JSONL locale: seleziona e carica direttamente un file `.jsonl` locale (fino a 500MB)
 - Scarica log corrente: scarica il file di log JSONL di monitoraggio corrente
 - Esporta prompt utente: estrai e visualizza tutti gli input dell'utente, con tag XML (system-reminder, ecc.) comprimibili; comandi slash (`/model`, `/context`, ecc.) mostrati come voci indipendenti; tag relativi ai comandi nascosti automaticamente dal contenuto del prompt
 - Esporta prompt in TXT: esporta i prompt utente (solo testo, esclusi tag di sistema) in un file `.txt` locale

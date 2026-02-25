@@ -82,6 +82,8 @@ Svevepanel i topptekstområdet:
 - Token-antall gruppert etter modell (input/output)
 - Cache creation/read-antall og cache-treffrate
 - Cache-gjenoppbyggingsstatistikk gruppert etter årsak (TTL, system/verktøy/modellendring, meldingstrunkering/-endring, nøkkelendring) med antall og cache_creation-tokens
+- Verktøybruksstatistikk: antall kall per verktøy, sortert etter hyppighet
+- Konsepthjelp (?)-ikoner: klikk for å se innebygd dokumentasjon for MainAgent, CacheRebuild og hvert verktøy
 - Main Agent cache-utløpsnedtelling
 
 ### Loggadministrasjon
@@ -89,7 +91,7 @@ Svevepanel i topptekstområdet:
 Via CC-Viewer-rullegardinmenyen øverst til venstre:
 
 - Importer lokale logger: bla gjennom historiske loggfiler, gruppert etter prosjekt, åpnes i nytt vindu
-- Last inn lokal JSONL-fil: velg og last inn en lokal `.jsonl`-fil direkte (opptil 200MB)
+- Last inn lokal JSONL-fil: velg og last inn en lokal `.jsonl`-fil direkte (opptil 500MB)
 - Last ned gjeldende logg: last ned den gjeldende overvåkings-JSONL-loggfilen
 - Eksporter brukerforespørsler: trekk ut og vis alle brukerinndata, med XML-tagger (system-reminder osv.) sammenleggbare; skråstrekkommandoer (`/model`, `/context` osv.) vist som selvstendige oppføringer; kommandorelaterte tagger automatisk skjult fra prompt-innhold
 - Eksporter forespørsler til TXT: eksporter brukerforespørsler (kun tekst, uten system-tagger) til en lokal `.txt`-fil

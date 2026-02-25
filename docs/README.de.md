@@ -82,6 +82,8 @@ Hover-Panel im Kopfbereich:
 - Token-Anzahl gruppiert nach Modell (Eingabe/Ausgabe)
 - Cache-Erstellungs-/Lesezähler und Cache-Trefferquote
 - Cache-Rebuild-Statistiken nach Grund gruppiert (TTL, System-/Tools-/Modelländerung, Nachrichtenkürzung/-änderung, Schlüsseländerung) mit Anzahl und cache_creation-Token
+- Tool-Nutzungsstatistiken: Aufrufanzahl pro Tool, nach Häufigkeit sortiert
+- Konzepthilfe (?)-Icons: Klicken zum Anzeigen der integrierten Dokumentation für MainAgent, CacheRebuild und jedes Tool
 - Main Agent Cache-Ablauf-Countdown
 
 ### Log-Verwaltung
@@ -89,7 +91,7 @@ Hover-Panel im Kopfbereich:
 Über das CC-Viewer-Dropdown-Menü oben links:
 
 - Lokale Logs importieren: historische Log-Dateien durchsuchen, nach Projekt gruppiert, öffnet in neuem Fenster
-- Lokale JSONL-Datei laden: eine lokale `.jsonl`-Datei direkt auswählen und laden (bis zu 200 MB)
+- Lokale JSONL-Datei laden: eine lokale `.jsonl`-Datei direkt auswählen und laden (bis zu 500MB)
 - Aktuelles Log herunterladen: aktuelle Überwachungs-JSONL-Log-Datei herunterladen
 - Benutzer-Prompts exportieren: alle Benutzereingaben extrahieren und anzeigen, XML-Tags (system-reminder usw.) einklappbar; Slash-Befehle (`/model`, `/context` usw.) als eigenständige Einträge angezeigt; befehlsbezogene Tags automatisch aus dem Prompt-Inhalt ausgeblendet
 - Prompts als TXT exportieren: Benutzer-Prompts (nur Text, ohne System-Tags) in eine lokale `.txt`-Datei exportieren

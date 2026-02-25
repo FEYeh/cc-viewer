@@ -1,8 +1,9 @@
 import React from 'react';
 import { Space, Tag, Button, Badge, Typography, Dropdown, Popover, Modal, Collapse, Drawer, Switch } from 'antd';
 import { MessageOutlined, FileTextOutlined, ImportOutlined, DownOutlined, DashboardOutlined, SaveOutlined, ExportOutlined, DownloadOutlined, SettingOutlined } from '@ant-design/icons';
-import { isSystemText, formatTokenCount, computeTokenStats, computeCacheRebuildStats } from '../utils/helpers';
+import { isSystemText, formatTokenCount, computeTokenStats, computeCacheRebuildStats, computeToolUsageStats } from '../utils/helpers';
 import { t, getLang, setLang } from '../i18n';
+import ConceptHelp from './ConceptHelp';
 import styles from './AppHeader.module.css';
 
 const LANG_OPTIONS = [
@@ -243,8 +244,9 @@ class AppHeader extends React.Component {
     const { requests = [] } = this.props;
     const byModel = computeTokenStats(requests);
     const models = Object.keys(byModel);
+    const toolStats = computeToolUsageStats(requests);
 
-    if (models.length === 0) {
+    if (models.length === 0 && toolStats.length === 0) {
       return (
         <div className={styles.tokenStatsEmpty}>
           暂无 token 数据
@@ -252,8 +254,8 @@ class AppHeader extends React.Component {
       );
     }
 
-    return (
-      <div className={styles.tokenStatsContainer}>
+    const tokenColumn = (
+      <div className={styles.tokenStatsColumn}>
         {models.map((model) => {
           const s = byModel[model];
           const totalInput = s.input + s.cacheCreation + s.cacheRead;
@@ -297,6 +299,43 @@ class AppHeader extends React.Component {
         {this.renderCacheRebuildStats()}
       </div>
     );
+
+    const toolColumn = toolStats.length > 0 ? (
+      <div className={styles.toolStatsColumn}>
+        <div className={styles.modelCard}>
+          <div className={styles.modelName}>{t('ui.toolUsageStats')}</div>
+          <table className={styles.statsTable}>
+            <thead>
+              <tr>
+                <td className={styles.th} style={{ textAlign: 'left' }}>Tool</td>
+                <td className={styles.th}>{t('ui.cacheRebuild.count')}</td>
+              </tr>
+            </thead>
+            <tbody>
+              {toolStats.map(([name, count]) => (
+                <tr key={name} className={styles.rowBorder}>
+                  <td className={styles.label}>{name} <ConceptHelp doc={`Tool-${name}`} /></td>
+                  <td className={styles.td}>{count}</td>
+                </tr>
+              ))}
+              {toolStats.length > 1 && (
+                <tr className={styles.rebuildTotalRow}>
+                  <td className={styles.label}>Total</td>
+                  <td className={styles.td}>{toolStats.reduce((s, e) => s + e[1], 0)}</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    ) : null;
+
+    return (
+      <div className={styles.tokenStatsContainer}>
+        {tokenColumn}
+        {toolColumn}
+      </div>
+    );
   }
 
   renderCacheRebuildStats() {
@@ -315,7 +354,7 @@ class AppHeader extends React.Component {
 
     return (
       <div className={styles.rebuildCard}>
-        <div className={styles.modelName}>{t('ui.cacheRebuildStats')}</div>
+        <div className={styles.modelName}>MainAgent<ConceptHelp doc="MainAgent" /> {t('ui.cacheRebuildStats')}<ConceptHelp doc="CacheRebuild" /></div>
         <table className={styles.statsTable}>
           <thead>
             <tr>
@@ -429,8 +468,8 @@ class AppHeader extends React.Component {
               {t('ui.tokenStats')}
             </Tag>
           </Popover>
-          <Tag color="green" className={styles.liveTag}>
-            <Badge status="processing" color="green" />
+          <Tag color={isLocalLog ? undefined : 'green'} className={`${styles.liveTag} ${isLocalLog ? styles.liveTagHistory : ''}`}>
+            {!isLocalLog && <Badge status="processing" color="green" />}
             <span className={styles.liveTagText}>{isLocalLog ? t('ui.historyLog', { file: localLogFile }) : (t('ui.liveMonitoring') + (projectName ? `:${projectName}` : ''))}</span>
           </Tag>
         </Space>

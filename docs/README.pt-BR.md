@@ -82,6 +82,8 @@ Painel flutuante na área do cabeçalho:
 - Contagem de Token agrupada por modelo (input/output)
 - Contagens de Cache creation/read e taxa de acerto de cache
 - Estatísticas de reconstrução de cache agrupadas por motivo (TTL, alteração de system/tools/model, truncamento/modificação de mensagens, alteração de chave) com contagem e tokens de cache_creation
+- Estatísticas de uso de ferramentas: contagem de chamadas por ferramenta, ordenadas por frequência
+- Ícones de ajuda conceitual (?): clique para visualizar a documentação integrada do MainAgent, CacheRebuild e cada ferramenta
 - Contagem regressiva de expiração do cache do Main Agent
 
 ### Gerenciamento de Logs
@@ -89,7 +91,7 @@ Painel flutuante na área do cabeçalho:
 Através do menu suspenso CC-Viewer no canto superior esquerdo:
 
 - Importar logs locais: navegar por arquivos de log históricos, agrupados por projeto, abre em nova janela
-- Carregar arquivo JSONL local: selecionar e carregar diretamente um arquivo `.jsonl` local (até 200MB)
+- Carregar arquivo JSONL local: selecionar e carregar diretamente um arquivo `.jsonl` local (até 500MB)
 - Baixar log atual: baixar o arquivo de log JSONL de monitoramento atual
 - Exportar prompts do usuário: extrair e exibir todas as entradas do usuário, com tags XML (system-reminder, etc.) recolhíveis; comandos slash (`/model`, `/context`, etc.) exibidos como entradas independentes; tags relacionadas a comandos ocultadas automaticamente do conteúdo do prompt
 - Exportar prompts para TXT: exportar prompts do usuário (somente texto, excluindo tags do sistema) para um arquivo `.txt` local

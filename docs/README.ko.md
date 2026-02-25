@@ -82,6 +82,8 @@ ccv --uninstall
 - 모델별 input/output token 수량 그룹 통계
 - Cache creation/read 수량 및 캐시 적중률 표시
 - 캐시 재구축 원인별 통계 (TTL, system/tools/model 변경, 메시지 잘림/수정, key 변경) — 횟수 및 cache_creation 토큰 표시
+- 도구 사용 통계: 도구별 호출 횟수, 빈도순 정렬
+- 개념 도움말 (?) 아이콘: 클릭하면 MainAgent, CacheRebuild 및 각 도구의 내장 문서를 볼 수 있음
 - Main Agent 캐시 만료 카운트다운
 
 ### 로그 관리
@@ -89,7 +91,7 @@ ccv --uninstall
 왼쪽 상단 CC-Viewer 드롭다운 메뉴:
 
 - 로컬 로그 가져오기: 프로젝트별 그룹화된 기록 로그 파일 탐색, 새 창에서 열기
-- 로컬 JSONL 파일 불러오기: 로컬 `.jsonl` 파일을 직접 선택하여 불러오기 (최대 200MB)
+- 로컬 JSONL 파일 불러오기: 로컬 `.jsonl` 파일을 직접 선택하여 불러오기 (최대 500MB)
 - 현재 로그 다운로드: 현재 모니터링 중인 JSONL 로그 파일 다운로드
 - 사용자 Prompt 내보내기: 모든 사용자 입력을 추출하여 표시, XML 태그(system-reminder 등) 접기 지원; 슬래시 명령(`/model`, `/context` 등)은 독립 항목으로 표시; 명령 관련 태그는 Prompt 내용에서 자동 숨김
 - Prompt를 TXT로 내보내기: 사용자 Prompt(텍스트만, 시스템 태그 제외)를 로컬 `.txt` 파일로 내보내기

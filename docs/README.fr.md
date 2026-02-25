@@ -82,6 +82,8 @@ Panneau au survol dans la zone d'en-tête :
 - Comptage de Token regroupé par modèle (entrée/sortie)
 - Compteurs de création/lecture de Cache et taux de succès du Cache
 - Statistiques de reconstruction du Cache regroupées par raison (TTL, changement de system/tools/modèle, troncature/modification de messages, changement de clé) avec le nombre d'occurrences et les tokens cache_creation
+- Statistiques d'utilisation des outils : nombre d'appels par outil, triés par fréquence
+- Icônes d'aide conceptuelle (?) : cliquez pour consulter la documentation intégrée de MainAgent, CacheRebuild et chaque outil
 - Compte à rebours d'expiration du Cache du Main Agent
 
 ### Gestion des Logs

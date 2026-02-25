@@ -131,7 +131,7 @@ const _initPromise = (async () => {
 
 export { LOG_FILE, _initPromise, _resumeState, _choicePromise, resolveResumeChoice, _projectName };
 
-const MAX_LOG_SIZE = 200 * 1024 * 1024; // 200MB
+const MAX_LOG_SIZE = 500 * 1024 * 1024; // 500MB
 
 function isPreflightEntry(entry) {
   if (entry.mainAgent || entry.isHeartbeat || entry.isCountTokens) return false;
@@ -458,7 +458,7 @@ export function setupInterceptor() {
       }
     } catch {}
 
-    // 用户新指令边界：检查日志文件大小，超过 200MB 则切换新文件
+    // 用户新指令边界：检查日志文件大小，超过 500MB 则切换新文件
     if (requestEntry?.mainAgent) {
       checkAndRotateLogFile();
     }

@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.1.0 (2026-02-25)
+
+- Added ConceptHelp component: click (?) icon next to tool names and titles to view concept docs in a modal
+- Added concept doc API endpoint (GET /api/concept) serving markdown files with i18n fallback
+- Added tool usage statistics column in Dashboard, showing call counts per tool with ConceptHelp links
+- Added system-reminder filter (CLAUDE.md) in request body view, auto-expands matching nodes
+- Added breathing animation for live monitoring badge; history logs show muted style
+- Dashboard cards now have darker background (#111) for better contrast
+- Increased max log file size from 200MB to 500MB
+- Cache rebuild analysis now uses stripped keys for more accurate diff comparison
+- Body Diff section layout improved: view toggle and copy button inline with title
+- Diff computation skips private keys (prefixed with _)
+
 ## 1.0.17 (2026-02-25)
 
 - Added cache rebuild statistics card in Dashboard, grouped by reason (TTL, system/tools/model change, message truncation/modification, key change) with count and cache_creation tokens

@@ -1,0 +1,58 @@
+.helpBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  color: #aaa;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  margin-left: 4px;
+  vertical-align: middle;
+  transition: background 0.2s;
+  user-select: none;
+}
+
+.helpBtn:hover {
+  background: #333;
+}
+
+.modalBody {
+  max-height: 60vh;
+  overflow-y: auto;
+  line-height: 1.7;
+}
+
+.modalBody h1,
+.modalBody h2,
+.modalBody h3 {
+  margin-top: 0.8em;
+}
+
+.modalBody p {
+  margin: 0.5em 0;
+}
+
+.modalBody code {
+  background: #2a2a2a;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.modalBody pre {
+  background: #1a1a1a;
+  padding: 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+.spinWrap {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}

@@ -82,6 +82,8 @@ Hover panel in the header area:
 - Token counts grouped by model (input/output)
 - Cache creation/read counts and cache hit rate
 - Cache rebuild statistics: grouped by reason (TTL, system/tools/model change, message truncation/modification, key change) with count and cache_creation tokens
+- Tool usage statistics: call counts per tool, sorted by frequency
+- Concept help (?) icons: click to view built-in documentation for MainAgent, CacheRebuild, and each tool
 - Main Agent cache expiration countdown
 
 ### Log Management
@@ -89,7 +91,7 @@ Hover panel in the header area:
 Via the CC-Viewer dropdown menu in the top left:
 
 - Import local logs: browse historical log files, grouped by project, opens in new window
-- Load local JSONL file: directly select and load a local `.jsonl` file (up to 200MB)
+- Load local JSONL file: directly select and load a local `.jsonl` file (up to 500MB)
 - Download current log: download the current monitoring JSONL log file
 - Export user prompts: extract and display all user inputs, with XML tags (system-reminder, etc.) collapsible; slash commands (`/model`, `/context`, etc.) shown as standalone entries; command-related tags auto-hidden from prompt content
 - Export prompts to TXT: export user prompts (text only, excluding system tags) to a local `.txt` file
