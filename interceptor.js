@@ -14,6 +14,8 @@ export let _cachedApiKey = null;
 export let _cachedAuthHeader = null;
 // 缓存从请求 body 中提取的模型名，供翻译接口使用
 export let _cachedModel = null;
+// 缓存 haiku 模型名（从实际请求中捕获），翻译接口优先使用
+export let _cachedHaikuModel = null;
 
 // 生成新的日志文件路径
 function generateNewLogFilePath() {
@@ -373,14 +375,12 @@ export function setupInterceptor() {
   const _originalFetch = globalThis.fetch;
 
   globalThis.fetch = async function (url, options) {
-    // [Debug] Log interception
-    try {
-      const urlStr = typeof url === 'string' ? url : url?.url || String(url);
-      if (urlStr.includes('/v1/messages')) {
-        // console.error('[CC-Viewer] Intercepting request:', urlStr);
-        // console.error('[CC-Viewer] Current LOG_FILE:', LOG_FILE);
-      }
-    } catch (e) { }
+    // cc-viewer 内部请求（翻译等）直接透传，不拦截
+    const internalHeader = options?.headers?.['x-cc-viewer-internal']
+      || (options?.headers instanceof Headers && options.headers.get('x-cc-viewer-internal'));
+    if (internalHeader) {
+      return _originalFetch.apply(this, arguments);
+    }
 
     const startTime = Date.now();
     let requestEntry = null;
@@ -427,10 +427,8 @@ export function setupInterceptor() {
           _cachedAuthHeader = headers['authorization'];
         }
 
-        // 缓存请求中的模型名，供翻译接口使用
-        if (body?.model && typeof body.model === 'string') {
-          _cachedModel = body.model;
-        }
+        // 缓存请求中的模型名（仅 mainAgent 请求，避免 SubAgent 覆盖）
+        // 注意：写入移到 requestEntry 构建之后
 
         // 脱敏敏感 headers，避免写入日志泄漏凭证
         const safeHeaders = { ...headers };
@@ -480,6 +478,14 @@ export function setupInterceptor() {
     // 用户新指令边界：检查日志文件大小，超过 500MB 则切换新文件
     if (requestEntry?.mainAgent) {
       checkAndRotateLogFile();
+      // 仅 mainAgent 请求时缓存模型名，避免 SubAgent 覆盖
+      if (requestEntry.body?.model && typeof requestEntry.body.model === 'string') {
+        _cachedModel = requestEntry.body.model;
+        // 捕获 haiku 模型名供翻译接口使用
+        if (/haiku/i.test(requestEntry.body.model)) {
+          _cachedHaikuModel = requestEntry.body.model;
+        }
+      }
     }
 
     const response = await _originalFetch.apply(this, arguments);
@@ -520,19 +526,21 @@ export function setupInterceptor() {
                           const lines = block.split('\n');
                           const dataLine = lines.find(l => l.startsWith('data:'));
                           if (dataLine) {
+                            // 处理 "data:" 或 "data: " 两种格式
+                            const jsonStr = dataLine.startsWith('data: ')
+                              ? dataLine.substring(6)
+                              : dataLine.substring(5);
                             try {
-                              // Handle 'data: ' and 'data:'
-                              const jsonStr = dataLine.startsWith('data: ') ? dataLine.substring(6) : dataLine.substring(5);
                               return JSON.parse(jsonStr);
                             } catch {
-                              return null;
+                              return jsonStr;
                             }
                           }
                           return null;
                         })
                         .filter(Boolean);
 
-                      // 组装完整的 message 对象
+                      // 组装完整的 message 对象（GLM 使用标准格式，但 data: 后无空格）
                       const assembledMessage = assembleStreamMessage(events);
 
                       // 直接使用组装后的 message 对象作为 response.body

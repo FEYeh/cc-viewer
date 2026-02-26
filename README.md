@@ -97,9 +97,11 @@ Click the "Chat mode" button in the top right to parse Main Agent's full convers
 ### Translation
 
 - Thinking blocks and assistant messages support one-click translation
-- Powered by Claude Haiku API, supports both API key (`x-api-key`) and OAuth Bearer token authentication
+- Powered by Claude Haiku API, uses `x-api-key` authentication only (OAuth session tokens are excluded to prevent context pollution)
+- Automatically captures haiku model name from mainAgent requests; defaults to `claude-haiku-4-5-20251001`
 - Translation results are cached; click again to toggle back to the original text
 - Loading spinner animation shown during translation
+- (?) help icon on `authorization` header links to concept doc explaining context pollution
 
 ### Token Stats
 

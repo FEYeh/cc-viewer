@@ -94,10 +94,12 @@ Fare clic sul pulsante "Chat mode" in alto a destra per analizzare la cronologia
 
 ### Traduzione
 
-- I blocchi thinking e i messaggi dell'Assistant supportano la traduzione con un clic
-- Basato sull'API Claude Haiku, supporta sia l'autenticazione tramite API Key (`x-api-key`) che OAuth Bearer Token
-- I risultati della traduzione vengono memorizzati automaticamente nella cache; fare clic di nuovo per tornare al testo originale
-- Animazione di caricamento rotante mostrata durante la traduzione
+- I blocchi thinking e i messaggi Assistant supportano la traduzione con un clic
+- Basato su Claude Haiku API, utilizza solo l'autenticazione `x-api-key` (i token di sessione OAuth sono esclusi per prevenire l'inquinamento del contesto)
+- Cattura automaticamente il nome del modello haiku dalle richieste mainAgent; predefinito `claude-haiku-4-5-20251001`
+- I risultati della traduzione vengono memorizzati automaticamente; clicca di nuovo per tornare al testo originale
+- Animazione di caricamento durante la traduzione
+- L'icona (?) accanto all'header `authorization` nei dettagli della richiesta rimanda al documento concettuale sull'inquinamento del contesto
 
 ### Statistiche Token
 

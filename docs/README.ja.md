@@ -94,10 +94,12 @@ ccv --uninstall
 
 ### 翻訳
 
-- thinking ブロックと Assistant メッセージでワンクリック翻訳に対応
-- Claude Haiku API を使用、API Key（`x-api-key`）と OAuth Bearer Token の両方の認証方式に対応
-- 翻訳結果は自動キャッシュされ、再度クリックで原文に切り替え
-- 翻訳中はローディングスピナーアニメーションを表示
+- thinking ブロックと Assistant メッセージのワンクリック翻訳対応
+- Claude Haiku API ベース、`x-api-key` 認証のみ使用（OAuth セッショントークンはコンテキスト汚染防止のため除外）
+- mainAgent リクエストから haiku モデル名を自動キャプチャ；デフォルトは `claude-haiku-4-5-20251001`
+- 翻訳結果は自動キャッシュ、再クリックで原文に切替
+- 翻訳中はローディングスピナーアニメーション表示
+- リクエスト詳細の `authorization` ヘッダー横の (?) アイコンからコンテキスト汚染の説明ドキュメントを参照可能
 
 ### Token 消費統計
 

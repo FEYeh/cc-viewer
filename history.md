@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2.2 (2026-02-26)
+## 1.2.4 (2026-02-26)
 
 - Added Native Install support for Claude Code: auto-detects `claude` binary and configures proxy automatically
 - Added Configuration Override support: respects `~/.claude/settings.json` and `ANTHROPIC_BASE_URL` env var
@@ -8,6 +8,24 @@
 - Silenced console logs in proxy mode to ensure clean CLI output
 - Fixed `ZlibError` during response decompression
 - Fixed connection refused issues by ensuring `ccv` background process stability
+
+## 1.2.3 (2026-02-26)
+
+- Fix: GLM streaming response body now correctly assembled (SSE `data:` format varies from Anthropic standard)
+- Fix: SSE parser now handles both `data: {...}` and `data:{...}` formats for broader API compatibility
+
+## 1.2.2 (2026-02-26)
+
+- Fix: translate API no longer reuses OAuth session token (`authorization` header), preventing context pollution with Claude Code's main conversation
+- Fix: translate API falls back to extracting `sk-` key from Bearer token when no `x-api-key` is available
+- Fix: translate requests now bypass fetch interceptor via `x-cc-viewer-internal` header, eliminating log noise
+- Fix: `_cachedModel` write guarded by `mainAgent` check, preventing SubAgent model overwrites
+- Added `_cachedHaikuModel` for translate API model selection (captures haiku model from mainAgent requests, defaults to `claude-haiku-4-5-20251001`)
+- Added `ccv --v` / `ccv --version` to display current version
+- Added (?) help icon on `authorization` header in request detail panel, linking to TranslateContextPollution concept doc
+- Fix: ConceptHelp (?) button click no longer triggers parent element expand/collapse (stopPropagation)
+- Added TranslateContextPollution concept doc explaining OAuth token context pollution
+- Included `concepts/` directory in npm package files
 
 ## 1.2.1 (2026-02-25)
 
@@ -78,8 +96,3 @@
 
 - 初始版本发布
 - 拦截并记录 Claude API 请求/响应
-- 实时 SSE 推送，Web 面板查看请求详情
-- 支持流式响应组装与展示
-- JSON Viewer 可视化请求/响应体
-- 对话模式视图
-- 构建脚本，将源码与 vendor 依赖打包至 `lib/`

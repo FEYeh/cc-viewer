@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execSync } from 'node:child_process';
 import { homedir } from 'node:os';
 import { spawn, execSync } from 'node:child_process';
 import { t } from './i18n.js';
@@ -18,7 +19,41 @@ const INJECT_BLOCK = `${INJECT_START}\n${INJECT_IMPORT}\n${INJECT_END}`;
 const SHELL_HOOK_START = '# >>> CC-Viewer Auto-Inject >>>';
 const SHELL_HOOK_END = '# <<< CC-Viewer Auto-Inject <<<';
 
-const cliPath = resolve(__dirname, '../@anthropic-ai/claude-code/cli.js');
+// Claude Code cli.js 包名候选列表，按优先级排列
+const CLAUDE_CODE_PACKAGES = [
+  '@anthropic-ai/claude-code',
+  '@ali/claude-code',
+];
+
+function getGlobalNodeModulesDir() {
+  try {
+    return execSync('npm root -g', { encoding: 'utf-8' }).trim();
+  } catch {
+    return null;
+  }
+}
+
+function resolveClaudeCodeCliPath() {
+  // 候选基础目录：__dirname 的上级（适用于常规 npm 安装）+ 全局 node_modules（适用于符号链接安装）
+  const baseDirs = [resolve(__dirname, '..')];
+  const globalRoot = getGlobalNodeModulesDir();
+  if (globalRoot && globalRoot !== resolve(__dirname, '..')) {
+    baseDirs.push(globalRoot);
+  }
+
+  for (const baseDir of baseDirs) {
+    for (const packageName of CLAUDE_CODE_PACKAGES) {
+      const candidate = join(baseDir, packageName, 'cli.js');
+      if (existsSync(candidate)) {
+        return candidate;
+      }
+    }
+  }
+  // 兜底：返回全局目录下的默认路径，便于错误提示
+  return join(globalRoot || resolve(__dirname, '..'), CLAUDE_CODE_PACKAGES[0], 'cli.js');
+}
+
+const cliPath = resolveClaudeCodeCliPath();
 
 function getShellConfigPath() {
   const shell = process.env.SHELL || '';
@@ -48,8 +83,14 @@ ${SHELL_HOOK_END}`;
 
   return `${SHELL_HOOK_START}
 claude() {
-  local cli_js="$HOME/.npm-global/lib/node_modules/@anthropic-ai/claude-code/cli.js"
-  if [ -f "$cli_js" ] && ! grep -q "CC Viewer" "$cli_js" 2>/dev/null; then
+  local cli_js=""
+  for candidate in "$HOME/.npm-global/lib/node_modules/@anthropic-ai/claude-code/cli.js" "$HOME/.npm-global/lib/node_modules/@ali/claude-code/cli.js"; do
+    if [ -f "$candidate" ]; then
+      cli_js="$candidate"
+      break
+    fi
+  done
+  if [ -n "$cli_js" ] && ! grep -q "CC Viewer" "$cli_js" 2>/dev/null; then
     ccv 2>/dev/null
   fi
   command claude "$@"
@@ -237,11 +278,12 @@ async function runProxyCommand(args) {
 // === 主逻辑 ===
 
 const args = process.argv.slice(2);
+const isUninstall = args.includes('--uninstall');
+const isVersion = args.includes('--v') || args.includes('--version') || args.includes('-v');
 
-if (args.includes('--version') || args.includes('-v')) {
+if (isVersion) {
   try {
-    const pkgPath = resolve(__dirname, 'package.json');
-    const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
+    const pkg = JSON.parse(readFileSync(resolve(__dirname, 'package.json'), 'utf-8'));
     console.log(`cc-viewer v${pkg.version}`);
   } catch (e) {
     console.error('Failed to read version:', e.message);

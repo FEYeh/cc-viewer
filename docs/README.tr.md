@@ -97,9 +97,11 @@ Main Agent'ın tam konuşma geçmişini sohbet arayüzüne dönüştürmek için
 ### Çeviri
 
 - Thinking blokları ve Assistant mesajları tek tıkla çeviriyi destekler
-- Claude Haiku API tabanlı, hem API Key (`x-api-key`) hem de OAuth Bearer Token kimlik doğrulamasını destekler
-- Çeviri sonuçları otomatik olarak önbelleğe alınır; orijinal metne geri dönmek için tekrar tıklayın
-- Çeviri sırasında yükleme döndürücü animasyonu gösterilir
+- Claude Haiku API tabanlı, yalnızca `x-api-key` kimlik doğrulaması kullanır (bağlam kirliliğini önlemek için OAuth oturum belirteçleri hariç tutulur)
+- mainAgent isteklerinden haiku model adını otomatik olarak yakalar; varsayılan `claude-haiku-4-5-20251001`
+- Çeviri sonuçları otomatik olarak önbelleğe alınır; orijinal metne dönmek için tekrar tıklayın
+- Çeviri sırasında yükleme animasyonu gösterilir
+- İstek detaylarındaki `authorization` başlığının yanındaki (?) simgesi bağlam kirliliği kavram belgesine bağlantı verir
 
 ### Token İstatistikleri
 

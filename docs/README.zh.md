@@ -97,9 +97,11 @@ ccv --version
 ### 翻译
 
 - thinking 块和 Assistant 消息支持一键翻译
-- 基于 Claude Haiku API，支持 API Key（`x-api-key`）和 OAuth Bearer Token 两种认证方式
+- 基于 Claude Haiku API，仅使用 `x-api-key` 认证（排除 OAuth session token 以防止上下文污染）
+- 自动从 mainAgent 请求中捕获 haiku 模型名；默认使用 `claude-haiku-4-5-20251001`
 - 翻译结果自动缓存，再次点击可切换回原文
 - 翻译过程中显示加载旋转动画
+- 请求详情中 `authorization` header 旁的 (?) 图标可查看上下文污染说明文档
 
 ### Token 消耗统计
 
