@@ -45,6 +45,12 @@ Once configured, use `claude` as usual. Open `http://localhost:7008` to view the
 ccv --uninstall
 ```
 
+### Check Version
+
+```bash
+ccv --version
+```
+
 ## Features
 
 ### Request Monitoring (Raw Mode)

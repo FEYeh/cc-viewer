@@ -238,6 +238,17 @@ async function runProxyCommand(args) {
 
 const args = process.argv.slice(2);
 
+if (args.includes('--version') || args.includes('-v')) {
+  try {
+    const pkgPath = resolve(__dirname, 'package.json');
+    const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
+    console.log(`cc-viewer v${pkg.version}`);
+  } catch (e) {
+    console.error('Failed to read version:', e.message);
+  }
+  process.exit(0);
+}
+
 if (args[0] === 'run') {
   runProxyCommand(args);
 } else if (args.includes('--uninstall')) {
