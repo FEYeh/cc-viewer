@@ -119,14 +119,22 @@ const _initPromise = (async () => {
   try {
     const recentLog = findRecentLog(_logDir, _projectName);
     if (recentLog) {
-      // 设置临时文件，不阻塞
-      const tempFile = _newLogFile.replace('.jsonl', '_temp.jsonl');
-      LOG_FILE = tempFile;
-      _resumeState = {
-        recentFile: recentLog,
-        recentFileName: basename(recentLog),
-        tempFile,
-      };
+      // Check if file is modified within 1 hour
+      const stats = statSync(recentLog);
+      const now = new Date();
+      const diff = now - stats.mtime;
+      const oneHour = 60 * 60 * 1000;
+
+      if (diff < oneHour) {
+        // 设置临时文件，不阻塞
+        const tempFile = _newLogFile.replace('.jsonl', '_temp.jsonl');
+        LOG_FILE = tempFile;
+        _resumeState = {
+          recentFile: recentLog,
+          recentFileName: basename(recentLog),
+          tempFile,
+        };
+      }
     }
   } catch { }
 })();
