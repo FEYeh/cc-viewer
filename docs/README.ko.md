@@ -39,7 +39,7 @@ ccv
 1단계: 임의의 디렉토리에서 Claude Code를 엽니다.
 2단계: Claude Code에 다음 내용으로 지시를 내립니다:
 ```
-저는 cc-viewer npm 패키지를 설치했지만 시작할 수 없습니다. cc-viewer의 cli.js와 findcc.js를 확인하고, 현재 상황에 맞게 로컬 Claude Code 배포 방식에 적응시켜 주세요. 적응 시 변경 범위는 가능한 한 findcc.js 내로 제한해 주세요.
+cc-viewer npm 패키지를 설치했지만, ccv를 실행해도 제대로 작동하지 않습니다. cc-viewer의 cli.js와 findcc.js를 확인하고, 구체적인 환경에 맞게 로컬 Claude Code 배포 방식에 적응시켜 주세요. 적응 시 변경 범위는 가능한 한 findcc.js 내로 제한해 주세요.
 ```
 Claude Code가 스스로 오류를 확인하는 것이 다른 누구에게 묻거나 어떤 문서를 보는 것보다 더 효과적인 방법입니다!
 

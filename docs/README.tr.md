@@ -39,7 +39,7 @@ Başlatma sorunuyla karşılaşırsanız, nihai bir sorun giderme yöntemi vard�
 Adım 1: Herhangi bir dizinde Claude Code'u açın;
 Adım 2: Claude Code'a aşağıdaki talimatı verin:
 ```
-cc-viewer npm paketini kurdum ancak başlatamıyorum. cc-viewer'ın cli.js ve findcc.js dosyalarını incele, yerel claude code dağıtım yöntemine göre uyum sağla. Uyum sağlarken değişiklik kapsamını mümkün olduğunca findcc.js ile sınırlı tut.
+cc-viewer npm paketini kurdum ancak ccv'yi çalıştırdıktan sonra hâlâ düzgün çalışmıyor. cc-viewer'ın cli.js ve findcc.js dosyalarını incele, belirli ortama göre yerel Claude Code dağıtım yöntemine uyum sağla. Uyum sağlarken değişiklik kapsamını mümkün olduğunca findcc.js ile sınırlı tut.
 ```
 Claude Code'un hatayı kendisinin incelemesi, herhangi birine sormaktan veya herhangi bir belgeyi okumaktan çok daha etkilidir!
 

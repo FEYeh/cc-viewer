@@ -41,7 +41,7 @@ Step 1: Open Claude Code in any directory.
 
 Step 2: Give Claude Code the following instruction:
 ```
-I have installed the cc-viewer npm package but cannot get it to start. Please check cc-viewer's cli.js and findcc.js, and adapt them to the local Claude Code deployment based on the specifics. Keep the scope of changes as constrained as possible within findcc.js.
+I have installed the cc-viewer npm package, but after running ccv it still doesn't work properly. Please check cc-viewer's cli.js and findcc.js, and adapt them to the local Claude Code deployment based on the specific environment. Keep the scope of changes as constrained as possible within findcc.js.
 ```
 Letting Claude Code diagnose the issue itself is more effective than asking anyone or reading any documentation!
 

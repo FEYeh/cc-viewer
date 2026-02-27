@@ -39,7 +39,7 @@ Si vous rencontrez un problème de démarrage, voici une solution de dépannage 
 Étape 1 : ouvrez Claude Code dans n'importe quel répertoire ;
 Étape 2 : donnez l'instruction suivante à Claude Code :
 ```
-J'ai installé le package npm cc-viewer, mais je n'arrive pas à le démarrer. Consulte cli.js et findcc.js de cc-viewer, puis adapte-le au mode de déploiement local de Claude Code en fonction du contexte actuel. Essaie de limiter les modifications au fichier findcc.js autant que possible.
+J'ai installé le package npm cc-viewer, mais après avoir exécuté ccv, il ne fonctionne toujours pas correctement. Consulte cli.js et findcc.js de cc-viewer, puis adapte-le au mode de déploiement local de Claude Code en fonction de l'environnement spécifique. Essaie de limiter les modifications au fichier findcc.js autant que possible.
 ```
 Laisser Claude Code diagnostiquer lui-même les erreurs est plus efficace que de demander à quelqu'un ou de lire n'importe quelle documentation !
 

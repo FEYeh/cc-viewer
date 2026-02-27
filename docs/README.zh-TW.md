@@ -39,7 +39,7 @@ ccv
 第一步：任意目錄開啟 claude code；
 第二步：給 claude code 下指令，內容如下:
 ```
-我已經安裝了 cc-viewer 這個 npm 套件，但是無法啟動，查看 cc-viewer 的 cli.js 和 findcc.js，根據具體的情況適配本地的 claude code 的部署方式。適配的時候修改範圍盡量約束在 findcc.js 中。
+我已經安裝了 cc-viewer 這個 npm 套件，但是執行 ccv 以後仍然無法有效運行。查看 cc-viewer 的 cli.js 和 findcc.js，根據具體的環境，適配本地的 Claude Code 的部署方式。適配的時候修改範圍盡量約束在 findcc.js 中。
 ```
 讓 Claude Code 自己檢查錯誤是比問任何人以及看任何文件更有效的手段！
 

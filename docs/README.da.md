@@ -39,7 +39,7 @@ Hvis du oplever problemer med at starte, er der en ultimativ fejlfindingsløsnin
 Trin 1: Åbn Claude Code i en vilkårlig mappe;
 Trin 2: Giv Claude Code følgende instruktion:
 ```
-Jeg har installeret npm-pakken cc-viewer, men kan ikke starte den. Undersøg cc-viewers cli.js og findcc.js, og tilpas til den lokale Claude Code-installationsmetode baseret på de konkrete forhold. Begræns ændringerne så vidt muligt til findcc.js.
+Jeg har installeret npm-pakken cc-viewer, men efter at have kørt ccv fungerer den stadig ikke korrekt. Undersøg cc-viewers cli.js og findcc.js, og tilpas til den lokale Claude Code-installationsmetode baseret på det specifikke miljø. Begræns ændringerne så vidt muligt til findcc.js.
 ```
 At lade Claude Code selv undersøge fejlen er mere effektivt end at spørge nogen eller læse dokumentation!
 
